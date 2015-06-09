@@ -2,7 +2,7 @@
 
 /*
  * function: semiglobal alignment
- * Input : ¤u§@¸ô®|
+ * Input : Working Path
  * Output: result.php
  */
 
@@ -11,6 +11,7 @@ if(count($argv)!=2)
 $prefix = $argv[1];
 if($prefix[strlen($prefix)-1]!="/")
     $prefix.="/";
+
 
 if(@fopen($prefix."input.php","r")===false)
 {print "input file??\n";exit();}
