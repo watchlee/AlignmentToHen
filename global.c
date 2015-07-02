@@ -9,6 +9,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+
+
 /*
  * function: semiglobal alignment
  * Input : Working Path
@@ -25,6 +27,12 @@
  * $suboptimal: # of output solution
 */
 
+/*-------------------------DEBUG setting-------------------------------*/
+enum{TEST_PRINT,TEST_ERROR,TEST_FUNCTION};
+#define DEBUG TEST_PRINT
+
+
+/************************************************************************/
 /*-------------------------Setting Variable-------------------------------*/
 static int input_length;
 FILE *input_file;
@@ -41,11 +49,11 @@ int gap_suboptimal;
 void input_function(char*);
 void print_result(char*,int);
 int max_compare_function(int,int);
-
+void readmat(char*);
 /************************************************************************/
-int main(int argv,char* argc[])
+int main(int argc,char* argv[])
 {
-    char *file = argc[1];
+    char *file = argv[1];
     input_function(file); 
  
     fclose(input_file);
@@ -62,7 +70,7 @@ void input_function(char *path)
     }
     char *temp;
 
-    /*In any case, I decide to choice dynamic allocate memory*/
+    /*In any case, I decide to choice dynamic allocate memory,but not done yet! */
     int data_size = 0;
     int maximun_length = 0;
     int temporal_length = 0;
@@ -123,6 +131,7 @@ void input_function(char *path)
     {
         fscanf(input_file,"%s",temp);
         temp = strtok(temp,"\"");
+        printf("%s\n",temp);
         if(strncmp(temp,"=",1)!=0&&strncmp(temp,"$",1)!=0&&strncmp(temp,"?>",1)!=0&&strncmp(temp,"<?",1)!=0)
         {
             /*When you copy data ,you must inialize your char pointer first, nor it will happen
@@ -161,12 +170,17 @@ void input_function(char *path)
             loop++;
         }
     }
+#if DEBUG==TEST_PRINT
     printf("seq1 = %s\n",seq1);
     printf("seq2 = %s\n",seq2);
     printf("matfile = %s\n",matfile);
     printf("opp = %d\n",gap_opp);
     printf("exp = %d\n",gap_exp);
     printf("suboptimal = %d\n",gap_suboptimal);
+#endif
+   readmat(matfile); 
+
+
 }
 
 int max_compare_function(int first_data,int second_data)
@@ -185,3 +199,29 @@ void print_result(char* array,int length)
         printf("%s\n",&array[loop]);
     
 }
+
+void readmat(char *file_name)
+{
+    FILE *fptr = fopen(file_name,"r");
+    if(fptr==NULL)
+    {
+        printf("File open failed!\n");
+        exit(EXIT_FAILURE);
+    }
+    else
+    {
+        printf("Successful open file!\n");
+        puts(file_name);
+    }
+
+    char line[100];
+    /*first reading data is comment, so lets ingnore it!*/
+    fgets(line,100,fptr);
+    /*Start reading data from scoring matrix*/
+    fgets(line,100,fptr);
+    
+
+    printf("%s\n",line);
+    fclose(fptr);
+}
+
