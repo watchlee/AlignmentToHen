@@ -40,6 +40,7 @@ int gap_suboptimal;
 /*-------------------------Setting function-------------------------------*/
 void input_function(char*);
 void print_result(char*,int);
+int max_compare_function(int,int);
 
 /************************************************************************/
 int main(int argv,char* argc[])
@@ -61,11 +62,30 @@ void input_function(char *path)
     }
     char *temp;
 
+    /*In any case, I decide to choice dynamic allocate memory*/
     int data_size = 0;
+    int maximun_length = 0;
+    int temporal_length = 0;
     while(!feof(input_file))
     {
         fscanf(input_file,"%s",temp);
-        data_size++;   
+        if(strncmp(temp,"=",1)!=0&&strncmp(temp,"$",1)!=0&&strncmp(temp,"?>",1)!=0&&strncmp(temp,"<?",1)!=0)
+        {
+            /*first input*/
+            if(data_size==0)
+            {
+                maximun_length = strlen(temp);
+            }
+            else
+            /*trying to find maximun length to allocate memory*/
+            {
+                temporal_length = strlen(temp);
+                maximun_length = max_compare_function(maximun_length,temporal_length);
+            }
+            data_size++;
+            
+            
+        }
     }
     fclose(input_file);
 
@@ -80,19 +100,81 @@ void input_function(char *path)
      *5 line = $exp
      *6 line = $suboptimal
      */
+    printf("Getting input data...\n");
     int loop  = 0;
+
+    /*created temporal array to store data*/
+
+/*
+ *      current state, I don't use it! 
+ *      2015/7/2
+ *
+    char **temp_array,*temp_length;
+    temp_array = (char**)malloc(data_size*sizeof(char*)+data_size*maximun_length*sizeof(char));
+    for(loop = 0,temp_length=(char*)(temp_array+data_size);loop<data_size;loop++,temp_length+=maximun_length)
+        temp_array[loop] = temp_length;
+ *
+ *       
+*/
+    loop = 0;
+    
+    /* It is very stupid way------2015/7/2*/
     while(!feof(input_file))
     {
         fscanf(input_file,"%s",temp);
         temp = strtok(temp,"\"");
         if(strncmp(temp,"=",1)!=0&&strncmp(temp,"$",1)!=0&&strncmp(temp,"?>",1)!=0&&strncmp(temp,"<?",1)!=0)
         {
-            printf("%s\n",temp);
-        }
-        loop++;
-    }
-    
+            /*When you copy data ,you must inialize your char pointer first, nor it will happen
+             * segmentation fault 11 */
+            if(loop ==0)
+            {
+                seq1=(char*)malloc(strlen(temp)*sizeof(char));
+                strcpy(seq1,temp);
+            }
+            else if(loop==1)
+            {
 
+                seq2=(char*)malloc(strlen(temp)*sizeof(char));
+                strcpy(seq2,temp);
+            }
+            else if(loop==2)
+            {
+                     
+                matfile=(char*)malloc(strlen(temp)*sizeof(char));
+                strcpy(matfile,temp);
+            }
+            else if(loop==3)
+            {
+                gap_opp = atoi(temp);
+            }
+            else if(loop==4)
+            {
+
+                gap_exp = atoi(temp);
+            }
+            else
+            {
+                
+                gap_suboptimal= atoi(temp);
+            }
+            loop++;
+        }
+    }
+    printf("seq1 = %s\n",seq1);
+    printf("seq2 = %s\n",seq2);
+    printf("matfile = %s\n",matfile);
+    printf("opp = %d\n",gap_opp);
+    printf("exp = %d\n",gap_exp);
+    printf("suboptimal = %d\n",gap_suboptimal);
+}
+
+int max_compare_function(int first_data,int second_data)
+{
+    if(first_data>second_data)
+        return first_data;
+    else
+        return second_data;
 }
 
 void print_result(char* array,int length)

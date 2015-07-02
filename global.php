@@ -18,6 +18,8 @@ if(@fopen($prefix."input.php","r")===false)
 include_once($prefix."input.php");
 include_once("util.php");
 
+
+/*--------------資料是include就已經將變數宣告完成----------*/
 /*
  * Input:
  * $seq1 $seq2: sequence with structural alphabet
@@ -27,6 +29,7 @@ include_once("util.php");
  * $suboptimal: # of output solution
 */
 //print "$matfile";
+
 $matrix=readmat($matfile);
 
 $A=array();
