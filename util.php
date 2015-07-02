@@ -61,9 +61,13 @@ function readmat($file){
 	//如果開啟檔案失敗就回傳false
 	$matrix=array();
 	$col=array();
-	fgets($fp); 		//跳過第一行註解
-	$line=fgets($fp);
-	$element = strtok(trim($line)," ");
+    fgets($fp); 		//跳過第一行註解
+    $line=fgets($fp);
+    echo $line;
+    echo trim($line);
+    /*using trim function to delete meanlessing character, which was contained in input_string*/
+    $element = strtok(trim($line)," ");
+    /*Keeping take empty character until EOF*/
 	while($element!==false){
 		if($element=="") {$element = strtok(" ");continue;}
 		array_push($col,trim($element));
