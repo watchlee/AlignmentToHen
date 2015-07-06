@@ -42,14 +42,14 @@ char* matfile;
 int gap_opp;
 int gap_exp;
 int gap_suboptimal;
-
+int **scoring_matrix;
 /************************************************************************/
 
 /*-------------------------Setting function-------------------------------*/
 void input_function(char*);
 void print_result(char*,int);
 int max_compare_function(int,int);
-void readmat(char*);
+int** readmat(char*);
 /************************************************************************/
 int main(int argc,char* argv[])
 {
@@ -170,6 +170,8 @@ void input_function(char *path)
             loop++;
         }
     }
+
+    scoring_matrix= readmat(matfile);
 #if DEBUG==TEST_PRINT
     printf("seq1 = %s\n",seq1);
     printf("seq2 = %s\n",seq2);
@@ -177,8 +179,15 @@ void input_function(char *path)
     printf("opp = %d\n",gap_opp);
     printf("exp = %d\n",gap_exp);
     printf("suboptimal = %d\n",gap_suboptimal);
+    int i,j;
+    for(i =0;i<24;i++)
+    {
+        for(j = 0;j<24;j++)
+            printf("%d ",scoring_matrix[i][j]);
+        printf("\n");
+    }
+   free(scoring_matrix); 
 #endif
-   readmat(matfile); 
 
 
 }
@@ -200,8 +209,10 @@ void print_result(char* array,int length)
     
 }
 
-void readmat(char *file_name)
+int** readmat(char *file_name)
 {
+
+    
     FILE *fptr = fopen(file_name,"r");
     if(fptr==NULL)
     {
@@ -219,9 +230,85 @@ void readmat(char *file_name)
     fgets(line,100,fptr);
     /*Start reading data from scoring matrix*/
     fgets(line,100,fptr);
-    
+    fgets(line,100,fptr); 
+//    int data_array[24][24];
 
-    printf("%s\n",line);
+    int **array = (int**)malloc(24*sizeof(void *));
+    int count;
+    for( count = 0;count<24;count++  )
+    {
+        array[count] = (int*)malloc(24*sizeof(int));
+    }
+    /*Array index value*/
+    int array_row = 0,array_col = 0;
+    
+    while(!feof(fptr))
+    {
+        array_row = 0; 
+        char *temp = strtok(line," ");
+        temp = strtok(NULL," ");
+        while(temp!=NULL)
+        {
+//            data_array[array_col][array_row]= atoi(temp);
+            array[array_col][array_row] = atoi(temp);
+            printf("%d ",atoi(temp));
+            array_row++;
+            temp = strtok(NULL," ");
+        }
+
+        array_col++;
+        fgets(line,100,fptr);
+        printf("\n");
+    }
     fclose(fptr);
+/*----------------Testing-------------------*/
+#if DEBUG==TEST_PRINT
+    int i,j;
+    for(i = 0;i<24;i++)
+    {
+        for(j = 0;j<24;j++)
+        {
+//            printf("%d ",data_array[i][j]);
+            printf("%d ",array[i][j]);
+            
+        }
+        printf("\n");
+    }
+    fptr = fopen(file_name,"r");
+    fgets(line,100,fptr);
+    /*Start reading data from scoring matrix*/
+    fgets(line,100,fptr);
+    fgets(line,100,fptr); 
+    i = 0;
+    while(!feof(fptr))
+    {
+        j = 0;
+        char *temp = strtok(line," ");
+        temp = strtok(NULL," ");
+        
+        while(temp!=NULL)
+        {
+            if(atoi(temp)==array[i][j])
+            {
+                temp = strtok(NULL," ");
+                j++;
+                
+            }
+            else
+            {
+                printf("比對失敗!!!!!!!!!!\n");
+                break;
+            }
+        }
+        if(j==24&&i==23)
+        {
+            printf("完全符合!\t\n");
+        }
+        i++;
+        fgets(line,100,fptr);
+    }
+    fclose(fptr);
+#endif
+    return array;
 }
 
