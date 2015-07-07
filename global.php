@@ -37,6 +37,8 @@ $A=array();
 $B=array();
 $C=array();
 //print "$seq1\n"; print "$seq2\n";
+
+/*---------------------------Initalize first column and first row's score-------------------*/
 $A[0][0]=0;
 $B[0][0]=0;
 $C[0][0]=0;
@@ -65,7 +67,7 @@ for($j=1;$j<=strlen($seq1);$j++){
     $dirB[$j][0]="B";
     $dirC[$j][0]="B";
 }
-
+/*-------------------------------------------------*/
 function determingABC($As,$Bs,$Cs,$temp){
     if($Cs==$temp)  $determing="7";
     if($Bs==$temp)  $determing="6";
