@@ -50,6 +50,7 @@ void input_function(char*);
 void print_result(char*,int);
 int max_compare_function(int,int);
 int** readmat(char*);
+void setting_scoring_function();
 /************************************************************************/
 int main(int argc,char* argv[])
 {
@@ -136,6 +137,34 @@ void input_function(char *path)
         {
             /*When you copy data ,you must inialize your char pointer first, nor it will happen
              * segmentation fault 11 */
+            
+            switch(loop)
+            {
+                case 0:
+                    seq1 = (char*)malloc(strlen(temp)*sizeof(char));
+                    strcpy(seq1,temp);
+                break;
+                case 1:
+                    seq2 = (char*)malloc(strlen(temp)*sizeof(char));
+                    strcpy(seq2,temp);
+                break;
+                case 2:
+                    matfile=(char*)malloc(strlen(temp)*sizeof(char));
+                    strcpy(matfile,temp);
+                break;
+                case 3:
+                    gap_opp = atoi(temp);
+                break;
+                case 4:
+                    gap_exp = atoi(temp);
+                break;
+                case 5:
+                    gap_suboptimal = atoi(temp);
+                break;
+                default:
+                break;
+            }
+            /*
             if(loop ==0)
             {
                 seq1=(char*)malloc(strlen(temp)*sizeof(char));
@@ -166,7 +195,7 @@ void input_function(char *path)
             {
                 
                 gap_suboptimal= atoi(temp);
-            }
+            }*/
             loop++;
         }
     }
@@ -180,15 +209,18 @@ void input_function(char *path)
     printf("exp = %d\n",gap_exp);
     printf("suboptimal = %d\n",gap_suboptimal);
     int i,j;
+    /*
     for(i =0;i<24;i++)
     {
         for(j = 0;j<24;j++)
             printf("%d ",scoring_matrix[i][j]);
         printf("\n");
     }
-   free(scoring_matrix); 
+    */
 #endif
 
+
+    free(scoring_matrix);
 
 }
 
@@ -230,17 +262,32 @@ int** readmat(char *file_name)
     fgets(line,100,fptr);
     /*Start reading data from scoring matrix*/
     fgets(line,100,fptr);
-    fgets(line,100,fptr); 
-//    int data_array[24][24];
 
-    int **array = (int**)malloc(24*sizeof(void *));
-    int count;
-    for( count = 0;count<24;count++  )
+
+/*---------------Testing------------------------*/
+    char *temp = strtok(line," ");
+
+    int test_index=1;
+    do
     {
-        array[count] = (int*)malloc(24*sizeof(int));
+        
+        temp = strtok(NULL," ");
+        if(temp!=NULL)
+            test_index++;
+    }while(temp!=NULL);
+
+    printf("test_index = %d\n",test_index);
+/*----------------------------------------------*/
+    
+    const int size = test_index;
+    int **array = (int**)malloc(size*sizeof(void *));
+    int count;
+    for( count = 0;count<size;count++  )
+    {
+        array[count] = (int*)malloc(size*sizeof(int));
     }
     /*Array index value*/
-    int array_row = 0,array_col = 0;
+    int array_row ,array_col = -1;
     
     while(!feof(fptr))
     {
@@ -261,11 +308,20 @@ int** readmat(char *file_name)
         printf("\n");
     }
     fclose(fptr);
+
+    printf("Done!\n");
 /*----------------Testing-------------------*/
 #if DEBUG==TEST_PRINT
+
+/*
+ *Should add output_test_file 2015/7/7
+ *
+ *
+ */
     int i,j;
-    for(i = 0;i<24;i++)
+    for(i =0;i<24;i++)
     {
+        printf("i = %d    ",i);
         for(j = 0;j<24;j++)
         {
 //            printf("%d ",data_array[i][j]);
@@ -297,8 +353,10 @@ int** readmat(char *file_name)
             else
             {
                 printf("比對失敗!!!!!!!!!!\n");
-                break;
+                printf("%d and array[%d][%d] = %d was compared failed!",atoi(temp),i,j,array[i][j]);
+                exit(EXIT_FAILURE);
             }
+            
         }
         if(j==24&&i==23)
         {
