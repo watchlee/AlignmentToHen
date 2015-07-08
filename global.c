@@ -28,8 +28,7 @@
 */
 
 /*-------------------------DEBUG setting-------------------------------*/
-enum{TEST_PRINT,TEST_ERROR,TEST_FUNCTION};
-#define DEBUG TEST_PRINT
+#define DEBUG 1
 
 
 /************************************************************************/
@@ -43,11 +42,22 @@ int gap_opp;
 int gap_exp;
 int gap_suboptimal;
 int **scoring_matrix;
-/************************************************************************/
+/*-------------------------Setting Array----------------------------------*/
+int **A;
+int **B;
+int **C;
+int **score;
+char **dir;
+char **dirA;
+char **dirB;
+char **dirC;
+
+/***************************************************************************/
 
 /*-------------------------Setting function-------------------------------*/
 void input_function(char*);
 void print_result(char*,int);
+void initialize_setting();
 int max_compare_function(int,int);
 int** readmat(char*);
 void setting_scoring_function();
@@ -55,8 +65,7 @@ void setting_scoring_function();
 int main(int argc,char* argv[])
 {
     char *file = argv[1];
-    input_function(file); 
- 
+    input_function(file);
     fclose(input_file);
     return 0;
 }
@@ -200,8 +209,9 @@ void input_function(char *path)
         }
     }
 
+    /*Get scoring_matrix*/
     scoring_matrix= readmat(matfile);
-#if DEBUG==TEST_PRINT
+#if DEBUG
     printf("seq1 = %s\n",seq1);
     printf("seq2 = %s\n",seq2);
     printf("matfile = %s\n",matfile);
@@ -219,9 +229,19 @@ void input_function(char *path)
     */
 #endif
 
-
+    initialize_setting();
+/*------------------free memory-----------------*/ 
     free(scoring_matrix);
-
+    free(A);
+    free(B);
+    free(C);
+    free(dir);
+    free(dirA);
+    free(dirB);
+    free(dirC);
+    free(seq1);
+    free(seq2);
+    free(matfile);
 }
 
 int max_compare_function(int first_data,int second_data)
@@ -311,7 +331,7 @@ int** readmat(char *file_name)
 
     printf("Done!\n");
 /*----------------Testing-------------------*/
-#if DEBUG==TEST_PRINT
+#if DEBUG
 
 /*
  *Should add output_test_file 2015/7/7
@@ -370,3 +390,156 @@ int** readmat(char *file_name)
     return array;
 }
 
+/*-----------------------initializing all setting variable--------------------------*/
+void initialize_setting()
+{
+    int i;
+    A = (int**)malloc(strlen(seq1)*sizeof(int*)+strlen(seq1)*strlen(seq2)*sizeof(int));
+    B = (int**)malloc(strlen(seq1)*sizeof(int*)+strlen(seq1)*strlen(seq2)*sizeof(int));
+    C = (int**)malloc(strlen(seq1)*sizeof(int*)+strlen(seq1)*strlen(seq2)*sizeof(int));
+    score=(int**)malloc(strlen(seq1)*sizeof(int*)+strlen(seq1)*strlen(seq2)*sizeof(int));
+    dir = (char**)malloc(strlen(seq1)*sizeof(char*)+strlen(seq1)*strlen(seq2)*sizeof(char));
+    dirA = (char**)malloc(strlen(seq1)*sizeof(char*)+strlen(seq1)*strlen(seq2)*sizeof(char));
+    dirB = (char**)malloc(strlen(seq1)*sizeof(char*)+strlen(seq1)*strlen(seq2)*sizeof(char));
+    dirC = (char**)malloc(strlen(seq1)*sizeof(char*)+strlen(seq1)*strlen(seq2)*sizeof(char));
+
+    int *temp;
+    for(i = 0,temp = (int*)(A+strlen(seq1));i<strlen(seq1);temp+=strlen(seq2),i++)
+        A[i] = temp;
+
+    int *tempB;
+    for(i = 0,tempB = (int*)(B+strlen(seq1));i<strlen(seq1);tempB+=strlen(seq2),i++)
+        B[i] = tempB;
+
+    int *tempC;
+    for(i = 0,tempC = (int*)(C+strlen(seq1));i<strlen(seq1);tempC+=strlen(seq2),i++)
+        C[i] = tempC;
+
+    int *tempScore;
+    for(i =0,tempScore = (int*)(score+strlen(seq1));i<strlen(seq1);i++,tempScore+=strlen(seq2))
+        score[i] = tempScore;
+
+    char* temp_dir;
+    for(i = 0,temp_dir = (char*)(dir+strlen(seq1));i<strlen(seq1);temp_dir+=strlen(seq2),i++)
+        dir[i] = temp_dir;
+
+    char* temp_dirA;
+    for(i = 0,temp_dirA = (char*)(dirA+strlen(seq1));i<strlen(seq1);temp_dirA+=strlen(seq2),i++)
+        dirA[i]= temp_dirA;
+
+    char* temp_dirB;
+    for(i = 0,temp_dirB=(char*)(dirC+strlen(seq1));i<strlen(seq1);temp_dirB+=strlen(seq2),i++)
+        dirB[i]=temp_dirB;
+
+    char* temp_dirC;
+    for(i = 0,temp_dirC = (char*)(dirC+strlen(seq1));i<strlen(seq1);i++,temp_dirC+=strlen(seq2))
+        dirC[i] = temp_dirC;
+
+    A[0][0] = B[0][0] = C[0][0]= score[0][0] = 0;
+    dir[0][0] = 'o';  
+
+/*-----------------do first "-" (row)-----------------*/
+    for(i =1;i<strlen(seq2);i++)
+    {
+        A[0][i] = -1000000;
+        B[0][i] = -1000000; 
+        C[0][i] = gap_opp+gap_exp*i;
+        score[0][i] = gap_opp+gap_exp*i;
+        dir[0][i] = 'C';
+        dirA[0][i] = 'C';
+        dirB[0][i] = 'C';
+        dirC[0][i] = 'C';
+    }
+    
+/*-----------------do first "|" (column)-----------------*/
+    for(i =1;i<strlen(seq1);i++)
+    {
+        A[i][0] = -1000000;
+        B[i][0] = gap_opp+gap_exp*i; 
+        C[i][0] = -1000000; 
+        score[i][0] = gap_opp+gap_exp*i;
+        dir[i][0] = 'B';
+        dirA[i][0] = 'B';
+        dirB[i][0] = 'B';
+        dirC[i][0] = 'B';
+    }
+#ifdef DEBUG
+    printf("%d %d %d %d %c\n",A[0][0],B[0][0],C[0][0],score[0][0],dir[0][0]);
+    FILE *debug_file = fopen("test_result.txt","w");
+    int index_row,index_column;
+    fprintf(debug_file,"A array is \n");
+    for(index_column = 0;index_column<strlen(seq1);index_column++)
+    {
+        for(index_row = 0;index_row<strlen(seq2);index_row++)
+        {
+            fprintf(debug_file,"%d ",A[index_column][index_row]);
+        }
+        fprintf(debug_file,"\n");
+    }
+    fprintf(debug_file,"B array is \n");
+    for(index_column = 0;index_column<strlen(seq1);index_column++)
+    {
+        for(index_row = 0;index_row<strlen(seq2);index_row++)
+        {
+            fprintf(debug_file,"%d ",B[index_column][index_row]);
+        }
+        fprintf(debug_file,"\n");
+    }
+        fprintf(debug_file,"C array is \n");
+    for(index_column = 0;index_column<strlen(seq1);index_column++)
+    {
+        for(index_row = 0;index_row<strlen(seq2);index_row++)
+        {
+            fprintf(debug_file,"%d ",C[index_column][index_row]);
+        }
+        fprintf(debug_file,"\n");
+    }
+        fprintf(debug_file,"score array is \n");
+    for(index_column = 0;index_column<strlen(seq1);index_column++)
+    {
+        for(index_row = 0;index_row<strlen(seq2);index_row++)
+        {
+            fprintf(debug_file,"%d ",score[index_column][index_row]);
+        }
+        fprintf(debug_file,"\n");
+    }
+        fprintf(debug_file,"dir array is \n");
+    for(index_column = 0;index_column<strlen(seq1);index_column++)
+    {
+        for(index_row = 0;index_row<strlen(seq2);index_row++)
+        {
+            fprintf(debug_file,"%d ",dir[index_column][index_row]);
+        }
+        fprintf(debug_file,"\n");
+    }
+        fprintf(debug_file,"dirA array is \n");
+    for(index_column = 0;index_column<strlen(seq1);index_column++)
+    {
+        for(index_row = 0;index_row<strlen(seq2);index_row++)
+        {
+            fprintf(debug_file,"%c ",dirA[index_column][index_row]);
+        }
+        fprintf(debug_file,"\n");
+    }
+        fprintf(debug_file,"dirB array is \n");
+    for(index_column = 0;index_column<strlen(seq1);index_column++)
+    {
+        for(index_row = 0;index_row<strlen(seq2);index_row++)
+        {
+            fprintf(debug_file,"%c ",dirB[index_column][index_row]);
+        }
+        fprintf(debug_file,"\n");
+    }
+        fprintf(debug_file,"dirC array is \n");
+    for(index_column = 0;index_column<strlen(seq1);index_column++)
+    {
+        for(index_row = 0;index_row<strlen(seq2);index_row++)
+        {
+            fprintf(debug_file,"%c ",dirC[index_column][index_row]);
+        }
+        fprintf(debug_file,"\n");
+    }
+    fclose(debug_file);
+#endif
+
+}
