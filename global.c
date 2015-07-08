@@ -11,6 +11,7 @@
 
 
 
+
 /*
  * function: semiglobal alignment
  * Input : Working Path
@@ -51,7 +52,6 @@ char **dir;
 char **dirA;
 char **dirB;
 char **dirC;
-
 /***************************************************************************/
 
 /*-------------------------Setting function-------------------------------*/
@@ -61,9 +61,11 @@ void initialize_setting();
 int max_compare_function(int,int);
 int** readmat(char*);
 void setting_scoring_function();
+int file_exists(const char*);
 /************************************************************************/
 int main(int argc,char* argv[])
 {
+    /*-----------Here we must add prefix process function----------------2015/7/8--*/
     char *file = argv[1];
     input_function(file);
     fclose(input_file);
@@ -230,6 +232,8 @@ void input_function(char *path)
 #endif
 
     initialize_setting();
+    int total_len = strlen(seq1)+strlen(seq2);
+    
 /*------------------free memory-----------------*/ 
     free(scoring_matrix);
     free(A);
@@ -542,4 +546,17 @@ void initialize_setting()
     fclose(debug_file);
 #endif
 
+}
+/*-------------------Determine whether file is existed or not?--------------------*/
+int file_exists(const char* path)
+{
+    FILE *fptr = fopen(path,"r");
+    if(fptr!=NULL)
+    {
+        fclose(fptr);
+        return 1;
+    }
+    else
+        return 0;
+        
 }
