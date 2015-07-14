@@ -69,6 +69,7 @@ int getX_position(char);
 int getY_position(char);
 int compared_matrixs(int,int,int);
 char determingABC(int,int,int,int);
+void debug_test();
 /************************************************************************/
 int main(int argc,char* argv[])
 {
@@ -296,7 +297,7 @@ for(loop = 1;loop<strlen(seq1);loop++)
 
     }
 
-
+debug_test();
 /*------------------free memory-----------------*/ 
     free(scoring_matrix);
     free(A);
@@ -563,8 +564,7 @@ void initialize_setting()
         dirC[i][0] = 'B';
     }
 #ifdef DEBUG
-    //printf("%d %d %d %d %c\n",A[0][0],B[0][0],C[0][0],score[0][0],dir[0][0]);
-    FILE *debug_file = fopen("test_result.txt","w");
+    FILE *debug_file = fopen("test_result/test_result.txt","w");
     int index_row,index_column;
     fprintf(debug_file,"A array is \n");
     for(index_column = 0;index_column<strlen(seq1);index_column++)
@@ -719,4 +719,105 @@ char determingABC(int temp_A,int temp_B,int temp_C,int temp_score)
     if((temp_A==temp_score)&&(temp_B==temp_score)&&(temp_C==temp_score))
         determing = '1';
     return determing;
+}
+
+void debug_test()
+{
+    FILE *debug_file = fopen("test_result/result_A.txt","w");
+    int index_row,index_column;
+    fprintf(debug_file,"A array is \n");
+    for(index_column = 0;index_column<strlen(seq1);index_column++)
+    {
+        for(index_row = 0;index_row<strlen(seq2);index_row++)
+        {
+            fprintf(debug_file,"%d ",A[index_column][index_row]);
+        }
+        fprintf(debug_file,"\n");
+    }
+    fclose(debug_file);
+
+    debug_file = fopen("test_result/result_B.txt","w");
+    fprintf(debug_file,"B array is \n");
+    for(index_column = 0;index_column<strlen(seq1);index_column++)
+    {
+        for(index_row = 0;index_row<strlen(seq2);index_row++)
+        {
+            fprintf(debug_file,"%d ",B[index_column][index_row]);
+        }
+        fprintf(debug_file,"\n");
+    }
+    fclose(debug_file);
+
+    debug_file = fopen("test_result/result_C.txt","w");
+        fprintf(debug_file,"C array is \n");
+    for(index_column = 0;index_column<strlen(seq1);index_column++)
+    {
+        for(index_row = 0;index_row<strlen(seq2);index_row++)
+        {
+            fprintf(debug_file,"%d ",C[index_column][index_row]);
+        }
+        fprintf(debug_file,"\n");
+    }
+    fclose(debug_file);
+    
+    debug_file = fopen("test_result/result_Score.txt","w");
+        fprintf(debug_file,"score array is \n");
+    for(index_column = 0;index_column<strlen(seq1);index_column++)
+    {
+        for(index_row = 0;index_row<strlen(seq2);index_row++)
+        {
+            fprintf(debug_file,"%d ",score[index_column][index_row]);
+        }
+        fprintf(debug_file,"\n");
+    }
+    fclose(debug_file);
+
+    debug_file = fopen("test_result/result_dir.txt","w");
+        fprintf(debug_file,"dir array is \n");
+    for(index_column = 0;index_column<strlen(seq1);index_column++)
+    {
+        for(index_row = 0;index_row<strlen(seq2);index_row++)
+        {
+            fprintf(debug_file,"%d ",dir[index_column][index_row]);
+        }
+        fprintf(debug_file,"\n");
+    }
+    fclose(debug_file);
+
+    debug_file = fopen("test_result/result_dirA.txt","w");
+        fprintf(debug_file,"dirA array is \n");
+    for(index_column = 0;index_column<strlen(seq1);index_column++)
+    {
+        for(index_row = 0;index_row<strlen(seq2);index_row++)
+        {
+            fprintf(debug_file,"%c ",dirA[index_column][index_row]);
+        }
+        fprintf(debug_file,"\n");
+    }
+    fclose(debug_file);
+
+    debug_file = fopen("test_result/result_dirB.txt","w");
+        fprintf(debug_file,"dirB array is \n");
+    for(index_column = 0;index_column<strlen(seq1);index_column++)
+    {
+        for(index_row = 0;index_row<strlen(seq2);index_row++)
+        {
+            fprintf(debug_file,"%c ",dirB[index_column][index_row]);
+        }
+        fprintf(debug_file,"\n");
+    }
+    fclose(debug_file);
+
+    debug_file = fopen("test_result/result_dirC.txt","w");
+        fprintf(debug_file,"dirC array is \n");
+    for(index_column = 0;index_column<strlen(seq1);index_column++)
+    {
+        for(index_row = 0;index_row<strlen(seq2);index_row++)
+        {
+            fprintf(debug_file,"%c ",dirC[index_column][index_row]);
+        }
+        fprintf(debug_file,"\n");
+    }
+    fclose(debug_file);
+
 }
