@@ -8,7 +8,7 @@
 #include<stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <stdbool.h>
 
 
 
@@ -52,6 +52,9 @@ char **dir;
 char **dirA;
 char **dirB;
 char **dirC;
+char *prefix;
+char *column_array;
+char *row_array;
 /***************************************************************************/
 
 /*-------------------------Setting function-------------------------------*/
@@ -62,13 +65,22 @@ int max_compare_function(int,int);
 int** readmat(char*);
 void setting_scoring_function();
 int file_exists(const char*);
+bool array_key_exits();
 /************************************************************************/
 int main(int argc,char* argv[])
 {
     /*-----------Here we must add prefix process function----------------2015/7/8--*/
-    char *file = argv[1];
+    prefix = argv[1];
+    if(strcmp(&prefix[strlen(prefix)-1],"/")!=0)
+        strcat(prefix,"/");
+
+    char *file = (char*)malloc(strlen(prefix)*sizeof(char));
+    strcpy(file,prefix);
+    strcat(file,"input.php");
+
     input_function(file);
     fclose(input_file);
+    
     return 0;
 }
 
@@ -80,8 +92,9 @@ void input_function(char *path)
         printf("where is input file?\n");
         exit(-1);
     }
-    char *temp;
 
+    char *temp=(char*)malloc(100*sizeof(char));
+//    char *temp;
     /*In any case, I decide to choice dynamic allocate memory,but not done yet! */
     int data_size = 0;
     int maximun_length = 0;
@@ -126,7 +139,7 @@ void input_function(char *path)
     /*created temporal array to store data*/
 
 /*
- *      current state, I don't use it! 
+ *      In current statuation, I don't use it! 
  *      2015/7/2
  *
     char **temp_array,*temp_length;
@@ -175,38 +188,6 @@ void input_function(char *path)
                 default:
                 break;
             }
-            /*
-            if(loop ==0)
-            {
-                seq1=(char*)malloc(strlen(temp)*sizeof(char));
-                strcpy(seq1,temp);
-            }
-            else if(loop==1)
-            {
-
-                seq2=(char*)malloc(strlen(temp)*sizeof(char));
-                strcpy(seq2,temp);
-            }
-            else if(loop==2)
-            {
-                     
-                matfile=(char*)malloc(strlen(temp)*sizeof(char));
-                strcpy(matfile,temp);
-            }
-            else if(loop==3)
-            {
-                gap_opp = atoi(temp);
-            }
-            else if(loop==4)
-            {
-
-                gap_exp = atoi(temp);
-            }
-            else
-            {
-                
-                gap_suboptimal= atoi(temp);
-            }*/
             loop++;
         }
     }
@@ -233,6 +214,44 @@ void input_function(char *path)
 
     initialize_setting();
     int total_len = strlen(seq1)+strlen(seq2);
+    char* temp_string = (char*)malloc(strlen(prefix)*sizeof(char));
+    strcpy(temp_string,prefix);
+    strcat(temp_string,"dirA_glo");
+    /*------------------------Due to we don't need to consider memory problem, just skip this function
+    if(total_len>4000&&file_exists(temp_string))
+    {
+        remove(temp_string);
+
+        strcpy(temp_string,prefix);
+        strcat(temp_string,"dirB_glo");
+        remove(temp_string);
+
+        strcpy(temp_string,prefix);
+        strcat(temp_string,"dirC_glo");
+        remove(temp_string);
+
+        strcpy(temp_string,prefix);
+        strcat(temp_string,"dir_glo");
+        remove(temp_string);
+
+        strcpy(temp_string,prefix);
+        strcat(temp_string,"score_glo");
+        remove(temp_string);
+    }
+    */
+    
+    /*1.找到Seq的X Y位置
+     *2.利用此XY找到Matrix的對應位置
+     *Sol:利用seq1 X and Seq2 Y取得的字元到matrix找 看是否能找到相對應的XY並回傳int的X Y
+     */
+     int inner_loop;
+     for(loop = 0;loop<strlen(seq1);loop++)
+     {
+        for(inner_loop = 0;inner_loop<strlen(seq2);inner_loop++)
+        {
+
+        }
+     }
     
 /*------------------free memory-----------------*/ 
     free(scoring_matrix);
@@ -246,6 +265,9 @@ void input_function(char *path)
     free(seq1);
     free(seq2);
     free(matfile);
+    free(temp_string);
+    free(row_array);
+    free(column_array);
 }
 
 int max_compare_function(int first_data,int second_data)
@@ -286,21 +308,46 @@ int** readmat(char *file_name)
     fgets(line,100,fptr);
     /*Start reading data from scoring matrix*/
     fgets(line,100,fptr);
-
-
+    row_array = (char*)malloc(24*sizeof(char));
+    column_array = (char*)malloc(24*sizeof(char));
+    
+    int loop = 1;
 /*---------------Testing------------------------*/
+    /*
+     *
+     *First at all, I used test_index to caculate how many data that I should store into array. And also, I used very unsmartly way to store alphabet characters. 
+     *Comment Time : 2015/7/10
+     *
+     *
+     */
     char *temp = strtok(line," ");
-
+    row_array[0] = *temp;
+    column_array[0]=*temp;
+    
     int test_index=1;
     do
     {
         
         temp = strtok(NULL," ");
         if(temp!=NULL)
+        {
+            column_array[loop]=*temp;
+            row_array[loop++]=*temp;
             test_index++;
+        }
     }while(temp!=NULL);
 
-    printf("test_index = %d\n",test_index);
+#if DEBUG
+    printf("Row array = \n");
+    for(loop = 0;loop<24;loop++)
+        printf("%c ",row_array[loop]);
+    printf("\n");
+    printf("Column array = \n");
+    for(loop = 0;loop<24;loop++)
+        printf("%c ",column_array[loop]);
+    printf("\ntest_index = %d\n\n",test_index);
+#endif
+
 /*----------------------------------------------*/
     
     const int size = test_index;
@@ -312,27 +359,31 @@ int** readmat(char *file_name)
     }
     /*Array index value*/
     int array_row ,array_col = -1;
+    loop =0;
+
     
+
     while(!feof(fptr))
     {
         array_row = 0; 
         char *temp = strtok(line," ");
+        printf("%s ",temp);
         temp = strtok(NULL," ");
         while(temp!=NULL)
         {
-//            data_array[array_col][array_row]= atoi(temp);
             array[array_col][array_row] = atoi(temp);
             printf("%d ",atoi(temp));
             array_row++;
             temp = strtok(NULL," ");
         }
-
+        
         array_col++;
         fgets(line,100,fptr);
         printf("\n");
     }
-    fclose(fptr);
+    
 
+    fclose(fptr);
     printf("Done!\n");
 /*----------------Testing-------------------*/
 #if DEBUG
@@ -468,7 +519,7 @@ void initialize_setting()
         dirC[i][0] = 'B';
     }
 #ifdef DEBUG
-    printf("%d %d %d %d %c\n",A[0][0],B[0][0],C[0][0],score[0][0],dir[0][0]);
+    //printf("%d %d %d %d %c\n",A[0][0],B[0][0],C[0][0],score[0][0],dir[0][0]);
     FILE *debug_file = fopen("test_result.txt","w");
     int index_row,index_column;
     fprintf(debug_file,"A array is \n");
