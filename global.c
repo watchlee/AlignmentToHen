@@ -65,7 +65,10 @@ int max_compare_function(int,int);
 int** readmat(char*);
 void setting_scoring_function();
 int file_exists(const char*);
-bool array_key_exits();
+int getX_position(char);
+int getY_position(char);
+int compared_matrixs(int,int,int);
+char determingABC(int,int,int,int);
 /************************************************************************/
 int main(int argc,char* argv[])
 {
@@ -244,15 +247,56 @@ void input_function(char *path)
      *2.利用此XY找到Matrix的對應位置
      *Sol:利用seq1 X and Seq2 Y取得的字元到matrix找 看是否能找到相對應的XY並回傳int的X Y
      */
-     int inner_loop;
-     for(loop = 0;loop<strlen(seq1);loop++)
-     {
-        for(inner_loop = 0;inner_loop<strlen(seq2);inner_loop++)
-        {
 
-        }
-     }
-    
+int inner_loop;
+int X,Y,getScore,temp_score;
+int temp_A,temp_B,temp_C;
+for(loop = 1;loop<strlen(seq1);loop++)
+    for(inner_loop = 1;inner_loop<strlen(seq2);inner_loop++)
+    {        
+        char dirA_t,dirB_t,dirC_t;
+        
+        X = getX_position(seq1[loop-1]);
+        Y = getY_position(seq2[inner_loop-1]);
+        getScore = scoring_matrix[X][Y];/*Matrix[x][y]*/
+        temp_score = compared_matrixs(A[loop-1][inner_loop-1],B[loop-1][inner_loop-1],C[loop-1][inner_loop-1]);
+        A[loop][inner_loop] = getScore+temp_score;
+        temp_A = A[loop-1][inner_loop-1];
+        temp_B = B[loop -1][inner_loop-1];
+        temp_C = C[loop-1][inner_loop-1];
+        dirA_t = determingABC(temp_A,temp_B,temp_C,temp_score);
+        dirA[loop][inner_loop] = dirA_t;
+      
+        temp_score = compared_matrixs(A[loop-1][inner_loop]+gap_opp+gap_exp,B[loop-1][inner_loop]+gap_exp,C[loop-1][inner_loop]+gap_opp+gap_exp);
+        B[loop][inner_loop]= temp_score;
+        temp_A=A[loop-1][inner_loop]+gap_opp+gap_exp;
+        temp_B = B[loop-1][inner_loop]+gap_exp;
+        temp_C = C[loop-1][inner_loop]+gap_opp+gap_exp;
+        dirB_t = determingABC(temp_A,temp_B,temp_C,temp_score);
+        dirB[loop][inner_loop] = dirB_t;
+
+        temp_score = compared_matrixs(A[loop][inner_loop-1]+gap_opp+gap_exp,B[loop][inner_loop-1]+gap_opp+gap_exp,C[loop][inner_loop-1]+gap_exp);
+        C[loop][inner_loop]= temp_score;
+        temp_A = A[loop][inner_loop-1]+gap_opp+gap_exp;
+        temp_B = B[loop][inner_loop-1]+gap_opp+gap_exp;
+        temp_C = C[loop][inner_loop-1]+gap_exp;
+        dirC_t = determingABC(temp_A,temp_B,temp_C,temp_score);
+        dirC[loop][inner_loop] = dirC_t;
+        score[loop][inner_loop] = compared_matrixs(A[loop][inner_loop],B[loop][inner_loop],C[loop][inner_loop]);
+
+        char dir_t;
+        if(C[loop][inner_loop]==score[loop][inner_loop])
+            dir_t = 'C';
+        if(B[loop][inner_loop]==score[loop][inner_loop])
+            dir_t = 'B';
+        if(score[loop][inner_loop]==A[loop][inner_loop])
+            dir_t = 'A';
+        else
+            dir[loop][inner_loop] = dir_t;
+
+    }
+
+
 /*------------------free memory-----------------*/ 
     free(scoring_matrix);
     free(A);
@@ -610,4 +654,69 @@ int file_exists(const char* path)
     else
         return 0;
         
+}
+
+
+int getX_position(char X)
+{
+    int loop;
+    for(loop = 0;loop<strlen(row_array);loop++)
+    {
+        if(X==row_array[loop])
+        {
+            return loop;
+            
+        }
+    }
+    return strlen(row_array)-1;
+}
+
+
+int getY_position(char Y)
+{
+    int loop;
+    for(loop = 0;loop<strlen(column_array);loop++)
+    {
+        if(Y==column_array[loop])
+            return loop;
+    }
+    return strlen(column_array)-1;
+}
+
+int compared_matrixs(int A,int B,int C)
+{
+   if(A>B)
+   {
+       if(A>C)
+           return A;
+       else
+           return C;
+   }
+   else
+   {
+       if(B>C)
+           return B;
+       else
+           return C;
+   }
+}
+
+char determingABC(int temp_A,int temp_B,int temp_C,int temp_score)
+{
+    char determing;
+    if(temp_C==temp_score)
+        determing = '7';
+    if(temp_B==temp_score)
+        determing ='6'; 
+    if(temp_A==temp_score)
+        determing = '5';
+    if(temp_B==temp_score&&temp_C==temp_score)
+        determing = '4';
+    if(temp_A==temp_score&&temp_C==temp_score)
+        determing = '3';
+    if(temp_A==temp_score&&temp_B==temp_score)
+        determing = '2';
+    if((temp_A==temp_score)&&(temp_B==temp_score)&&(temp_C==temp_score))
+        determing = '1';
+    return determing;
 }
