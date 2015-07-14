@@ -214,7 +214,7 @@ $result = array();
 $maxI=strlen($seq2);
 $maxJ=strlen($seq1);
 $i=$maxI; //print "i=$i ";
-$j=$maxJ; //print "j=$j\n";
+$j=$maxJ; //print "j =$j\n";
 //print $score[$j][$i]."\n";
 $res2=substr($seq2,$maxI);
 $res1=str_repeat("-",strlen($seq2)-$maxI);

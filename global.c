@@ -292,11 +292,14 @@ for(loop = 1;loop<strlen(seq1);loop++)
             dir_t = 'B';
         if(score[loop][inner_loop]==A[loop][inner_loop])
             dir_t = 'A';
-        else
-            dir[loop][inner_loop] = dir_t;
+        dir[loop][inner_loop] = dir_t;
 
     }
+    
+int maxX  = strlen(seq1);
+int maxY = strlen(seq2);
 
+/*Just want to see the result*/
 debug_test();
 /*------------------free memory-----------------*/ 
     free(scoring_matrix);
