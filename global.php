@@ -207,37 +207,7 @@ for($i=0;$i<=strlen($seq2);$i++){
         print $dir[$j][$i]."  ";
     }
 }
-print "\n";
-*/
-
-$result = array();
-$maxI=strlen($seq2);
-$maxJ=strlen($seq1);
-$i=$maxI; //print "i=$i ";
-$j=$maxJ; //print "j =$j\n";
-//print $score[$j][$i]."\n";
-$res2=substr($seq2,$maxI);
-$res1=str_repeat("-",strlen($seq2)-$maxI);
-/*
-if($total_len > 4000){
-	$D[0][0]="o";
-	for($a=1;$a<=strlen($seq2);$a++){
-		$D[0][$a] = "C";
-	}
-	for($b=1;$b<=strlen($seq1);$b++){
-		$D[$b][0] = "B";
-	}
-	$dfile = fopen("dir_glo","r");
-	while($lines = fgets($dfile,64)){
-		if($lines == "") continue;
-		$each = explode("\t",$lines);
-		$D[$each[0]][$each[1]] = trim($each[2]);
-	}
-	fclose($dfile);
-}
-else
- */
-	$D = $dir;
+print "\n"b
 //printle($j!=0 && $i!=0){
 $flag = "";
 while($j+$i!=0){
