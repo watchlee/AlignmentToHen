@@ -70,6 +70,8 @@ int getY_position(char);
 int compared_matrixs(int,int,int);
 char determingABC(int,int,int,int);
 void debug_test();
+void substr(char*,char*,unsigned int);/*Reading string from target string and store into dest string*/
+void str_repeat(char**,char*,int);/*Repeat string */
 /************************************************************************/
 int main(int argc,char* argv[])
 {
@@ -298,6 +300,8 @@ for(loop = 1;loop<strlen(seq1);loop++)
     
 int maxX  = strlen(seq1);
 int maxY = strlen(seq2);
+char *res2 = (char*)malloc(maxX*sizeof(char));
+substr(res2,seq2,maxX);
 
 /*Just want to see the result*/
 debug_test();
@@ -823,4 +827,17 @@ void debug_test()
     }
     fclose(debug_file);
 
+}
+
+void substr(char* dest,char* src,unsigned int start)
+{
+    strncpy(dest,src,start);    
+    dest[start] = 0;
+}
+
+/*Call by reference*/
+void str_repeat(char** dest,char* src,int times)
+{
+    int repeat_string_length = strlen(src);
+    *dest = (char*)malloc(times*repeat_string_length*sizeof(char));           
 }
