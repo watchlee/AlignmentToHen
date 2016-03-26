@@ -1,0 +1,10 @@
+<?php
+$seq1="uuA7(N~XwYAwhhn20.FuXuXCXX'Xu)'h#y7IXuAwvuuwxd2X)zu))nAzQ<gXAu'X'XX";
+$arc1="((((..((((.........)))).((((((.....)))))).....(((((.......)))))))))";
+$seq2="zcXuAw4(N$Z;YCv,}yv\EzJuZJ,uXuAe)5JAAC'cucAz<u=afuXuu)/n1E=?XgzXucX'cuukAgcF";
+$arc2="(((((((..((((........)))).(((((.......))))).....(((((.......))))))))))))....";
+$matfile="SM/iPARTS2_new_23C_4L_matrix";
+$opp="-9";
+$exp="-5";
+$suboptimal="1";
+?>
