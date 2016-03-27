@@ -1,0 +1,10 @@
+<?php
+$seq1="GGAAGUUCGAGCCUUCU";
+$arc1="(.((.)))((....)).";
+$seq2="CGCGCCUUCUAAGCGUG";
+$arc2="(((((.......)))))";
+$matfile="SM/iPARTS2_new_23C_4L_matrix";
+$opp="-9";
+$exp="-5";
+$suboptimal="1";
+?>

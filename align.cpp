@@ -8,10 +8,21 @@
 #include <stdlib.h>
 #include <string.h>
 #include <fstream>
-#include<iostream>
+#include <iostream>
+#include <vector>
+#include <math.h>
+#include <stack>
 using namespace std;
 
 //#define _DEBUG 
+#define _COM_DEBUG
+
+/*alignment score*/
+typedef struct alignment{
+    int p1,p2;
+    double weight;
+    alignment *next;
+}Alignment;
 
 /*Scoring matrix data structure*/
 typedef struct index_matrix{
@@ -113,11 +124,31 @@ int BinarySearch(char character,IndexMatrix *array,int length)
 }
 
 /*------------------------------------global variable-----------------------------------*/
-IndexMatrix *temp_node=NULL;
+IndexMatrix *alphabet_index=NULL;
 static int size=0;
+static int gap_opp,gap_exp;//Input gap penalty arguments
+static string seq1,arc1,seq2,arc2,matrixpath;
+vector<double> weights;
+vector<int>    L1,R1,I1,L2,R2,I2;
+stack<int>     str_stack;
+vector<vector<double> > M;
+vector<vector<double> > D;
+const double eps=0.0000001;
+
+double w_d =1.0;  // base deletion
+double w_m =1.0;  // base mismatch
+double w_r =2.0;  // arc  removing
+double w_b =1.5;  // arc  breaking
+double w_am=1.8;  // arc  mismatc
+
+int not_free1    (int pos)          { return (arc1[pos]=='.' ? 0:1)      ;  }
+int not_free2    (int pos)          { return (arc2[pos]=='.' ? 0:1)      ;  }
+int base_mismatch(int pos1,int pos2){ return (seq1[pos1]!=seq2[pos2]?1:0);  }
+
 
 int** readmat(char *);
 void read_data(const char *,const char *);
+double computation();
 /*需要寫一個python 去處理input file data*/
 
 /* input format
@@ -129,6 +160,16 @@ void read_data(const char *,const char *);
  *$exp=""
  *
  */
+double min4(double a,double b,double c,double d)
+{
+  if (a<=b && a<=c && a<=d)
+    return a;
+  else if (b<=a && b<=c && b<=d)
+    return b;
+  else if (c<=a && c<=b && c<=d)
+    return c;
+  return d;
+}
 int main(int argc,char* argv[])
 {
     
@@ -142,8 +183,8 @@ int main(int argc,char* argv[])
     char test_char[100];
     for(count = 0;count<size;count++)
     {
-        test_char[count]=temp_node[count].alphabet;
-        printf("%d %c %d\n",temp_node[count].alphabet,temp_node[count].alphabet,temp_node[count].pos);
+        test_char[count]=alphabet_index[count].alphabet;
+        printf("%d %c %d\n",alphabet_index[count].alphabet,alphabet_index[count].alphabet,alphabet_index[count].pos);
     }
     for(count = 0;count<size;count++)
         printf("%c ",test_char[count]);
@@ -152,12 +193,15 @@ int main(int argc,char* argv[])
 
 
     Merge_Sort sorting;
-    sorting.Sort(temp_node,size);
+    sorting.Sort(alphabet_index,size);
+    /*取得處理資料需要的data*/
+    read_data("./test_file_2","./result"); 
 
-    read_data("./test_file","./result"); 
-
+    /*Computation*/
+    double score = computation();
+    cout<<score<<endl;
     /*釋放記憶體*/
-    free(temp_node);//來源 line:33
+    free(alphabet_index);//來源 line:33
     return 0;
 }
 
@@ -173,49 +217,72 @@ void read_data(const char *path,const char *outpath)
         exit(-1);
     }
     /*暫存buffer*/
-    char *seq1,*seq2,*arc1,*arc2,*matrixpath;
-    int gap_opp,gap_exp;
     string sub;
+    
+
     int temp_size;
     int option=0;
     /*read <?php*/
     getline(file,sub,'\n');
-    cout<<sub<<endl;
-
+    /*read seq1*/    
     getline(file,sub,'\n');
     temp_size = sub.size();
-    sub = sub.substr(7,temp_size-9);
-    cout<<sub<<endl;
+    seq1= sub.substr(7,temp_size-9);
+    cout<<sub<<" length="<<sub.size()<<" seq length="<<sub.size()-9<<endl;
 
+    /*read arc1*/    
     getline(file,sub,'\n');
     temp_size = sub.size();
-    sub = sub.substr(7,temp_size-9);
-    cout<<sub<<endl;
+    arc1 = sub.substr(7,temp_size-9);
+    cout<<sub<<" length="<<sub.size()<<" arc length="<<sub.size()-9<<endl;
 
+    /*read seq2*/    
     getline(file,sub,'\n');
     temp_size = sub.size();
-    sub = sub.substr(7,temp_size-9);
-    cout<<sub<<endl;
+    seq2 = sub.substr(7,temp_size-9);
+    cout<<sub<<" length="<<sub.size()<<" seq length="<<sub.size()-9<<endl;
 
+    /*read arc2*/    
     getline(file,sub,'\n');
     temp_size = sub.size();
-    sub = sub.substr(7,temp_size-9);
-    cout<<sub<<endl;
+    arc2 = sub.substr(7,temp_size-9);
+    cout<<sub<<" length="<<sub.size()<<" arc length="<<sub.size()-9<<endl;
 
+    /*read matrixpath*/    
     getline(file,sub,'\n');
     temp_size = sub.size();
-    sub = sub.substr(10,temp_size-12);
+    matrixpath = sub.substr(10,temp_size-12);
     cout<<sub<<endl;
 
+    /*read gap_opp*/    
     getline(file,sub,'\n');
     temp_size = sub.size();
     sub = sub.substr(6,temp_size-8);
+    gap_opp = atoi(sub.c_str());
     cout<<sub<<endl;
 
+    /*read gap_exp*/    
     getline(file,sub,'\n');
     temp_size = sub.size();
     sub = sub.substr(6,temp_size-8);
+    gap_exp = atoi(sub.c_str());
     cout<<sub<<endl;
+
+
+    /*Prevent the errors happend! If the sequence's length is not equal to the arc's length */
+    int length_seq1 = seq1.size(),length_arc1=arc1.size(),length_seq2=seq2.size(),length_arc2=arc2.size();
+    if(length_seq1!=length_arc1 || length_seq2!=length_arc2)
+    {
+        cout<<seq1<<"\n"<<arc1<<"\n"<<seq2<<"\n"<<arc2<<"\n"<<gap_opp<<"\n"<<gap_exp<<endl;
+        cout<<"Fatel error!  the size of the sequence is not equal to the size of the arc"<<endl;
+        cout<<"Maybe is the seq1 or seq2..."<<endl;
+        cout<<seq1.size()<<endl;
+        cout<<arc1.size()<<endl;
+        cout<<seq2.size()<<endl;
+        cout<<arc2.size()<<endl;
+        exit(1);
+    }
+
 }
 
 
@@ -282,13 +349,13 @@ int** readmat(char *file_name)
     size = test_index;
     int **array = (int**)malloc(size*sizeof(void *));
     int count;
-    temp_node = (IndexMatrix*)malloc(size*sizeof(IndexMatrix));
+    alphabet_index = (IndexMatrix*)malloc(size*sizeof(IndexMatrix));
 
     for( count = 0;count<size;count++  )
     {
         array[count] = (int*)malloc(size*sizeof(int));
-        temp_node[count].alphabet=str[count];
-        temp_node[count].pos=count;
+        alphabet_index[count].alphabet=str[count];
+        alphabet_index[count].pos=count;
     }
     /*Array index value*/
     int array_row ,array_col = -1;
@@ -319,4 +386,129 @@ int** readmat(char *file_name)
     fclose(fptr);
 /*----------------Testing-------------------*/
     return array;
+}
+
+/*計算best alignment*/
+double computation()
+{
+    /*對I1 I2兩個vector配置arc1 and arc2大小的記憶體空間*/
+    I1.resize(arc1.size());
+    I2.resize(arc2.size());
+    /*依照由內而外的方式取得arc1*/
+    int index = 0;
+    for(int i = 0;i<arc1.size();i++)
+    {
+        I1[i]=-1;
+        if(arc1[i]=='(')
+           str_stack.push(i);
+        else if(arc1[i]==')')
+        {
+            int last = str_stack.top();
+            str_stack.pop();
+
+            I1[i]=I1[last]=index++;
+            L1.push_back(last);
+            R1.push_back(i);
+        }
+    }
+    /*依照由內而外的方式取得arc2*/
+    index=0;
+    for(int i=0;i<arc2.size();i++)
+    {
+        I2[i]=-1;
+        if(arc2[i]=='(')
+           str_stack.push(i);
+        else if(arc2[i]==')')
+        {
+            int last = str_stack.top();
+            str_stack.pop();
+            I2[i]=I2[last]=index++;
+            L2.push_back(last);
+            R2.push_back(i);
+        }
+    }
+#ifdef _COM_DEBUG
+    for(int i = 0;i<L1.size();i++)
+        cout<<L1[i]<<" "<<R1[i]<<" "<<I1[i]<<endl;
+    cout<<endl;
+    for(int i = 0;i<L2.size();i++)
+        cout<<L2[i]<<" "<<R2[i]<<" "<<I2[i]<<endl;
+#endif
+    /*initialize*/
+    D.resize(L1.size());
+    for(int i = 0;i<D.size();i++)
+        D[i].resize(L2.size());
+    for(int i = 0;i<L1.size();i++)
+    {
+        for(int j = 0;j<L2.size();j++)
+        {
+            M.resize(R1[i]-L1[i]);
+            for(int s = 0;s<M.size();s++)
+                M[s].resize(R2[j]-L2[j]);
+            M[0][0]=0;
+            for(int k = 1;k<R1[i]-L1[i];k++)
+            {
+                M[k][0]=M[k-1][0]+w_d+not_free1(L1[i]+k)*(0.5*w_r-w_d);
+            }
+            for (int l=1;l<R2[j]-L2[j];l++)
+            {
+                M[0][l]=M[0][l-1]+w_d+not_free2(L2[j]+l)*(0.5*w_r-w_d);
+            }
+        //compute M
+        double v1,v2,v3,v4;
+        for(int k=1;k<R1[i]-L1[i];k++)
+            for(int l=1;l<R2[j]-L2[j];l++)
+            {
+                v1 = v2 = v3 = v4 = 100000;
+                int a1 = L1[i]+k;
+                int a2 = L2[j]+l;
+
+                v1=M[k-1][l]+w_d+not_free1(a1)*(0.5*w_r-w_d);
+                v2=M[k][l-1]+w_d+not_free2(a2)*(0.5*w_r-w_d);
+                v3=M[k-1][l-1]+base_mismatch(a1,a2)*w_m+(not_free1(a1)+not_free2(a2))*0.5*w_b;
+                if(arc1[a1]==')' && arc2[a2]==')')
+                {
+                    int leftpoint = L1[I1[a1]];
+                    int leftpoint2 = L2[I2[a2]];
+                    v4 = M[leftpoint - L1[i]-1][leftpoint2 - L2[j]-1]+D[I1[a1]][I2[a2]]+(base_mismatch(L1[I1[a1]],L2[I2[a2]])+base_mismatch(R1[I1[a1]],R2[I2[a2]]))*0.5*w_am;
+                }
+                M[k][l]=min4(v1,v2,v3,v4);
+            }
+        D[i][j]=M[R1[i]-L1[i]-1][R2[j]-L2[j]-1];
+
+        }
+    }
+
+    M.resize(arc1.size()+1);
+    for(int i =0; i<M.size();i++)
+        M[i].resize(arc2.size()+1);
+
+    M[0][0]=0;
+
+    for(int k=1;k<=arc1.size();k++)
+        M[k][0]=M[k-1][0]+w_d+not_free1(k-1)*(0.5*w_r-w_d);
+    for(int l = 1;l<=arc2.size();l++)
+        M[0][l]=M[0][l-1]+w_d+not_free2(l-1)*(0.5*w_r-w_d);
+
+    //compute M
+    double v1,v2,v3,v4;
+    for (int k=1;k<=arc1.size();k++)
+        for (int l=1;l<=arc2.size();l++)
+        {
+            v1=v2=v3=v4=10000;
+            v1=M[k-1][l]+w_d+not_free1(k-1)*(0.5*w_r-w_d);
+            v2=M[k][l-1]+w_d+not_free2(l-1)*(0.5*w_r-w_d);
+            v3=M[k-1][l-1]+base_mismatch(k-1,l-1)*w_m+(not_free1(k-1)+not_free2(l-1))*0.5*w_b;
+            if(arc1[k-1]==')'&& arc2[l-1]==')')
+            {
+                int leftpoint = L1[I1[k-1]];
+                int leftpoint2 = L2[I2[l-1]];
+                v4=M[leftpoint][leftpoint2]+D[I1[k-1]][I2[l-1]]
+                +(base_mismatch(L1[I1[k-1]],L2[I2[l-1]])+base_mismatch(R1[I1[k-1]],R2[I2[l-1]]))*0.5*w_am;
+
+            }
+            M[k][l]=min4(v1,v2,v3,v4);
+        }
+
+    return M[arc1.size()][arc2.size()];
 }
