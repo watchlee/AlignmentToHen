@@ -23,6 +23,16 @@ typedef struct alignment{
     double weight;
     alignment *next;
 }Alignment;
+/*紀錄位置*/
+typedef struct fourtuple
+{
+    int leftpoint1;
+    int rightpoint1;
+    int leftpoint2;
+    int rightpoint2;
+}FourTuple;
+
+
 
 /*Scoring matrix data structure*/
 typedef struct index_matrix{
@@ -100,29 +110,6 @@ void Merge_Sort::Merge(IndexMatrix* array, IndexMatrix* temp,int length,int left
 }
 /*-------------------------------------------------------------------------------------*/
 
-/*------------------利用二元搜尋快速索引位置-----------------------*/
-int BinarySearch(char character,IndexMatrix *array,int length)
-{
-    int low = 0;
-    int high =length-1;
-    while(low<=high)
-    {
-        int mid = (low+high)/2;
-
-        if(array[mid].alphabet==character)
-        {
-            printf("%c %d",array[mid].alphabet,array[mid].pos);
-            return array[mid].pos;
-        }
-        else if(array[mid].alphabet>character)
-            high = mid-1;
-        else if(array[mid].alphabet<character)
-            low = mid+1;
-
-    }
-    return -1;
-}
-
 /*------------------------------------global variable-----------------------------------*/
 IndexMatrix *alphabet_index=NULL;
 static int size=0;
@@ -134,18 +121,23 @@ stack<int>     str_stack;
 vector<vector<double> > M;
 vector<vector<double> > D;
 const double eps=0.0000001;
+static int **scoring_matrix;
 
-double w_d =1.0;  // base deletion
-double w_m =1.0;  // base mismatch
-double w_r =2.0;  // arc  removing
-double w_b =1.5;  // arc  breaking
-double w_am=1.8;  // arc  mismatc
+double w_d =-1.0;  // base deletion
+double w_m =-1.0;  // base mismatch
+double w_r =-2.0;  // arc  removing
+double w_b =-1.5;  // arc  breaking
+double w_am=-1.8;  // arc  mismatc
 
 int not_free1    (int pos)          { return (arc1[pos]=='.' ? 0:1)      ;  }
 int not_free2    (int pos)          { return (arc2[pos]=='.' ? 0:1)      ;  }
-int base_mismatch(int pos1,int pos2){ return (seq1[pos1]!=seq2[pos2]?1:0);  }
+/*沒這麼簡單了*/
+int scoring_base_mismatch(int pos1,int pos2){ return (seq1[pos1]!=seq2[pos2]?1:0);  }
+int base_mismatch(int,int);
 
-
+int BinarySearch(char ,IndexMatrix *,int );
+void traceback();
+void insert(Alignment*,int,int,double);
 int** readmat(char *);
 void read_data(const char *,const char *);
 double computation();
@@ -160,6 +152,17 @@ double computation();
  *$exp=""
  *
  */
+double max4(double a,double b,double c,double d)
+{
+
+  if (a>=b && a>=c && a>=d)
+    return a;
+  else if (b>=a && b>=c && b>=d)
+    return b;
+  else if (c>=a && c>=b && c>=d)
+    return c;
+  return d;
+}
 double min4(double a,double b,double c,double d)
 {
   if (a<=b && a<=c && a<=d)
@@ -177,7 +180,7 @@ int main(int argc,char* argv[])
     char path[100];
     //sprintf(path,"./SM/BLOSUM-like_scoring_matrix");
     sprintf(path,"./SM/iPARTS2_new_23C_4L_matrix");
-    int **scoring_matrix=readmat(path);
+    scoring_matrix=readmat(path);
     int count = 0;
 #ifdef _DEBUG 
     char test_char[100];
@@ -195,16 +198,152 @@ int main(int argc,char* argv[])
     Merge_Sort sorting;
     sorting.Sort(alphabet_index,size);
     /*取得處理資料需要的data*/
-    read_data("./test_file_2","./result"); 
+    //read_data("./test_file_2","./result"); 
+    read_data("./test_file","./result"); 
 
     /*Computation*/
     double score = computation();
     cout<<score<<endl;
+    traceback();
     /*釋放記憶體*/
     free(alphabet_index);//來源 line:33
     return 0;
 }
 
+void insert(Alignment* start,int pos1,int pos2,double weight)
+{
+    //Construction of the alignment
+    Alignment* insertion = new Alignment;
+    insertion->p1     = pos1;
+    insertion->p2     = pos2;
+    insertion->weight = weight;
+    insertion->next   = NULL; 
+    Alignment* iter   = start;
+    if (pos1==-1 && pos2!=-1)
+        while (iter->next!=NULL && pos2>iter->next->p2)
+            iter=iter->next;
+    else if (pos2==-1 && pos1!=-1)
+        while (iter->next!=NULL && pos1>iter->next->p1)
+            iter=iter->next;
+    else
+        while (iter->next!=NULL && pos2>iter->next->p2 && pos1>iter->next->p1 )
+            iter=iter->next;
+      
+    insertion->next=iter->next;
+    iter->next=insertion;
+}
+
+void traceback()
+{
+    Alignment* ali = new Alignment;
+    ali->p1=-1;
+    ali->p2=-1;
+    ali->next=NULL;
+    stack<double> weight;
+    double v1,v2,v3,v4;
+
+    //range is the currently computed sequence range
+    FourTuple range;
+    range.leftpoint1=0;
+    range.rightpoint1=arc1.size()-1;
+    range.leftpoint2=0;
+    range.rightpoint2=arc2.size()-1;
+
+    stack<FourTuple> range_stack;
+    range_stack.push(range);
+    int round = 0;
+    while(!range_stack.empty())
+    {
+        int leftpoint1 = range_stack.top().leftpoint1;
+        int rightpoint1 = range_stack.top().rightpoint1;
+        int leftpoint2 = range_stack.top().leftpoint2;
+        int rightpoint2 = range_stack.top().rightpoint2;
+        range_stack.pop();
+
+        if(leftpoint1 > rightpoint1 && leftpoint2<=rightpoint2)
+            for(int count = rightpoint2;count>=leftpoint2;--count)
+                insert(ali,-1,count,w_d);
+        else if(leftpoint1 <= rightpoint1 && leftpoint2> rightpoint2)
+            for(int count = rightpoint1;count>=leftpoint1;--count)
+                insert(ali,count,-1,w_d);
+        else if(leftpoint1<=rightpoint1 && leftpoint2<=rightpoint2)
+        {
+            M.resize(rightpoint1-leftpoint1+2);
+            for(int count = 0;count<M.size();--count)
+            {
+                M[count].resize(rightpoint2-leftpoint2+2);
+                for(int inner_count=0;inner_count<M[count].size();inner_count++)
+                    M[count][inner_count]=0;
+            }
+            /*initalize*/
+            M[0][0]=0;
+            for(int k=1;k<rightpoint1-leftpoint1+2;k++)
+                M[k][0]=M[k-1][0]+w_d+not_free1(leftpoint1+k-1)*(0.5*w_r-w_d);
+            for(int l=1;l<rightpoint2-leftpoint2+2;l++)
+                M[0][l]=M[0][l-1]+w_d+not_free2(leftpoint2+l-1)*(0.5*w_r-w_d);
+            //compute M
+            for(int k = 1;k<rightpoint1-leftpoint1+2;++k)
+                for(int l=1;l<rightpoint2-leftpoint2+2;++l)
+                {
+                    v1=v2=v3=v4=-99999;
+                    int offset_index1=leftpoint1+k-1;
+                    int offset_index2=leftpoint2+l-1;
+                    //case1
+                    v1=M[k-1][l]+w_d+not_free1(offset_index1)*(0.5*w_r-w_d);
+                    //case2
+                    v2=M[k][l-1]+w_d+not_free2(offset_index1)*(0.5*w_r-w_d);
+                    //case3
+                    v3=M[k-1][l-1]+base_mismatch(offset_index1,offset_index2)+(not_free1(offset_index1)+not_free2(offset_index2))*0.5*w_b;
+                    //case4
+                    if(arc1[offset_index1]==')' && arc2[offset_index2]==')')
+                    {
+                        int current_basepair_leftpoint1=L1[I1[offset_index1]];
+                        int current_basepair_leftpoint2=L2[I2[offset_index2]];
+                        v4 = M[current_basepair_leftpoint1-leftpoint1][current_basepair_leftpoint2-leftpoint2]+
+                        D[I1[offset_index1]][I2[offset_index2]]+(base_mismatch(current_basepair_leftpoint1,current_basepair_leftpoint2)+base_mismatch(offset_index1,offset_index2))*0.5*w_am;
+                    }
+                    M[k][l]=max4(v1,v2,v3,v4);
+
+                }
+            bool seq_flag = true;
+
+            
+        }
+    }   
+}
+
+
+/*------------------利用二元搜尋快速索引位置-----------------------*/
+int BinarySearch(char character,IndexMatrix *array,int length)
+{
+    int low = 0;
+    int high =length-1;
+    while(low<=high)
+    {
+        int mid = (low+high)/2;
+
+        if(array[mid].alphabet==character)
+        {
+            //printf("%c %d",array[mid].alphabet,array[mid].pos);
+            return array[mid].pos;
+        }
+        else if(array[mid].alphabet>character)
+            high = mid-1;
+        else if(array[mid].alphabet<character)
+            low = mid+1;
+
+    }
+    return -1;
+}
+
+int base_mismatch(int pos1,int pos2)
+{
+    int index_x,index_y;
+    index_x = BinarySearch(seq1[pos1],alphabet_index,size);
+    index_y = BinarySearch(seq2[pos2],alphabet_index,size);
+    //cout<<seq1[pos1]<<" vs "<<seq2[pos2]<<" "<<scoring_matrix[index_x][index_y]<<endl;
+    return scoring_matrix[index_x][index_y];  
+}
 /*讀取序列資訊*/
 void read_data(const char *path,const char *outpath)
 {
@@ -459,20 +598,21 @@ double computation()
         for(int k=1;k<R1[i]-L1[i];k++)
             for(int l=1;l<R2[j]-L2[j];l++)
             {
-                v1 = v2 = v3 = v4 = 100000;
+                v1 = v2 = v3 = v4 = -100000;
                 int a1 = L1[i]+k;
                 int a2 = L2[j]+l;
 
                 v1=M[k-1][l]+w_d+not_free1(a1)*(0.5*w_r-w_d);
                 v2=M[k][l-1]+w_d+not_free2(a2)*(0.5*w_r-w_d);
-                v3=M[k-1][l-1]+base_mismatch(a1,a2)*w_m+(not_free1(a1)+not_free2(a2))*0.5*w_b;
+                v3=M[k-1][l-1]+base_mismatch(a1,a2)+(not_free1(a1)+not_free2(a2))*0.5*w_b;
                 if(arc1[a1]==')' && arc2[a2]==')')
                 {
                     int leftpoint = L1[I1[a1]];
                     int leftpoint2 = L2[I2[a2]];
                     v4 = M[leftpoint - L1[i]-1][leftpoint2 - L2[j]-1]+D[I1[a1]][I2[a2]]+(base_mismatch(L1[I1[a1]],L2[I2[a2]])+base_mismatch(R1[I1[a1]],R2[I2[a2]]))*0.5*w_am;
                 }
-                M[k][l]=min4(v1,v2,v3,v4);
+                //M[k][l]=min4(v1,v2,v3,v4);
+                M[k][l]=max4(v1,v2,v3,v4);
             }
         D[i][j]=M[R1[i]-L1[i]-1][R2[j]-L2[j]-1];
 
@@ -495,10 +635,10 @@ double computation()
     for (int k=1;k<=arc1.size();k++)
         for (int l=1;l<=arc2.size();l++)
         {
-            v1=v2=v3=v4=10000;
+            v1=v2=v3=v4=-10000;
             v1=M[k-1][l]+w_d+not_free1(k-1)*(0.5*w_r-w_d);
             v2=M[k][l-1]+w_d+not_free2(l-1)*(0.5*w_r-w_d);
-            v3=M[k-1][l-1]+base_mismatch(k-1,l-1)*w_m+(not_free1(k-1)+not_free2(l-1))*0.5*w_b;
+            v3=M[k-1][l-1]+base_mismatch(k-1,l-1)+(not_free1(k-1)+not_free2(l-1))*0.5*w_b;
             if(arc1[k-1]==')'&& arc2[l-1]==')')
             {
                 int leftpoint = L1[I1[k-1]];
@@ -507,7 +647,8 @@ double computation()
                 +(base_mismatch(L1[I1[k-1]],L2[I2[l-1]])+base_mismatch(R1[I1[k-1]],R2[I2[l-1]]))*0.5*w_am;
 
             }
-            M[k][l]=min4(v1,v2,v3,v4);
+            //M[k][l]=min4(v1,v2,v3,v4);
+            M[k][l]=max4(v1,v2,v3,v4);
         }
 
     return M[arc1.size()][arc2.size()];
