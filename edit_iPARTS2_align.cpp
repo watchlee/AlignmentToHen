@@ -125,12 +125,12 @@ vector<vector<double> > D;
 const double eps=0.0000001;
 static int **scoring_matrix;
 
-double w_d =-9;  // base deletion
+double w_d =9;  // base deletion
 //double w_r =2.0;  // arc  removing
 //double w_b =1.5;  // arc  breaking
-double w_r =-18.0;  // arc  removing
-double w_b =-9.0;  // arc  breaking
-double w_am=1.5;  // arc  mismatch
+double w_r =9.0;  // arc  removing
+double w_b =9.0;  // arc  breaking
+double w_am=1.8;  // arc  mismatch
 double w_aa=0;     // arc  match
 double w_m=1; //base mismatch
 
@@ -154,17 +154,17 @@ double arc_operation(int p1,int p2,int p3,int p4)
 {
     
     //當alignment score > = 0 views as arc match
-    //if(base_matching(p1,p2)>=0&&base_matching(p3,p4)>=0)
-    if((base_matching(p1,p2)+base_matching(p3,p4))>=0)
+    if(base_matching(p1,p2)>=0&&base_matching(p3,p4)>=0)
+    //if((base_matching(p1,p2)+base_matching(p3,p4))>=0)
     {
-        //return 0;
-        return k*(base_matching(p1,p2)+base_matching(p3,p4));
+        return 0;
+        //return k*(base_matching(p1,p2)+base_matching(p3,p4));
     }
     //當alignment score <0 views as arc-mismatch
     else
     {
-        //return (base_matching(p1,p2)+base_matching(p3,p4))*0.5*w_am;
-        return (base_matching(p1,p2)+base_matching(p3,p4))*l;
+        return (base_matching(p1,p2)+base_matching(p3,p4))*0.5*w_am;
+        //return (base_matching(p1,p2)+base_matching(p3,p4))*l;
     }
 }
 
@@ -229,9 +229,7 @@ int main(int argc,char* argv[])
     cout<<argc<<endl;
     if(argc!=3)
     {
-        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/test_data/1A9N_Q_to_1E7K_C/semi_input.php";
-        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1M90_B_to_1NKW_9/semi_input.php";
-        pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1IBK_A_to_1N33_A/semi_input.php";
+        pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/test_data/2FMT_C_to_1J2B_D/semi_input.php";
         pdb_result= "/home/watchlee/result.php";
     }
     else
@@ -302,11 +300,12 @@ int main(int argc,char* argv[])
 
 void write_data(double score,const char *path)
 {
-    int Nmat= 0;
-    for(int count = 0;count<aseq1.size();count++)
+    int Nmat=0;
+    for(int count=0;count<aseq1.size();count++)
     {
-        if(aseq1[count]!='-' && aseq2[count]!='-')
+        if(aseq1[count]!='-'&&aseq2[count]!='-')
             ++Nmat;
+
     }
     fstream file;
     file.open(path,ios::out);
@@ -497,9 +496,9 @@ void traceback()
 	  for (int k=1;k<r1-l1+2;k++)
 	    for (int l=1;l<r2-l2+2;l++)
 	      {
-		//max
-        v1=v2=v3=v4=-10000;
-        //min 		v1=v2=v3=v4=10000;
+		//max         v1=v2=v3=v4=-10000;
+        //min 
+      v1=v2=v3=v4=10000;
 		int a1=l1+k-1;                      // a1,a2 sequence positions 
 		int a2=l2+l-1;
 		
@@ -515,8 +514,8 @@ void traceback()
               arc_operation(i1,j1,a1,a2);
 		      //(base_matching(i1,j1)+base_matching(a1,a2))*0.5*w_am;
 		  }
-		//M[k][l]=min4(v1,v2,v3,v4);
-		M[k][l]=max4(v1,v2,v3,v4);
+		M[k][l]=min4(v1,v2,v3,v4);
+		//M[k][l]=max4(v1,v2,v3,v4);
 	      }
 	  
 	  bool seqaln=true;
@@ -587,154 +586,6 @@ void traceback()
       weights.push_back(iter->weight);
     }
 }
-/*
-void ttraceback()
-{
-    alignment* ali = new alignment;
-    ali->p1=-1;
-    ali->p2=-1;
-    ali->next=NULL;
-    stack<double> weight;
-    double v1,v2,v3,v4;
-
-    //range is the currently computed sequence range
-    four_tuple range;
-    range.leftpoint1=0;
-    range.rightpoint1=seq1.size()-1;
-    range.leftpoint2=0;
-    range.rightpoint2=seq2.size()-1;
-    stack<four_tuple> range_stack;
-    range_stack.push(range);
-    while(!range_stack.empty())
-    {
-        int leftpoint1 = range_stack.top().leftpoint1;
-        int rightpoint1 = range_stack.top().rightpoint1;
-        int leftpoint2 = range_stack.top().leftpoint2;
-        int rightpoint2 = range_stack.top().rightpoint2;
-        range_stack.pop();
-        if (leftpoint1>rightpoint1 && leftpoint2<=rightpoint2)
-            for (int s=rightpoint2;s>=leftpoint2;s--)
-                insert(ali,-1,s,w_d);
-        else if (leftpoint1<=rightpoint1 && leftpoint2>rightpoint2)
-            for (int s=rightpoint1;s>=leftpoint1;s--)
-                insert(ali,s,-1,w_d);
-        //normal
-        else if(leftpoint1<=rightpoint1 && leftpoint2<=rightpoint2)
-        {
-            M.resize(rightpoint1-leftpoint1+2);
-            for(int count = 0;count<M.size();count++)
-            {
-                M[count].resize(rightpoint2-leftpoint2+2);
-                for(int inner_count=0;inner_count<M[count].size();inner_count++)
-                    M[count][inner_count]=0;
-            }
-            M[0][0]=0;
-            for(int k=1;k<rightpoint1-leftpoint1+2;k++)
-                M[k][0]=M[k-1][0]+w_d+not_free1(leftpoint1+k-1)*(0.5*w_r-w_d);
-            for(int l=1;l<rightpoint2-leftpoint2+2;l++)
-                M[0][l]=M[0][l-1]+w_d+not_free2(leftpoint2+l-1)*(0.5*w_r-w_d);
-            //compute M
-            for(int k = 1;k<rightpoint1-leftpoint1+2;k++)
-                for(int l=1;l<rightpoint2-leftpoint2+2;l++)
-                {
-                    v1=v2=v3=v4=-99999;
-                    int offset_index1=leftpoint1+k-1;
-                    int offset_index2=leftpoint2+l-1;
-                    //case1
-                    v1=M[k-1][l]+w_d+not_free1(offset_index1)*(0.5*w_r-w_d);
-                    //case2
-                    v2=M[k][l-1]+w_d+not_free2(offset_index1)*(0.5*w_r-w_d);
-                    //case3
-                    v3=M[k-1][l-1]+base_matching(offset_index1,offset_index2)+(not_free1(offset_index1)+not_free2(offset_index2))*0.5*w_b;
-                    //case4
-                    if(arc1[offset_index1]==')' && arc2[offset_index2]==')')
-                    {
-                        int current_basepair_leftpoint1=L1[I1[offset_index1]];
-                        int current_basepair_leftpoint2=L2[I2[offset_index2]];
-                          v4=M[current_basepair_leftpoint1-leftpoint1][current_basepair_leftpoint2-leftpoint2]+D[I1[offset_index1]][I2[offset_index2]]+(base_matching(current_basepair_leftpoint1,current_basepair_leftpoint2)+base_matching(offset_index1,offset_index2))*0.5*w_am;
-                    }
-                    M[k][l]=max4(v1,v2,v3,v4);
-
-                }
-            cout<<"phase1"<<endl;
-            bool seq_flag = true;
-            int k=rightpoint1-leftpoint1+1;
-            int l = rightpoint2-leftpoint2+1;
-            while(seq_flag)
-            {
-                int offset_index1=leftpoint1+k-1;                      // a1,a2 sequence positions 
-                int offset_index2=leftpoint2+l-1;
-                if (k==0 && l==0)
-                    seq_flag=false;
-                else if (k>0 && fabs(M[k][l]-(M[k-1][l]+w_d+not_free1(offset_index1)*(0.5*w_r-w_d)))<eps )
-                {
-                    insert(ali,offset_index1,-1,w_d+not_free1(offset_index1)*(0.5*w_r-w_d));
-                    k--;
-                                    
-                }
-                else if (l>0 && fabs(M[k][l]-(M[k][l-1]+w_d+not_free2(offset_index2)*(0.5*w_r-w_d)))<eps )
-                {
-                    insert(ali,-1,offset_index2,w_d+not_free2(offset_index2)*(0.5*w_r-w_d));
-                    l--;
-                                    
-                }
-                else if (k>0 && l>0 && fabs(M[k][l]-(M[k-1][l-1]+base_matching(offset_index1,offset_index2)*w_m+(not_free1(offset_index1)+not_free2(offset_index2))*0.5*w_b))<eps)
-                {
-                    insert(ali,offset_index1,offset_index2,base_matching(offset_index1,offset_index2)*w_m+(not_free1(offset_index1)+not_free2(offset_index2))*0.5*w_b);
-                    k--;
-                    l--;
-                                    
-                }
-                else
-                    seq_flag=false;
-            }
-            int offset_index1=leftpoint1+k-1;
-            int offset_index2=leftpoint2+l-1;
-            //base-pair alignment
-            if(arc1[offset_index1]==')' && arc2[offset_index2]==')')
-            {
-                cout<<"phase2"<<endl;
-                 double w=M[L1[I1[offset_index1]]-leftpoint1][L2[I2[offset_index2]]-leftpoint2]+D[I1[offset_index1]][I2[offset_index2]]+(base_matching(L1[I1[offset_index1]],L2[I2[offset_index2]])+base_matching(offset_index1,offset_index2))*0.5*w_am;
-                if(fabs(M[k][l]-w)<eps)
-                {
-                    int current_basepair_leftpoint1=L1[I1[offset_index1]];
-                    int current_basepair_leftpoint2=L2[I2[offset_index2]];
-                    double edge_weight=0.5*(base_matching(L1[I1[offset_index1]],L2[I2[offset_index2]])+base_matching(offset_index1,offset_index2))*0.5*w_am;
-
-                    insert(ali,current_basepair_leftpoint1,current_basepair_leftpoint2,edge_weight);
-                    insert(ali,offset_index1,offset_index2,edge_weight);
-
-                    FourTuple CR1,CR2;
-                    CR1.leftpoint1=leftpoint1   ; CR1.rightpoint1=current_basepair_leftpoint1-1 ; CR1.leftpoint2=leftpoint2   ; CR1.rightpoint2=current_basepair_leftpoint2-1 ;
-                    CR2.leftpoint1=current_basepair_leftpoint1+1 ; CR2.rightpoint1=offset_index1-1 ; CR2.leftpoint2=current_basepair_leftpoint2+1 ; CR2.rightpoint2=offset_index2-1 ;
-                    range_stack.push(CR1);
-                    range_stack.push(CR2);
-                }
-            }
-        }
-        for(Alignment* iter=ali->next;iter!=NULL;iter=iter->next)
-            cout<<iter->p1<<" ";
-        cout<<" inset"<<endl;
-    }   
-
-    weights.resize(0);
-    for(Alignment* iter=ali->next;iter!=NULL;iter=iter->next)
-    {
-
-         aseq1.push_back((iter->p1==-1?'-':seq1[iter->p1]));
-         astr1.push_back((iter->p1==-1?'-':arc1[iter->p1]));
-         aseq2.push_back((iter->p2==-1?'-':seq2[iter->p2]));
-         astr2.push_back((iter->p2==-1?'-':arc2[iter->p2]));
-         weights.push_back(iter->weight);
-         
-    }
-    cout<<endl;
-    cout<<arc1<<endl;
-    cout<<seq1<<endl;
-    cout<<arc2<<endl;
-    cout<<seq2<<endl;
-}
-*/
 
 /*------------------利用二元搜尋快速索引位置-----------------------*/
 int BinarySearch(char character,IndexMatrix *array,int length)
@@ -762,20 +613,18 @@ int BinarySearch(char character,IndexMatrix *array,int length)
 int base_matching(int pos1,int pos2)
 {
     int index_x,index_y;
-    //time complexity = O(logN) * 2
     index_x = BinarySearch(seq1[pos1],alphabet_index,size);
     index_y = BinarySearch(seq2[pos2],alphabet_index,size);
-    
     //cout<<seq1[pos1]<<" vs "<<seq2[pos2]<<" "<<scoring_matrix[index_x][index_y]<<endl;
-    /*
+    
     if(scoring_matrix[index_x][index_y]>=0)
     {
         return 0;
     }
     else
         return 1;
-    */
-    return scoring_matrix[index_x][index_y];
+    
+    //return scoring_matrix[index_x][index_y];
 }
 /*讀取序列資訊*/
 void read_data(const char *path)
@@ -800,45 +649,45 @@ void read_data(const char *path)
     getline(file,sub,'\n');
     temp_size = sub.size();
     seq1= sub.substr(7,temp_size-9);
-    //cout<<sub<<" length="<<sub.size()<<" seq length="<<sub.size()-9<<endl;
+    cout<<sub<<" length="<<sub.size()<<" seq length="<<sub.size()-9<<endl;
 
     /*read arc1*/    
     getline(file,sub,'\n');
     temp_size = sub.size();
     arc1 = sub.substr(7,temp_size-9);
-    //cout<<sub<<" length="<<sub.size()<<" arc length="<<sub.size()-9<<endl;
+    cout<<sub<<" length="<<sub.size()<<" arc length="<<sub.size()-9<<endl;
 
     /*read seq2*/    
     getline(file,sub,'\n');
     temp_size = sub.size();
     seq2 = sub.substr(7,temp_size-9);
-    //cout<<sub<<" length="<<sub.size()<<" seq length="<<sub.size()-9<<endl;
+    cout<<sub<<" length="<<sub.size()<<" seq length="<<sub.size()-9<<endl;
 
     /*read arc2*/    
     getline(file,sub,'\n');
     temp_size = sub.size();
     arc2 = sub.substr(7,temp_size-9);
-    //cout<<sub<<" length="<<sub.size()<<" arc length="<<sub.size()-9<<endl;
+    cout<<sub<<" length="<<sub.size()<<" arc length="<<sub.size()-9<<endl;
 
     /*read matrixpath*/    
     getline(file,sub,'\n');
     temp_size = sub.size();
     matrixpath = sub.substr(10,temp_size-12);
-    //cout<<sub<<endl;
+    cout<<sub<<endl;
 
     /*read gap_opp*/    
     getline(file,sub,'\n');
     temp_size = sub.size();
     sub = sub.substr(6,temp_size-8);
     gap_opp = atoi(sub.c_str());
-    //cout<<sub<<endl;
+    cout<<sub<<endl;
 
     /*read gap_exp*/    
     getline(file,sub,'\n');
     temp_size = sub.size();
     sub = sub.substr(6,temp_size-8);
     gap_exp = atoi(sub.c_str());
-    //cout<<sub<<endl;
+    cout<<sub<<endl;
 
 
     /*Prevent the errors happend! If the sequence's length is not equal to the arc's length */
@@ -1038,8 +887,9 @@ double computation()
             for(int l=1;l<R2[j]-L2[j];l++)
             {
                 //max 
-                v1 = v2 = v3 = v4 = -10000;
-                //min                 v1 = v2 = v3 = v4 = 10000;
+                //v1 = v2 = v3 = v4 = -10000;
+                //min 
+                v1 = v2 = v3 = v4 = 10000;
                 int a1 = L1[i]+k;
                 int a2 = L2[j]+l;
                 //edit operation
@@ -1054,8 +904,8 @@ double computation()
                     int leftpoint2 = L2[I2[a2]];
                     v4 = M[leftpoint - L1[i]-1][leftpoint2 - L2[j]-1]+D[I1[a1]][I2[a2]]+arc_operation(L1[I1[a1]],L2[I2[a2]],R1[I1[a1]],R2[I2[a2]]);//(base_matching(L1[I1[a1]],L2[I2[a2]])+base_matching(R1[I1[a1]],R2[I2[a2]]))*0.5*w_am;
                 }
-                //M[k][l]=min4(v1,v2,v3,v4);
-                M[k][l]=max4(v1,v2,v3,v4);
+                M[k][l]=min4(v1,v2,v3,v4);
+                //M[k][l]=max4(v1,v2,v3,v4);
             }
         D[i][j]=M[R1[i]-L1[i]-1][R2[j]-L2[j]-1];
 
@@ -1078,9 +928,10 @@ double computation()
     for (int k=1;k<=arc1.size();k++)
         for (int l=1;l<=arc2.size();l++)
         {
-                //min v1 = v2 = v3 = v4 = 10000;
+                //min 
+            v1 = v2 = v3 = v4 = 10000;
             //max
-            v1 = v2 = v3 = v4 = -10000;
+            //v1 = v2 = v3 = v4 = -10000;
             v1=M[k-1][l]+w_d+not_free1(k-1)*(0.5*w_r-w_d);
             v2=M[k][l-1]+w_d+not_free2(l-1)*(0.5*w_r-w_d);
             v3=M[k-1][l-1]+base_matching(k-1,l-1)*w_m+(not_free1(k-1)+not_free2(l-1))*0.5*w_b;
@@ -1092,8 +943,8 @@ double computation()
                 +arc_operation(L1[I1[k-1]],L2[I2[l-1]],R1[I1[k-1]],R2[I2[l-1]]);//(base_matching(L1[I1[k-1]],L2[I2[l-1]])+base_matching(R1[I1[k-1]],R2[I2[l-1]]))*0.5*w_am;
 
             }
-            //M[k][l]=min4(v1,v2,v3,v4);
-            M[k][l]=max4(v1,v2,v3,v4);
+            M[k][l]=min4(v1,v2,v3,v4);
+            //M[k][l]=max4(v1,v2,v3,v4);
         }
 
     return M[arc1.size()][arc2.size()];
@@ -1130,3 +981,152 @@ void determine_MAX(double *arc_max,double *seq_max)
     
 
 }
+
+/*
+void ttraceback()
+{
+    alignment* ali = new alignment;
+    ali->p1=-1;
+    ali->p2=-1;
+    ali->next=NULL;
+    stack<double> weight;
+    double v1,v2,v3,v4;
+
+    //range is the currently computed sequence range
+    four_tuple range;
+    range.leftpoint1=0;
+    range.rightpoint1=seq1.size()-1;
+    range.leftpoint2=0;
+    range.rightpoint2=seq2.size()-1;
+    stack<four_tuple> range_stack;
+    range_stack.push(range);
+    while(!range_stack.empty())
+    {
+        int leftpoint1 = range_stack.top().leftpoint1;
+        int rightpoint1 = range_stack.top().rightpoint1;
+        int leftpoint2 = range_stack.top().leftpoint2;
+        int rightpoint2 = range_stack.top().rightpoint2;
+        range_stack.pop();
+        if (leftpoint1>rightpoint1 && leftpoint2<=rightpoint2)
+            for (int s=rightpoint2;s>=leftpoint2;s--)
+                insert(ali,-1,s,w_d);
+        else if (leftpoint1<=rightpoint1 && leftpoint2>rightpoint2)
+            for (int s=rightpoint1;s>=leftpoint1;s--)
+                insert(ali,s,-1,w_d);
+        //normal
+        else if(leftpoint1<=rightpoint1 && leftpoint2<=rightpoint2)
+        {
+            M.resize(rightpoint1-leftpoint1+2);
+            for(int count = 0;count<M.size();count++)
+            {
+                M[count].resize(rightpoint2-leftpoint2+2);
+                for(int inner_count=0;inner_count<M[count].size();inner_count++)
+                    M[count][inner_count]=0;
+            }
+            M[0][0]=0;
+            for(int k=1;k<rightpoint1-leftpoint1+2;k++)
+                M[k][0]=M[k-1][0]+w_d+not_free1(leftpoint1+k-1)*(0.5*w_r-w_d);
+            for(int l=1;l<rightpoint2-leftpoint2+2;l++)
+                M[0][l]=M[0][l-1]+w_d+not_free2(leftpoint2+l-1)*(0.5*w_r-w_d);
+            //compute M
+            for(int k = 1;k<rightpoint1-leftpoint1+2;k++)
+                for(int l=1;l<rightpoint2-leftpoint2+2;l++)
+                {
+                    v1=v2=v3=v4=-99999;
+                    int offset_index1=leftpoint1+k-1;
+                    int offset_index2=leftpoint2+l-1;
+                    //case1
+                    v1=M[k-1][l]+w_d+not_free1(offset_index1)*(0.5*w_r-w_d);
+                    //case2
+                    v2=M[k][l-1]+w_d+not_free2(offset_index1)*(0.5*w_r-w_d);
+                    //case3
+                    v3=M[k-1][l-1]+base_matching(offset_index1,offset_index2)+(not_free1(offset_index1)+not_free2(offset_index2))*0.5*w_b;
+                    //case4
+                    if(arc1[offset_index1]==')' && arc2[offset_index2]==')')
+                    {
+                        int current_basepair_leftpoint1=L1[I1[offset_index1]];
+                        int current_basepair_leftpoint2=L2[I2[offset_index2]];
+                          v4=M[current_basepair_leftpoint1-leftpoint1][current_basepair_leftpoint2-leftpoint2]+D[I1[offset_index1]][I2[offset_index2]]+(base_matching(current_basepair_leftpoint1,current_basepair_leftpoint2)+base_matching(offset_index1,offset_index2))*0.5*w_am;
+                    }
+                    M[k][l]=max4(v1,v2,v3,v4);
+
+                }
+            cout<<"phase1"<<endl;
+            bool seq_flag = true;
+            int k=rightpoint1-leftpoint1+1;
+            int l = rightpoint2-leftpoint2+1;
+            while(seq_flag)
+            {
+                int offset_index1=leftpoint1+k-1;                      // a1,a2 sequence positions 
+                int offset_index2=leftpoint2+l-1;
+                if (k==0 && l==0)
+                    seq_flag=false;
+                else if (k>0 && fabs(M[k][l]-(M[k-1][l]+w_d+not_free1(offset_index1)*(0.5*w_r-w_d)))<eps )
+                {
+                    insert(ali,offset_index1,-1,w_d+not_free1(offset_index1)*(0.5*w_r-w_d));
+                    k--;
+                                    
+                }
+                else if (l>0 && fabs(M[k][l]-(M[k][l-1]+w_d+not_free2(offset_index2)*(0.5*w_r-w_d)))<eps )
+                {
+                    insert(ali,-1,offset_index2,w_d+not_free2(offset_index2)*(0.5*w_r-w_d));
+                    l--;
+                                    
+                }
+                else if (k>0 && l>0 && fabs(M[k][l]-(M[k-1][l-1]+base_matching(offset_index1,offset_index2)*w_m+(not_free1(offset_index1)+not_free2(offset_index2))*0.5*w_b))<eps)
+                {
+                    insert(ali,offset_index1,offset_index2,base_matching(offset_index1,offset_index2)*w_m+(not_free1(offset_index1)+not_free2(offset_index2))*0.5*w_b);
+                    k--;
+                    l--;
+                                    
+                }
+                else
+                    seq_flag=false;
+            }
+            int offset_index1=leftpoint1+k-1;
+            int offset_index2=leftpoint2+l-1;
+            //base-pair alignment
+            if(arc1[offset_index1]==')' && arc2[offset_index2]==')')
+            {
+                cout<<"phase2"<<endl;
+                 double w=M[L1[I1[offset_index1]]-leftpoint1][L2[I2[offset_index2]]-leftpoint2]+D[I1[offset_index1]][I2[offset_index2]]+(base_matching(L1[I1[offset_index1]],L2[I2[offset_index2]])+base_matching(offset_index1,offset_index2))*0.5*w_am;
+                if(fabs(M[k][l]-w)<eps)
+                {
+                    int current_basepair_leftpoint1=L1[I1[offset_index1]];
+                    int current_basepair_leftpoint2=L2[I2[offset_index2]];
+                    double edge_weight=0.5*(base_matching(L1[I1[offset_index1]],L2[I2[offset_index2]])+base_matching(offset_index1,offset_index2))*0.5*w_am;
+
+                    insert(ali,current_basepair_leftpoint1,current_basepair_leftpoint2,edge_weight);
+                    insert(ali,offset_index1,offset_index2,edge_weight);
+
+                    FourTuple CR1,CR2;
+                    CR1.leftpoint1=leftpoint1   ; CR1.rightpoint1=current_basepair_leftpoint1-1 ; CR1.leftpoint2=leftpoint2   ; CR1.rightpoint2=current_basepair_leftpoint2-1 ;
+                    CR2.leftpoint1=current_basepair_leftpoint1+1 ; CR2.rightpoint1=offset_index1-1 ; CR2.leftpoint2=current_basepair_leftpoint2+1 ; CR2.rightpoint2=offset_index2-1 ;
+                    range_stack.push(CR1);
+                    range_stack.push(CR2);
+                }
+            }
+        }
+        for(Alignment* iter=ali->next;iter!=NULL;iter=iter->next)
+            cout<<iter->p1<<" ";
+        cout<<" inset"<<endl;
+    }   
+
+    weights.resize(0);
+    for(Alignment* iter=ali->next;iter!=NULL;iter=iter->next)
+    {
+
+         aseq1.push_back((iter->p1==-1?'-':seq1[iter->p1]));
+         astr1.push_back((iter->p1==-1?'-':arc1[iter->p1]));
+         aseq2.push_back((iter->p2==-1?'-':seq2[iter->p2]));
+         astr2.push_back((iter->p2==-1?'-':arc2[iter->p2]));
+         weights.push_back(iter->weight);
+         
+    }
+    cout<<endl;
+    cout<<arc1<<endl;
+    cout<<seq1<<endl;
+    cout<<arc2<<endl;
+    cout<<seq2<<endl;
+}
+*/
