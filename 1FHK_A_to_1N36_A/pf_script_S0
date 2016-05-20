@@ -1,8 +1,0 @@
-reference /home/watchlee/Research_Programming/RMSD/pdb/1FHK_A.pdb
-mobile /home/watchlee/Research_Programming/RMSD/pdb/1N36_A.pdb
-readalignment alignment_main/23-4L_matrix-O9E1-SARA_FSCOR_23C_4L_result-semiG.job/1FHK_A_to_1N36_A/ori_ali_seq.pir0
-atoms *
-ignoremissing
-fit
-residue
-quit
