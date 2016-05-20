@@ -1,6 +1,12 @@
-all:global.o
-	gcc global.c -o global.o
-	./global.o Global_2DR2-2J02 
+all:align.o
+	g++ align.cpp -o align.o
+	python data_script.py
+
+edit:edit_iPARTS2_align.o
+	g++ edit_iPARTS2_align.cpp -o edit_iPARTS2_align.o
 
 clean:
 	rm -f global.o
+
+
+

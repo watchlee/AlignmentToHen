@@ -1,0 +1,155 @@
+
+                  PPPPP                FFFFFF ii   tt
+                  PP  PP               FF          tt
+                  PP  PP rrrrr   oooo  FF     ii  ttttt
+                  PPPPP  rr  rr oo  oo FFFF   ii   tt
+                  PP     rr     oo  oo FF     ii   tt
+                  PP     rr     oo  oo FF     ii   tt
+                  PP     rr      oooo  FF      ii   ttt
+
+                      Protein Least Squares Fitting
+
+                               Version 2.5.3
+
+      Copyright (c) Dr. Andrew C.R. Martin, SciTech Software 1992-2006
+
+   Reading reference structure...
+   Reading mobile structure...
+   Fitting structures...
+   Warning==> Ignored reference atom  O6  not found in mobile.
+      Reference   G      1  Mobile   A     18 
+   Warning==> Ignored reference atom  N2  not found in mobile.
+      Reference   G      1  Mobile   A     18 
+   Warning==> Ignored reference atom  H5' not found in mobile.
+      Reference   G      1  Mobile   A     18 
+   Warning==> Ignored reference atom H5'' not found in mobile.
+      Reference   G      1  Mobile   A     18 
+   Warning==> Ignored reference atom  H4' not found in mobile.
+      Reference   G      1  Mobile   A     18 
+   Warning==> Ignored reference atom  H3' not found in mobile.
+      Reference   G      1  Mobile   A     18 
+   Warning==> Ignored reference atom  H2' not found in mobile.
+      Reference   G      1  Mobile   A     18 
+   Warning==> Ignored reference atom HO2' not found in mobile.
+      Reference   G      1  Mobile   A     18 
+   Warning==> Ignored reference atom  H1' not found in mobile.
+      Reference   G      1  Mobile   A     18 
+   Warning==> Ignored reference atom  H8  not found in mobile.
+      Reference   G      1  Mobile   A     18 
+   Warning==> Ignored reference atom  H1  not found in mobile.
+      Reference   G      1  Mobile   A     18 
+   Warning==> Ignored reference atom  H21 not found in mobile.
+      Reference   G      1  Mobile   A     18 
+   Warning==> Ignored reference atom  H22 not found in mobile.
+      Reference   G      1  Mobile   A     18 
+   Warning==> Ignored reference atom HO5' not found in mobile.
+      Reference   G      1  Mobile   A     18 
+   Warning==> Ignored reference atom  H5' not found in mobile.
+      Reference   G      2  Mobile   G     19 
+   Warning==> Ignored reference atom H5'' not found in mobile.
+      Reference   G      2  Mobile   G     19 
+   Warning==> Ignored reference atom  H4' not found in mobile.
+      Reference   G      2  Mobile   G     19 
+   Warning==> Ignored reference atom  H3' not found in mobile.
+      Reference   G      2  Mobile   G     19 
+   Warning==> Ignored reference atom  H2' not found in mobile.
+      Reference   G      2  Mobile   G     19 
+   Warning==> Ignored reference atom HO2' not found in mobile.
+      Reference   G      2  Mobile   G     19 
+   Warning==> Ignored reference atom  H1' not found in mobile.
+      Reference   G      2  Mobile   G     19 
+   Warning==> Ignored reference atom  H8  not found in mobile.
+      Reference   G      2  Mobile   G     19 
+   Warning==> Ignored reference atom  H1  not found in mobile.
+      Reference   G      2  Mobile   G     19 
+   Warning==> Ignored reference atom  H21 not found in mobile.
+      Reference   G      2  Mobile   G     19 
+   Warning==> Ignored reference atom  H22 not found in mobile.
+      Reference   G      2  Mobile   G     19 
+   Warning==> Ignored reference atom  H5' not found in mobile.
+      Reference   C      3  Mobile   C     20 
+   Warning==> Ignored reference atom H5'' not found in mobile.
+      Reference   C      3  Mobile   C     20 
+   Warning==> Ignored reference atom  H4' not found in mobile.
+      Reference   C      3  Mobile   C     20 
+   Warning==> Ignored reference atom  H3' not found in mobile.
+      Reference   C      3  Mobile   C     20 
+   Warning==> Ignored reference atom  H2' not found in mobile.
+      Reference   C      3  Mobile   C     20 
+   Warning==> Ignored reference atom HO2' not found in mobile.
+      Reference   C      3  Mobile   C     20 
+   Warning==> Ignored reference atom  H1' not found in mobile.
+      Reference   C      3  Mobile   C     20 
+   Warning==> Ignored reference atom  H41 not found in mobile.
+      Reference   C      3  Mobile   C     20 
+   Warning==> Ignored reference atom  H42 not found in mobile.
+      Reference   C      3  Mobile   C     20 
+   Warning==> Ignored reference atom  H5  not found in mobile.
+      Reference   C      3  Mobile   C     20 
+   Warning==> Ignored reference atom  H6  not found in mobile.
+      Reference   C      3  Mobile   C     20 
+   Warning==> Ignored reference atom  H5' not found in mobile.
+      Reference   A      4  Mobile   A     21 
+   Warning==> Ignored reference atom H5'' not found in mobile.
+      Reference   A      4  Mobile   A     21 
+   Warning==> Ignored reference atom  H4' not found in mobile.
+      Reference   A      4  Mobile   A     21 
+   Warning==> Ignored reference atom  H3' not found in mobile.
+      Reference   A      4  Mobile   A     21 
+   Warning==> Ignored reference atom  H2' not found in mobile.
+      Reference   A      4  Mobile   A     21 
+   Warning==> Ignored reference atom HO2' not found in mobile.
+      Reference   A      4  Mobile   A     21 
+   Warning==> Ignored reference atom  H1' not found in mobile.
+      Reference   A      4  Mobile   A     21 
+   Warning==> Ignored reference atom  H8  not found in mobile.
+      Reference   A      4  Mobile   A     21 
+   Warning==> Ignored reference atom  H61 not found in mobile.
+      Reference   A      4  Mobile   A     21 
+   Warning==> Ignored reference atom  H62 not found in mobile.
+      Reference   A      4  Mobile   A     21 
+   Warning==> Ignored reference atom  H2  not found in mobile.
+      Reference   A      4  Mobile   A     21 
+   Warning==> Ignored reference atom  H5' not found in mobile.
+      Reference   A      5  Mobile   A     22 
+   Warning==> Ignored reference atom H5'' not found in mobile.
+      Reference   A      5  Mobile   A     22 
+   Warning==> Ignored reference atom  H4' not found in mobile.
+      Reference   A      5  Mobile   A     22 
+   Warning==> Ignored reference atom  H3' not found in mobile.
+      Reference   A      5  Mobile   A     22 
+   Warning==> Ignored reference atom  H2' not found in mobile.
+      Reference   A      5  Mobile   A     22 
+   Warning==> Ignored reference atom HO2' not found in mobile.
+      Reference   A      5  Mobile   A     22 
+   Warning==> Ignored reference atom  H1' not found in mobile.
+      Reference   A      5  Mobile   A     22 
+   Warning==> Ignored reference atom  H8  not found in mobile.
+      Reference   A      5  Mobile   A     22 
+   Warning==> Ignored reference atom  H61 not found in mobile.
+      Reference   A      5  Mobile   A     22 
+   Warning==> Ignored reference atom  H62 not found in mobile.
+      Reference   A      5  Mobile   A     22 
+   Warning==> Ignored reference atom  H2  not found in mobile.
+      Reference   A      5  Mobile   A     22 
+   Warning==> Ignored reference atom  H5' not found in mobile.
+      Reference   U      6  Mobile   U     23 
+   Warning==> Ignored reference atom H5'' not found in mobile.
+      Reference   U      6  Mobile   U     23 
+   Warning==> Ignored reference atom  H4' not found in mobile.
+      Reference   U      6  Mobile   U     23 
+   Warning==> Ignored reference atom  H3' not found in mobile.
+      Reference   U      6  Mobile   U     23 
+   Warning==> Ignored reference atom  H2' not found in mobile.
+      Reference   U      6  Mobile   U     23 
+   Warning==> Ignored reference atom HO2' not found in mobile.
+      Reference   U      6  Mobile   U     23 
+   Warning==> Ignored reference atom  H1' not found in mobile.
+      Reference   U      6  Mobile   U     23 
+   Warning==> Ignored reference atom  H3  not found in mobile.
+      Reference   U      6  Mobile   U     23 
+   Warning==> Ignored reference atom  H5  not found in mobile.
+      Reference   U      6  Mobile   U     23 
+   Warning==> Ignored reference atom  H6  not found in mobile.
+      Reference   U      6  Mobile   U     23 
+   RMS: 1.813

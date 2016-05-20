@@ -1,0 +1,35 @@
+
+                  PPPPP                FFFFFF ii   tt
+                  PP  PP               FF          tt
+                  PP  PP rrrrr   oooo  FF     ii  ttttt
+                  PPPPP  rr  rr oo  oo FFFF   ii   tt
+                  PP     rr     oo  oo FF     ii   tt
+                  PP     rr     oo  oo FF     ii   tt
+                  PP     rr      oooo  FF      ii   ttt
+
+                      Protein Least Squares Fitting
+
+                               Version 2.5.3
+
+      Copyright (c) Dr. Andrew C.R. Martin, SciTech Software 1992-2006
+
+   Reading reference structure...
+   Reading mobile structure...
+   Fitting structures...
+   Warning==> Ignored reference atom  O6  not found in mobile.
+      Reference   G      1  Mobile   A     74 
+   Warning==> Ignored reference atom  N2  not found in mobile.
+      Reference   G      1  Mobile   A     74 
+   Warning==> Ignored reference atom  H1  not found in mobile.
+      Reference   G      1  Mobile   A     74 
+   Warning==> Ignored reference atom  H21 not found in mobile.
+      Reference   G      1  Mobile   A     74 
+   Warning==> Ignored reference atom  H22 not found in mobile.
+      Reference   G      1  Mobile   A     74 
+   Warning==> Ignored reference atom HO5' not found in mobile.
+      Reference   G      1  Mobile   A     74 
+   RMS: 1.141
+     A1    G  :     A74    A    RMS: 1.200
+     A2    G  :     A75    G    RMS: 1.403
+     A3    C  :     A76    C    RMS: 0.714
+     A4    C  :     A77    C    RMS: 1.117

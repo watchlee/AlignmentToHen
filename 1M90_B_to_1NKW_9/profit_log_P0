@@ -1,0 +1,136 @@
+
+                  PPPPP                FFFFFF ii   tt
+                  PP  PP               FF          tt
+                  PP  PP rrrrr   oooo  FF     ii  ttttt
+                  PPPPP  rr  rr oo  oo FFFF   ii   tt
+                  PP     rr     oo  oo FF     ii   tt
+                  PP     rr     oo  oo FF     ii   tt
+                  PP     rr      oooo  FF      ii   ttt
+
+                      Protein Least Squares Fitting
+
+                               Version 2.5.3
+
+      Copyright (c) Dr. Andrew C.R. Martin, SciTech Software 1992-2006
+
+   Reading reference structure...
+   Reading mobile structure...
+   Warning==> Mobile set contains multiple occupancy atoms.
+              Only the first atom will be considered.
+   Fitting structures...
+   RMS: 4.955
+  B3002    U  :      96    C    RMS: 4.066
+  B3003    A  :      97    C    RMS: 4.818
+  B3004    G  :      98    C    RMS: 0.667
+  B3005    G  :      99    G    RMS: 0.513
+  B3006    C  :     910    U    RMS: 1.635
+  B3007    G  :     911    G    RMS: 3.082
+  B3008    G  :     912    C    RMS: 3.281
+  B3009    C  :     913    C    RMS: 3.326
+  B3010    C  :     914    C    RMS: 3.602
+  B3011    A  :     915    A    RMS: 2.970
+  B3012    C  :     916    U    RMS: 2.522
+  B3013    A  :     917    A    RMS: 3.275
+  B3014    G  :     918    G    RMS: 3.259
+  B3015    C  :     919    C    RMS: 3.757
+  B3016    G  :     920    A    RMS: 2.655
+  B3017    G  :     921    C    RMS: 2.164
+  B3018    U  :     922    U    RMS: 1.417
+  B3019    G  :     923    G    RMS: 2.042
+  B3020    G  :     924    U    RMS: 1.767
+  B3021    G  :     925    G    RMS: 1.900
+  B3022    G  :     926    G    RMS: 1.038
+  B3024    U  :     927    A    RMS: 5.999
+  B3025    G  :     928    A    RMS: 2.800
+  B3026    C  :     929    C    RMS: 1.784
+  B3027    C  :     930    C    RMS: 1.187
+  B3028    U  :     931    A    RMS: 0.844
+  B3029    C  :     932    C    RMS: 1.239
+  B3030    C  :     933    C    RMS: 1.272
+  B3031    C  :     934    C    RMS: 2.857
+  B3032    G  :     935    C    RMS: 3.107
+  B3033    U  :     936    A    RMS: 2.307
+  B3034    A  :     937    C    RMS: 4.006
+  B3035    C  :     938    C    RMS: 6.026
+  B3036    C  :     939    C    RMS: 5.971
+  B3037    C  :     940    C    RMS: 3.582
+  B3038    A  :     941    A    RMS: 2.863
+  B3039    U  :     942    U    RMS: 2.601
+  B3040    C  :     943    G    RMS: 3.971
+  B3041    C  :     944    C    RMS: 5.032
+  B3042    C  :     945    C    RMS: 2.631
+  B3043    G  :     946    G    RMS: 2.554
+  B3044    A  :     947    A    RMS: 2.104
+  B3045    A  :     948    A    RMS: 3.147
+  B3046    C  :     949    C    RMS: 2.546
+  B3047    A  :     950    U    RMS: 1.249
+  B3048    C  :     951    G    RMS: 1.025
+  B3049    G  :     952    G    RMS: 1.022
+  B3050    G  :     953    G    RMS: 0.895
+  B3051    A  :     954    U    RMS: 1.637
+  B3052    A  :     955    C    RMS: 3.526
+  B3053    G  :     956    G    RMS: 2.033
+  B3054    A  :     957    U    RMS: 1.095
+  B3055    U  :     958    G    RMS: 1.588
+  B3056    A  :     959    A    RMS: 2.237
+  B3057    A  :     960    A    RMS: 1.601
+  B3058    G  :     961    A    RMS: 3.074
+  B3059    C  :     962    C    RMS: 1.701
+  B3060    C  :     963    A    RMS: 0.558
+  B3061    C  :     964    C    RMS: 2.206
+  B3062    A  :     965    A    RMS: 0.970
+  B3063    C  :     966    G    RMS: 1.886
+  B3064    C  :     967    C    RMS: 3.408
+  B3065    A  :     968    A    RMS: 3.374
+  B3066    G  :     969    G    RMS: 3.327
+  B3067    C  :     970    C    RMS: 2.280
+  B3068    G  :     971    G    RMS: 3.056
+  B3072    C  :     972    C    RMS: 15.220
+  B3073    G  :     973    C    RMS: 15.984
+  B3074    G  :     974    A    RMS: 16.027
+  B3075    G  :     975    A    RMS: 16.050
+  B3076    G  :     976    U    RMS: 12.764
+  B3077    A  :     977    G    RMS: 13.805
+  B3078    G  :     978    A    RMS: 3.519
+  B3079    U  :     979    U    RMS: 4.849
+  B3080    A  :     980    A    RMS: 2.587
+  B3081    C  :     981    C    RMS: 1.720
+  B3082    U  :     982    U    RMS: 1.248
+  B3083    G  :     983    C    RMS: 1.328
+  B3084    G  :     984    G    RMS: 0.720
+  B3086    G  :     985    G    RMS: 5.659
+  B3087    U  :     986    A    RMS: 5.801
+  B3088    G  :     987    C    RMS: 5.706
+  B3089    C  :     988    C    RMS: 4.349
+  B3090    G  :     989    G    RMS: 3.661
+  B3091    C  :     990    C    RMS: 4.756
+  B3093    A  :     991    A    RMS: 3.342
+  B3094    G  :     992    G    RMS: 3.166
+  B3095    C  :     993    G    RMS: 6.591
+  B3096    C  :     994    G    RMS: 7.684
+  B3097    U  :     995    U    RMS: 7.971
+  B3098    C  :     996    C    RMS: 7.437
+  B3099    U  :     997    C    RMS: 7.819
+  B3100    G  :     998    C    RMS: 7.328
+  B3101    G  :     999    G    RMS: 6.714
+  B3102    G  :    9100    G    RMS: 5.188
+  B3103    A  :    9101    A    RMS: 5.909
+  B3104    A  :    9102    A    RMS: 6.218
+  B3105    A  :    9103    A    RMS: 5.287
+  B3106    C  :    9104    A    RMS: 6.146
+  B3107    C  :    9105    G    RMS: 4.708
+  B3108    C  :    9106    U    RMS: 4.630
+  B3109    G  :    9107    C    RMS: 3.886
+  B3110    G  :    9108    G    RMS: 3.268
+  B3111    U  :    9109    G    RMS: 3.410
+  B3112    U  :    9110    U    RMS: 2.079
+  B3113    C  :    9111    C    RMS: 2.804
+  B3114    G  :    9112    A    RMS: 2.886
+  B3115    C  :    9113    G    RMS: 2.895
+  B3116    C  :    9114    C    RMS: 2.905
+  B3117    G  :    9115    G    RMS: 3.465
+  B3118    C  :    9116    C    RMS: 3.418
+  B3119    C  :    9117    G    RMS: 2.762
+  B3120    A  :    9118    G    RMS: 1.817
+  B3121    C  :    9119    G    RMS: 1.218
+  B3122    C  :    9120    G    RMS: 2.672

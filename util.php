@@ -49,11 +49,8 @@ function gen_resultlist($result){
 	$r.="\n?>";
 	return $r;
 }
-/* function readmat
- * 讀入Substitution Matrix
- * Input: SM路徑
- * return: 以alphabet為索引值的2D Array
- */
+
+
 function readmat($file){
 	
 	$fp=fopen($file,"r");
@@ -63,13 +60,7 @@ function readmat($file){
 	$col=array();
     fgets($fp); 		//跳過第一行註解
     $line=fgets($fp);
-    /*using trim function to delete meanlessing character, which was contained in input_string*/
     $element = strtok(trim($line)," ");
-    /*Keeping take empty character until EOF*/
-    /*Main goal is to put elements into array, and if there have any empty character or something character, which would cause array can't normal run, it should be token away!
-     * get any elements*/
-
-    /*This code is used to store first row line alphabet, i.e A B C E D F G H I J K L M N O P Q R S T X V W * */
 
 	while($element!==false){
         if($element=="") {$element = strtok(" ");continue;}

@@ -1,0 +1,27 @@
+
+                  PPPPP                FFFFFF ii   tt
+                  PP  PP               FF          tt
+                  PP  PP rrrrr   oooo  FF     ii  ttttt
+                  PPPPP  rr  rr oo  oo FFFF   ii   tt
+                  PP     rr     oo  oo FF     ii   tt
+                  PP     rr     oo  oo FF     ii   tt
+                  PP     rr      oooo  FF      ii   ttt
+
+                      Protein Least Squares Fitting
+
+                               Version 2.5.3
+
+      Copyright (c) Dr. Andrew C.R. Martin, SciTech Software 1992-2006
+
+   Reading reference structure...
+   Reading mobile structure...
+   Warning==> Mobile set contains multiple occupancy atoms.
+              Only the first atom will be considered.
+   Fitting structures...
+   RMS: 0.922
+     A2    G  :     R16    C    RMS: 1.405
+     A3    G  :     R17    C    RMS: 0.808
+     A4    A  :     R18    A    RMS: 0.550
+     A5    U  :     R19    U    RMS: 0.458
+     A6    C  :     R20    G    RMS: 0.833
+     A7    A  :     R21    U    RMS: 1.124

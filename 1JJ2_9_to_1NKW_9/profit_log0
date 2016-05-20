@@ -1,0 +1,295 @@
+
+                  PPPPP                FFFFFF ii   tt
+                  PP  PP               FF          tt
+                  PP  PP rrrrr   oooo  FF     ii  ttttt
+                  PPPPP  rr  rr oo  oo FFFF   ii   tt
+                  PP     rr     oo  oo FF     ii   tt
+                  PP     rr     oo  oo FF     ii   tt
+                  PP     rr      oooo  FF      ii   ttt
+
+                      Protein Least Squares Fitting
+
+                               Version 2.5.3
+
+      Copyright (c) Dr. Andrew C.R. Martin, SciTech Software 1992-2006
+
+   Reading reference structure...
+   Reading mobile structure...
+   Warning==> Mobile set contains multiple occupancy atoms.
+              Only the first atom will be considered.
+   Fitting structures...
+   Warning==> Ignored reference atom  O4  not found in mobile.
+      Reference   U      1  Mobile   C      5 
+   Warning==> Ignored reference atom  O4  not found in mobile.
+      Reference   U      2  Mobile   C      6 
+   Warning==> Ignored reference atom  N9  not found in mobile.
+      Reference   A      3  Mobile   C      7 
+   Warning==> Ignored reference atom  C8  not found in mobile.
+      Reference   A      3  Mobile   C      7 
+   Warning==> Ignored reference atom  N7  not found in mobile.
+      Reference   A      3  Mobile   C      7 
+   Warning==> Ignored reference atom  N6  not found in mobile.
+      Reference   A      3  Mobile   C      7 
+   Warning==> Ignored reference atom  N9  not found in mobile.
+      Reference   G      4  Mobile   C      8 
+   Warning==> Ignored reference atom  C8  not found in mobile.
+      Reference   G      4  Mobile   C      8 
+   Warning==> Ignored reference atom  N7  not found in mobile.
+      Reference   G      4  Mobile   C      8 
+   Warning==> Ignored reference atom  O6  not found in mobile.
+      Reference   G      4  Mobile   C      8 
+   Warning==> Ignored reference atom  N2  not found in mobile.
+      Reference   G      4  Mobile   C      8 
+   Warning==> Ignored reference atom  N4  not found in mobile.
+      Reference   C      6  Mobile   U     10 
+   Warning==> Ignored reference atom  N9  not found in mobile.
+      Reference   G      8  Mobile   C     12 
+   Warning==> Ignored reference atom  C8  not found in mobile.
+      Reference   G      8  Mobile   C     12 
+   Warning==> Ignored reference atom  N7  not found in mobile.
+      Reference   G      8  Mobile   C     12 
+   Warning==> Ignored reference atom  O6  not found in mobile.
+      Reference   G      8  Mobile   C     12 
+   Warning==> Ignored reference atom  N2  not found in mobile.
+      Reference   G      8  Mobile   C     12 
+   Warning==> Ignored reference atom  N4  not found in mobile.
+      Reference   C     12  Mobile   U     16 
+   Warning==> Ignored reference atom  O6  not found in mobile.
+      Reference   G     16  Mobile   A     20 
+   Warning==> Ignored reference atom  N2  not found in mobile.
+      Reference   G     16  Mobile   A     20 
+   Warning==> Ignored reference atom  N9  not found in mobile.
+      Reference   G     17  Mobile   C     21 
+   Warning==> Ignored reference atom  C8  not found in mobile.
+      Reference   G     17  Mobile   C     21 
+   Warning==> Ignored reference atom  N7  not found in mobile.
+      Reference   G     17  Mobile   C     21 
+   Warning==> Ignored reference atom  O6  not found in mobile.
+      Reference   G     17  Mobile   C     21 
+   Warning==> Ignored reference atom  N2  not found in mobile.
+      Reference   G     17  Mobile   C     21 
+   Warning==> Ignored reference atom  N9  not found in mobile.
+      Reference   G     20  Mobile   U     24 
+   Warning==> Ignored reference atom  C8  not found in mobile.
+      Reference   G     20  Mobile   U     24 
+   Warning==> Ignored reference atom  N7  not found in mobile.
+      Reference   G     20  Mobile   U     24 
+   Warning==> Ignored reference atom  O6  not found in mobile.
+      Reference   G     20  Mobile   U     24 
+   Warning==> Ignored reference atom  N2  not found in mobile.
+      Reference   G     20  Mobile   U     24 
+   Warning==> Ignored reference atom  O2  not found in mobile.
+      Reference   U     23  Mobile   A     27 
+   Warning==> Ignored reference atom  O4  not found in mobile.
+      Reference   U     23  Mobile   A     27 
+   Warning==> Ignored reference atom  O2  not found in mobile.
+      Reference   U     24  Mobile   A     28 
+   Warning==> Ignored reference atom  O4  not found in mobile.
+      Reference   U     24  Mobile   A     28 
+   Warning==> Ignored reference atom  O2  not found in mobile.
+      Reference   U     28  Mobile   A     31 
+   Warning==> Ignored reference atom  O4  not found in mobile.
+      Reference   U     28  Mobile   A     31 
+   Warning==> Ignored reference atom  N9  not found in mobile.
+      Reference   G     32  Mobile   C     35 
+   Warning==> Ignored reference atom  C8  not found in mobile.
+      Reference   G     32  Mobile   C     35 
+   Warning==> Ignored reference atom  N7  not found in mobile.
+      Reference   G     32  Mobile   C     35 
+   Warning==> Ignored reference atom  O6  not found in mobile.
+      Reference   G     32  Mobile   C     35 
+   Warning==> Ignored reference atom  N2  not found in mobile.
+      Reference   G     32  Mobile   C     35 
+   Warning==> Ignored reference atom  O2  not found in mobile.
+      Reference   U     33  Mobile   A     36 
+   Warning==> Ignored reference atom  O4  not found in mobile.
+      Reference   U     33  Mobile   A     36 
+   Warning==> Ignored reference atom  N9  not found in mobile.
+      Reference   A     34  Mobile   C     37 
+   Warning==> Ignored reference atom  C8  not found in mobile.
+      Reference   A     34  Mobile   C     37 
+   Warning==> Ignored reference atom  N7  not found in mobile.
+      Reference   A     34  Mobile   C     37 
+   Warning==> Ignored reference atom  N6  not found in mobile.
+      Reference   A     34  Mobile   C     37 
+   Warning==> Ignored reference atom  O2  not found in mobile.
+      Reference   C     40  Mobile   G     43 
+   Warning==> Ignored reference atom  N4  not found in mobile.
+      Reference   C     40  Mobile   G     43 
+   Warning==> Ignored reference atom  N9  not found in mobile.
+      Reference   A     47  Mobile   U     50 
+   Warning==> Ignored reference atom  C8  not found in mobile.
+      Reference   A     47  Mobile   U     50 
+   Warning==> Ignored reference atom  N7  not found in mobile.
+      Reference   A     47  Mobile   U     50 
+   Warning==> Ignored reference atom  N6  not found in mobile.
+      Reference   A     47  Mobile   U     50 
+   Warning==> Ignored reference atom  O2  not found in mobile.
+      Reference   C     48  Mobile   G     51 
+   Warning==> Ignored reference atom  N4  not found in mobile.
+      Reference   C     48  Mobile   G     51 
+   Warning==> Ignored reference atom  N9  not found in mobile.
+      Reference   A     51  Mobile   U     54 
+   Warning==> Ignored reference atom  C8  not found in mobile.
+      Reference   A     51  Mobile   U     54 
+   Warning==> Ignored reference atom  N7  not found in mobile.
+      Reference   A     51  Mobile   U     54 
+   Warning==> Ignored reference atom  N6  not found in mobile.
+      Reference   A     51  Mobile   U     54 
+   Warning==> Ignored reference atom  N9  not found in mobile.
+      Reference   A     52  Mobile   C     55 
+   Warning==> Ignored reference atom  C8  not found in mobile.
+      Reference   A     52  Mobile   C     55 
+   Warning==> Ignored reference atom  N7  not found in mobile.
+      Reference   A     52  Mobile   C     55 
+   Warning==> Ignored reference atom  N6  not found in mobile.
+      Reference   A     52  Mobile   C     55 
+   Warning==> Ignored reference atom  N9  not found in mobile.
+      Reference   A     54  Mobile   U     57 
+   Warning==> Ignored reference atom  C8  not found in mobile.
+      Reference   A     54  Mobile   U     57 
+   Warning==> Ignored reference atom  N7  not found in mobile.
+      Reference   A     54  Mobile   U     57 
+   Warning==> Ignored reference atom  N6  not found in mobile.
+      Reference   A     54  Mobile   U     57 
+   Warning==> Ignored reference atom  O2  not found in mobile.
+      Reference   U     55  Mobile   G     58 
+   Warning==> Ignored reference atom  O4  not found in mobile.
+      Reference   U     55  Mobile   G     58 
+   Warning==> Ignored reference atom  O6  not found in mobile.
+      Reference   G     58  Mobile   A     61 
+   Warning==> Ignored reference atom  N2  not found in mobile.
+      Reference   G     58  Mobile   A     61 
+   Warning==> Ignored reference atom  O2  not found in mobile.
+      Reference   C     60  Mobile   A     63 
+   Warning==> Ignored reference atom  N4  not found in mobile.
+      Reference   C     60  Mobile   A     63 
+   Warning==> Ignored reference atom  O2  not found in mobile.
+      Reference   C     63  Mobile   G     66 
+   Warning==> Ignored reference atom  N4  not found in mobile.
+      Reference   C     63  Mobile   G     66 
+   Warning==> Ignored reference atom  N9  not found in mobile.
+      Reference   G     73  Mobile   C     73 
+   Warning==> Ignored reference atom  C8  not found in mobile.
+      Reference   G     73  Mobile   C     73 
+   Warning==> Ignored reference atom  N7  not found in mobile.
+      Reference   G     73  Mobile   C     73 
+   Warning==> Ignored reference atom  O6  not found in mobile.
+      Reference   G     73  Mobile   C     73 
+   Warning==> Ignored reference atom  N2  not found in mobile.
+      Reference   G     73  Mobile   C     73 
+   Warning==> Ignored reference atom  O6  not found in mobile.
+      Reference   G     74  Mobile   A     74 
+   Warning==> Ignored reference atom  N2  not found in mobile.
+      Reference   G     74  Mobile   A     74 
+   Warning==> Ignored reference atom  O6  not found in mobile.
+      Reference   G     75  Mobile   A     75 
+   Warning==> Ignored reference atom  N2  not found in mobile.
+      Reference   G     75  Mobile   A     75 
+   Warning==> Ignored reference atom  N9  not found in mobile.
+      Reference   G     76  Mobile   U     76 
+   Warning==> Ignored reference atom  C8  not found in mobile.
+      Reference   G     76  Mobile   U     76 
+   Warning==> Ignored reference atom  N7  not found in mobile.
+      Reference   G     76  Mobile   U     76 
+   Warning==> Ignored reference atom  O6  not found in mobile.
+      Reference   G     76  Mobile   U     76 
+   Warning==> Ignored reference atom  N2  not found in mobile.
+      Reference   G     76  Mobile   U     76 
+   Warning==> Ignored reference atom  N6  not found in mobile.
+      Reference   A     77  Mobile   G     77 
+   Warning==> Ignored reference atom  O6  not found in mobile.
+      Reference   G     78  Mobile   A     78 
+   Warning==> Ignored reference atom  N2  not found in mobile.
+      Reference   G     78  Mobile   A     78 
+   Warning==> Ignored reference atom  N9  not found in mobile.
+      Reference   G     83  Mobile   C     83 
+   Warning==> Ignored reference atom  C8  not found in mobile.
+      Reference   G     83  Mobile   C     83 
+   Warning==> Ignored reference atom  N7  not found in mobile.
+      Reference   G     83  Mobile   C     83 
+   Warning==> Ignored reference atom  O6  not found in mobile.
+      Reference   G     83  Mobile   C     83 
+   Warning==> Ignored reference atom  N2  not found in mobile.
+      Reference   G     83  Mobile   C     83 
+   Warning==> Ignored reference atom  O2  not found in mobile.
+      Reference   U     87  Mobile   A     86 
+   Warning==> Ignored reference atom  O4  not found in mobile.
+      Reference   U     87  Mobile   A     86 
+   Warning==> Ignored reference atom  N9  not found in mobile.
+      Reference   G     88  Mobile   C     87 
+   Warning==> Ignored reference atom  C8  not found in mobile.
+      Reference   G     88  Mobile   C     87 
+   Warning==> Ignored reference atom  N7  not found in mobile.
+      Reference   G     88  Mobile   C     87 
+   Warning==> Ignored reference atom  O6  not found in mobile.
+      Reference   G     88  Mobile   C     87 
+   Warning==> Ignored reference atom  N2  not found in mobile.
+      Reference   G     88  Mobile   C     87 
+   Warning==> Ignored reference atom  O2  not found in mobile.
+      Reference   C     95  Mobile   G     93 
+   Warning==> Ignored reference atom  N4  not found in mobile.
+      Reference   C     95  Mobile   G     93 
+   Warning==> Ignored reference atom  O2  not found in mobile.
+      Reference   C     96  Mobile   G     94 
+   Warning==> Ignored reference atom  N4  not found in mobile.
+      Reference   C     96  Mobile   G     94 
+   Warning==> Ignored reference atom  O4  not found in mobile.
+      Reference   U     99  Mobile   C     97 
+   Warning==> Ignored reference atom  N9  not found in mobile.
+      Reference   G    100  Mobile   C     98 
+   Warning==> Ignored reference atom  C8  not found in mobile.
+      Reference   G    100  Mobile   C     98 
+   Warning==> Ignored reference atom  N7  not found in mobile.
+      Reference   G    100  Mobile   C     98 
+   Warning==> Ignored reference atom  O6  not found in mobile.
+      Reference   G    100  Mobile   C     98 
+   Warning==> Ignored reference atom  N2  not found in mobile.
+      Reference   G    100  Mobile   C     98 
+   Warning==> Ignored reference atom  O2  not found in mobile.
+      Reference   C    106  Mobile   A    104 
+   Warning==> Ignored reference atom  N4  not found in mobile.
+      Reference   C    106  Mobile   A    104 
+   Warning==> Ignored reference atom  O2  not found in mobile.
+      Reference   C    107  Mobile   G    105 
+   Warning==> Ignored reference atom  N4  not found in mobile.
+      Reference   C    107  Mobile   G    105 
+   Warning==> Ignored reference atom  N4  not found in mobile.
+      Reference   C    108  Mobile   U    106 
+   Warning==> Ignored reference atom  N9  not found in mobile.
+      Reference   G    109  Mobile   C    107 
+   Warning==> Ignored reference atom  C8  not found in mobile.
+      Reference   G    109  Mobile   C    107 
+   Warning==> Ignored reference atom  N7  not found in mobile.
+      Reference   G    109  Mobile   C    107 
+   Warning==> Ignored reference atom  O6  not found in mobile.
+      Reference   G    109  Mobile   C    107 
+   Warning==> Ignored reference atom  N2  not found in mobile.
+      Reference   G    109  Mobile   C    107 
+   Warning==> Ignored reference atom  O2  not found in mobile.
+      Reference   U    111  Mobile   G    109 
+   Warning==> Ignored reference atom  O4  not found in mobile.
+      Reference   U    111  Mobile   G    109 
+   Warning==> Ignored reference atom  O6  not found in mobile.
+      Reference   G    114  Mobile   A    112 
+   Warning==> Ignored reference atom  N2  not found in mobile.
+      Reference   G    114  Mobile   A    112 
+   Warning==> Ignored reference atom  O2  not found in mobile.
+      Reference   C    115  Mobile   G    113 
+   Warning==> Ignored reference atom  N4  not found in mobile.
+      Reference   C    115  Mobile   G    113 
+   Warning==> Ignored reference atom  O2  not found in mobile.
+      Reference   C    119  Mobile   G    117 
+   Warning==> Ignored reference atom  N4  not found in mobile.
+      Reference   C    119  Mobile   G    117 
+   Warning==> Ignored reference atom  N6  not found in mobile.
+      Reference   A    120  Mobile   G    118 
+   Warning==> Ignored reference atom  O2  not found in mobile.
+      Reference   C    121  Mobile   G    119 
+   Warning==> Ignored reference atom  N4  not found in mobile.
+      Reference   C    121  Mobile   G    119 
+   Warning==> Ignored reference atom  O2  not found in mobile.
+      Reference   C    122  Mobile   G    120 
+   Warning==> Ignored reference atom  N4  not found in mobile.
+      Reference   C    122  Mobile   G    120 
+   RMS: 4.698

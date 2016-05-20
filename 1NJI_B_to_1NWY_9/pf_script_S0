@@ -1,0 +1,8 @@
+reference /home/watchlee/Research_Programming/RMSD/pdb/1NJI_B.pdb
+mobile /home/watchlee/Research_Programming/RMSD/pdb/1NWY_9.pdb
+readalignment alignment_main/23-4L_matrix-O9E1-SARA_FSCOR_23C_4L_result-semiG.job/1NJI_B_to_1NWY_9/ori_ali_seq.pir0
+atoms *
+ignoremissing
+fit
+residue
+quit

@@ -1,0 +1,10 @@
+<?php
+$seq1="AABABAQADJFCBAKRGMOSAIDFGABBBACDJFAACAAABBAMSDVPBABACCJFGJMFBABBABABBAHKLHH";
+$arc1="...........................................................................";
+$seq2="GGABBBMEMJACBBDMQNPMDKABAAAABAAGCDJBCACBAAABAAEXKPBCBBADJARJMFBBABCBBAABCQCGG";
+$arc2=".............................................................................";
+$matfile="./SM/BLOSUM-like_scoring_matrix";
+$opp="0";
+$exp="-1";
+$suboptimal="1";
+?>
