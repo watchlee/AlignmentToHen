@@ -1,0 +1,10 @@
+<?php
+$seq1="]]MuuZzwZcKqMuXuu'uuv2@@wXZ(gXZu.OXXXB>plZ7OCZAXuxGOuA.OBwXXXAYZE8Xu''XXwuu6W")CX(uuAv]&XwruJuXX'X'wuvEACXXXwu)'eyXXuXXCZZ";
+$arc1="..........................................................................................................................";
+$seq2="ZZZlZu)vZgdK]TuZAX'u'w1OCXXCZXZXFlZZXF>~gX0OOZ(uwv(Zu'0ACAZAZBwZE8ZuZXCF)wA'CX(ZuuCcZ6nA3wv)XZXvwBADAu'Zwu*eEugvZuuuww";
+$arc2="......................................................................................................................";
+$matfile="SM/23-4L_matrix";
+$opp="0";
+$exp="-1";
+$suboptimal="1";
+?>

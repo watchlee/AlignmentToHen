@@ -1,0 +1,24 @@
+
+                  PPPPP                FFFFFF ii   tt
+                  PP  PP               FF          tt
+                  PP  PP rrrrr   oooo  FF     ii  ttttt
+                  PPPPP  rr  rr oo  oo FFFF   ii   tt
+                  PP     rr     oo  oo FF     ii   tt
+                  PP     rr     oo  oo FF     ii   tt
+                  PP     rr      oooo  FF      ii   ttt
+
+                      Protein Least Squares Fitting
+
+                               Version 2.5.3
+
+      Copyright (c) Dr. Andrew C.R. Martin, SciTech Software 1992-2006
+
+   Reading reference structure...
+   Warning==> Reference protein contains insertions.
+   Reading mobile structure...
+   Fitting structures...
+   Warning==> Ignored reference atom  P   not found in mobile.
+      Reference   U   1542  Mobile   U     10 
+   Error==> Fewer than 3 points to fit
+   Warning==> Structures have not yet been fitted.
+   Warning==> Structures have not yet been fitted.

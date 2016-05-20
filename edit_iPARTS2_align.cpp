@@ -125,12 +125,15 @@ vector<vector<double> > D;
 const double eps=0.0000001;
 static int **scoring_matrix;
 
-double w_d =9;  // base deletion
+
+const double k = 1;
+const double l = 1;
+double w_d =1* 9 ;  // base deletion
 //double w_r =2.0;  // arc  removing
 //double w_b =1.5;  // arc  breaking
-double w_r =9.0;  // arc  removing
-double w_b =9.0;  // arc  breaking
-double w_am=1.8;  // arc  mismatch
+double w_r =2.0* k ;  // arc  removing
+double w_b =1.5*k;  // arc  breaking
+double w_am=1.8*l;  // arc  mismatch
 double w_aa=0;     // arc  match
 double w_m=1; //base mismatch
 
@@ -148,8 +151,6 @@ int not_free2    (int pos)          { return (arc2[pos]=='.' ? 0:1)      ;  }
 int arc_mismatch(int pos1,int pos2){ return (seq1[pos1]!=seq2[pos2]?1:0);  }
 int base_matching(int,int);
 
-static double k = 2;
-static double l= 0.1;
 double arc_operation(int p1,int p2,int p3,int p4)
 {
     
@@ -314,7 +315,9 @@ void write_data(double score,const char *path)
     //file<<"$result_list[0][\"seq1\"] = \""<<astr1<<"\";"<<endl;
     //cout<<astr1<<endl;
     file<<"$result_list[0][\"seq1\"] = \""<<aseq1<<"\";"<<endl;
+    file<<"$result_list[0][\"arc1\"] = \""<<astr1<<"\";"<<endl;
     file<<"$result_list[0][\"seq2\"] = \""<<aseq2<<"\";"<<endl;
+    file<<"$result_list[0][\"arc2\"] = \""<<astr2<<"\";"<<endl;
     file<<"$result_list[0][\"start1\"] = \"0\";"<<endl;
     file<<"$result_list[0][\"start2\"] = \"0\";"<<endl;
     file<<"$result_list[0][\"end1\"] = \""<<seq1.size()-1<<"\";"<<endl;

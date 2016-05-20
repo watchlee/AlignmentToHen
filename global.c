@@ -35,7 +35,6 @@
 /************************************************************************/
 /*-------------------------Setting Variable-------------------------------*/
 static int input_length;
-FILE *input_file;
 char* seq1;
 char* seq2;
 char* matfile;
@@ -77,22 +76,19 @@ int main(int argc,char* argv[])
     char *file = (char*)malloc(strlen(prefix)*sizeof(char));
     strcpy(file,prefix);
     strcat(file,"input.php");
-
     input_function(file);
-    fclose(input_file);
     
     return 0;
 }
 
 void input_function(char *path)
 {
-    input_file = fopen(path,"r");
+    FILE *input_file = fopen(path,"r");
     if(input_file==NULL)
     {
         printf("where is input file?\n");
         exit(-1);
     }
-
     char *temp=(char*)malloc(100*sizeof(char));
 //    char *temp;
     /*In any case, I decide to choice dynamic allocate memory,but not done yet! */
@@ -268,6 +264,7 @@ void input_function(char *path)
     free(temp_string);
     free(row_array);
     free(column_array);
+    free(input_file);
 }
 
 int max_compare_function(int first_data,int second_data)

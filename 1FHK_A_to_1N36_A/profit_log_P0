@@ -1,0 +1,33 @@
+
+                  PPPPP                FFFFFF ii   tt
+                  PP  PP               FF          tt
+                  PP  PP rrrrr   oooo  FF     ii  ttttt
+                  PPPPP  rr  rr oo  oo FFFF   ii   tt
+                  PP     rr     oo  oo FF     ii   tt
+                  PP     rr     oo  oo FF     ii   tt
+                  PP     rr      oooo  FF      ii   ttt
+
+                      Protein Least Squares Fitting
+
+                               Version 2.5.3
+
+      Copyright (c) Dr. Andrew C.R. Martin, SciTech Software 1992-2006
+
+   Reading reference structure...
+   Reading mobile structure...
+   Warning==> Mobile protein contains insertions.
+   Fitting structures...
+   RMS: 1.173
+     A2    G  :    A688    G    RMS: 1.754
+     A3    C  :    A689    C    RMS: 1.364
+     A4    G  :    A690    G    RMS: 0.963
+     A5    G  :    A691    G    RMS: 0.212
+     A6    U  :    A692    U    RMS: 1.121
+     A7    G  :    A693    G    RMS: 0.458
+     A8    A  :    A694    A    RMS: 1.058
+     A9    A  :    A695    A    RMS: 0.695
+    A10    A  :    A696    A    RMS: 1.571
+    A11    U  :    A697    U    RMS: 1.779
+    A12    G  :    A698    G    RMS: 0.321
+    A13    C  :    A699    C    RMS: 0.688
+    A14    C  :    A700    G    RMS: 1.647

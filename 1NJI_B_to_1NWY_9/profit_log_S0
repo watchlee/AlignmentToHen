@@ -1,0 +1,411 @@
+
+                  PPPPP                FFFFFF ii   tt
+                  PP  PP               FF          tt
+                  PP  PP rrrrr   oooo  FF     ii  ttttt
+                  PPPPP  rr  rr oo  oo FFFF   ii   tt
+                  PP     rr     oo  oo FF     ii   tt
+                  PP     rr     oo  oo FF     ii   tt
+                  PP     rr      oooo  FF      ii   ttt
+
+                      Protein Least Squares Fitting
+
+                               Version 2.5.3
+
+      Copyright (c) Dr. Andrew C.R. Martin, SciTech Software 1992-2006
+
+   Reading reference structure...
+   Reading mobile structure...
+   Warning==> Mobile set contains multiple occupancy atoms.
+              Only the first atom will be considered.
+   Fitting structures...
+   Warning==> Ignored reference atom  O4  not found in mobile.
+      Reference   U   3001  Mobile   C      5 
+   Warning==> Ignored reference atom  O4  not found in mobile.
+      Reference   U   3002  Mobile   C      6 
+   Warning==> Ignored reference atom  N9  not found in mobile.
+      Reference   A   3003  Mobile   C      7 
+   Warning==> Ignored reference atom  C8  not found in mobile.
+      Reference   A   3003  Mobile   C      7 
+   Warning==> Ignored reference atom  N7  not found in mobile.
+      Reference   A   3003  Mobile   C      7 
+   Warning==> Ignored reference atom  N6  not found in mobile.
+      Reference   A   3003  Mobile   C      7 
+   Warning==> Ignored reference atom  N9  not found in mobile.
+      Reference   G   3004  Mobile   C      8 
+   Warning==> Ignored reference atom  C8  not found in mobile.
+      Reference   G   3004  Mobile   C      8 
+   Warning==> Ignored reference atom  N7  not found in mobile.
+      Reference   G   3004  Mobile   C      8 
+   Warning==> Ignored reference atom  O6  not found in mobile.
+      Reference   G   3004  Mobile   C      8 
+   Warning==> Ignored reference atom  N2  not found in mobile.
+      Reference   G   3004  Mobile   C      8 
+   Warning==> Ignored reference atom  N4  not found in mobile.
+      Reference   C   3006  Mobile   U     10 
+   Warning==> Ignored reference atom  N9  not found in mobile.
+      Reference   G   3008  Mobile   C     12 
+   Warning==> Ignored reference atom  C8  not found in mobile.
+      Reference   G   3008  Mobile   C     12 
+   Warning==> Ignored reference atom  N7  not found in mobile.
+      Reference   G   3008  Mobile   C     12 
+   Warning==> Ignored reference atom  O6  not found in mobile.
+      Reference   G   3008  Mobile   C     12 
+   Warning==> Ignored reference atom  N2  not found in mobile.
+      Reference   G   3008  Mobile   C     12 
+   Warning==> Ignored reference atom  N4  not found in mobile.
+      Reference   C   3012  Mobile   U     16 
+   Warning==> Ignored reference atom  O6  not found in mobile.
+      Reference   G   3016  Mobile   A     20 
+   Warning==> Ignored reference atom  N2  not found in mobile.
+      Reference   G   3016  Mobile   A     20 
+   Warning==> Ignored reference atom  N9  not found in mobile.
+      Reference   G   3017  Mobile   C     21 
+   Warning==> Ignored reference atom  C8  not found in mobile.
+      Reference   G   3017  Mobile   C     21 
+   Warning==> Ignored reference atom  N7  not found in mobile.
+      Reference   G   3017  Mobile   C     21 
+   Warning==> Ignored reference atom  O6  not found in mobile.
+      Reference   G   3017  Mobile   C     21 
+   Warning==> Ignored reference atom  N2  not found in mobile.
+      Reference   G   3017  Mobile   C     21 
+   Warning==> Ignored reference atom  N9  not found in mobile.
+      Reference   G   3020  Mobile   U     24 
+   Warning==> Ignored reference atom  C8  not found in mobile.
+      Reference   G   3020  Mobile   U     24 
+   Warning==> Ignored reference atom  N7  not found in mobile.
+      Reference   G   3020  Mobile   U     24 
+   Warning==> Ignored reference atom  O6  not found in mobile.
+      Reference   G   3020  Mobile   U     24 
+   Warning==> Ignored reference atom  N2  not found in mobile.
+      Reference   G   3020  Mobile   U     24 
+   Warning==> Ignored reference atom  O2  not found in mobile.
+      Reference   U   3023  Mobile   A     27 
+   Warning==> Ignored reference atom  O4  not found in mobile.
+      Reference   U   3023  Mobile   A     27 
+   Warning==> Ignored reference atom  O2  not found in mobile.
+      Reference   U   3024  Mobile   A     28 
+   Warning==> Ignored reference atom  O4  not found in mobile.
+      Reference   U   3024  Mobile   A     28 
+   Warning==> Ignored reference atom  O2  not found in mobile.
+      Reference   U   3028  Mobile   A     31 
+   Warning==> Ignored reference atom  O4  not found in mobile.
+      Reference   U   3028  Mobile   A     31 
+   Warning==> Ignored reference atom  N9  not found in mobile.
+      Reference   G   3032  Mobile   C     35 
+   Warning==> Ignored reference atom  C8  not found in mobile.
+      Reference   G   3032  Mobile   C     35 
+   Warning==> Ignored reference atom  N7  not found in mobile.
+      Reference   G   3032  Mobile   C     35 
+   Warning==> Ignored reference atom  O6  not found in mobile.
+      Reference   G   3032  Mobile   C     35 
+   Warning==> Ignored reference atom  N2  not found in mobile.
+      Reference   G   3032  Mobile   C     35 
+   Warning==> Ignored reference atom  O2  not found in mobile.
+      Reference   U   3033  Mobile   A     36 
+   Warning==> Ignored reference atom  O4  not found in mobile.
+      Reference   U   3033  Mobile   A     36 
+   Warning==> Ignored reference atom  N9  not found in mobile.
+      Reference   A   3034  Mobile   C     37 
+   Warning==> Ignored reference atom  C8  not found in mobile.
+      Reference   A   3034  Mobile   C     37 
+   Warning==> Ignored reference atom  N7  not found in mobile.
+      Reference   A   3034  Mobile   C     37 
+   Warning==> Ignored reference atom  N6  not found in mobile.
+      Reference   A   3034  Mobile   C     37 
+   Warning==> Ignored reference atom  O2  not found in mobile.
+      Reference   C   3040  Mobile   G     43 
+   Warning==> Ignored reference atom  N4  not found in mobile.
+      Reference   C   3040  Mobile   G     43 
+   Warning==> Ignored reference atom  N9  not found in mobile.
+      Reference   A   3047  Mobile   U     50 
+   Warning==> Ignored reference atom  C8  not found in mobile.
+      Reference   A   3047  Mobile   U     50 
+   Warning==> Ignored reference atom  N7  not found in mobile.
+      Reference   A   3047  Mobile   U     50 
+   Warning==> Ignored reference atom  N6  not found in mobile.
+      Reference   A   3047  Mobile   U     50 
+   Warning==> Ignored reference atom  O2  not found in mobile.
+      Reference   C   3048  Mobile   G     51 
+   Warning==> Ignored reference atom  N4  not found in mobile.
+      Reference   C   3048  Mobile   G     51 
+   Warning==> Ignored reference atom  N9  not found in mobile.
+      Reference   A   3051  Mobile   U     54 
+   Warning==> Ignored reference atom  C8  not found in mobile.
+      Reference   A   3051  Mobile   U     54 
+   Warning==> Ignored reference atom  N7  not found in mobile.
+      Reference   A   3051  Mobile   U     54 
+   Warning==> Ignored reference atom  N6  not found in mobile.
+      Reference   A   3051  Mobile   U     54 
+   Warning==> Ignored reference atom  N9  not found in mobile.
+      Reference   A   3052  Mobile   C     55 
+   Warning==> Ignored reference atom  C8  not found in mobile.
+      Reference   A   3052  Mobile   C     55 
+   Warning==> Ignored reference atom  N7  not found in mobile.
+      Reference   A   3052  Mobile   C     55 
+   Warning==> Ignored reference atom  N6  not found in mobile.
+      Reference   A   3052  Mobile   C     55 
+   Warning==> Ignored reference atom  N9  not found in mobile.
+      Reference   A   3054  Mobile   U     57 
+   Warning==> Ignored reference atom  C8  not found in mobile.
+      Reference   A   3054  Mobile   U     57 
+   Warning==> Ignored reference atom  N7  not found in mobile.
+      Reference   A   3054  Mobile   U     57 
+   Warning==> Ignored reference atom  N6  not found in mobile.
+      Reference   A   3054  Mobile   U     57 
+   Warning==> Ignored reference atom  O2  not found in mobile.
+      Reference   U   3055  Mobile   G     58 
+   Warning==> Ignored reference atom  O4  not found in mobile.
+      Reference   U   3055  Mobile   G     58 
+   Warning==> Ignored reference atom  O6  not found in mobile.
+      Reference   G   3058  Mobile   A     61 
+   Warning==> Ignored reference atom  N2  not found in mobile.
+      Reference   G   3058  Mobile   A     61 
+   Warning==> Ignored reference atom  O2  not found in mobile.
+      Reference   C   3060  Mobile   A     63 
+   Warning==> Ignored reference atom  N4  not found in mobile.
+      Reference   C   3060  Mobile   A     63 
+   Warning==> Ignored reference atom  O2  not found in mobile.
+      Reference   C   3063  Mobile   G     66 
+   Warning==> Ignored reference atom  N4  not found in mobile.
+      Reference   C   3063  Mobile   G     66 
+   Warning==> Ignored reference atom  N9  not found in mobile.
+      Reference   G   3073  Mobile   C     73 
+   Warning==> Ignored reference atom  C8  not found in mobile.
+      Reference   G   3073  Mobile   C     73 
+   Warning==> Ignored reference atom  N7  not found in mobile.
+      Reference   G   3073  Mobile   C     73 
+   Warning==> Ignored reference atom  O6  not found in mobile.
+      Reference   G   3073  Mobile   C     73 
+   Warning==> Ignored reference atom  N2  not found in mobile.
+      Reference   G   3073  Mobile   C     73 
+   Warning==> Ignored reference atom  O6  not found in mobile.
+      Reference   G   3074  Mobile   A     74 
+   Warning==> Ignored reference atom  N2  not found in mobile.
+      Reference   G   3074  Mobile   A     74 
+   Warning==> Ignored reference atom  O6  not found in mobile.
+      Reference   G   3075  Mobile   A     75 
+   Warning==> Ignored reference atom  N2  not found in mobile.
+      Reference   G   3075  Mobile   A     75 
+   Warning==> Ignored reference atom  N9  not found in mobile.
+      Reference   G   3076  Mobile   U     76 
+   Warning==> Ignored reference atom  C8  not found in mobile.
+      Reference   G   3076  Mobile   U     76 
+   Warning==> Ignored reference atom  N7  not found in mobile.
+      Reference   G   3076  Mobile   U     76 
+   Warning==> Ignored reference atom  O6  not found in mobile.
+      Reference   G   3076  Mobile   U     76 
+   Warning==> Ignored reference atom  N2  not found in mobile.
+      Reference   G   3076  Mobile   U     76 
+   Warning==> Ignored reference atom  N6  not found in mobile.
+      Reference   A   3077  Mobile   G     77 
+   Warning==> Ignored reference atom  O6  not found in mobile.
+      Reference   G   3078  Mobile   A     78 
+   Warning==> Ignored reference atom  N2  not found in mobile.
+      Reference   G   3078  Mobile   A     78 
+   Warning==> Ignored reference atom  N9  not found in mobile.
+      Reference   G   3083  Mobile   C     83 
+   Warning==> Ignored reference atom  C8  not found in mobile.
+      Reference   G   3083  Mobile   C     83 
+   Warning==> Ignored reference atom  N7  not found in mobile.
+      Reference   G   3083  Mobile   C     83 
+   Warning==> Ignored reference atom  O6  not found in mobile.
+      Reference   G   3083  Mobile   C     83 
+   Warning==> Ignored reference atom  N2  not found in mobile.
+      Reference   G   3083  Mobile   C     83 
+   Warning==> Ignored reference atom  O2  not found in mobile.
+      Reference   U   3087  Mobile   A     86 
+   Warning==> Ignored reference atom  O4  not found in mobile.
+      Reference   U   3087  Mobile   A     86 
+   Warning==> Ignored reference atom  N9  not found in mobile.
+      Reference   G   3088  Mobile   C     87 
+   Warning==> Ignored reference atom  C8  not found in mobile.
+      Reference   G   3088  Mobile   C     87 
+   Warning==> Ignored reference atom  N7  not found in mobile.
+      Reference   G   3088  Mobile   C     87 
+   Warning==> Ignored reference atom  O6  not found in mobile.
+      Reference   G   3088  Mobile   C     87 
+   Warning==> Ignored reference atom  N2  not found in mobile.
+      Reference   G   3088  Mobile   C     87 
+   Warning==> Ignored reference atom  O2  not found in mobile.
+      Reference   C   3095  Mobile   G     93 
+   Warning==> Ignored reference atom  N4  not found in mobile.
+      Reference   C   3095  Mobile   G     93 
+   Warning==> Ignored reference atom  O2  not found in mobile.
+      Reference   C   3096  Mobile   G     94 
+   Warning==> Ignored reference atom  N4  not found in mobile.
+      Reference   C   3096  Mobile   G     94 
+   Warning==> Ignored reference atom  O4  not found in mobile.
+      Reference   U   3099  Mobile   C     97 
+   Warning==> Ignored reference atom  N9  not found in mobile.
+      Reference   G   3100  Mobile   C     98 
+   Warning==> Ignored reference atom  C8  not found in mobile.
+      Reference   G   3100  Mobile   C     98 
+   Warning==> Ignored reference atom  N7  not found in mobile.
+      Reference   G   3100  Mobile   C     98 
+   Warning==> Ignored reference atom  O6  not found in mobile.
+      Reference   G   3100  Mobile   C     98 
+   Warning==> Ignored reference atom  N2  not found in mobile.
+      Reference   G   3100  Mobile   C     98 
+   Warning==> Ignored reference atom  O2  not found in mobile.
+      Reference   C   3106  Mobile   A    104 
+   Warning==> Ignored reference atom  N4  not found in mobile.
+      Reference   C   3106  Mobile   A    104 
+   Warning==> Ignored reference atom  O2  not found in mobile.
+      Reference   C   3107  Mobile   G    105 
+   Warning==> Ignored reference atom  N4  not found in mobile.
+      Reference   C   3107  Mobile   G    105 
+   Warning==> Ignored reference atom  N4  not found in mobile.
+      Reference   C   3108  Mobile   U    106 
+   Warning==> Ignored reference atom  N9  not found in mobile.
+      Reference   G   3109  Mobile   C    107 
+   Warning==> Ignored reference atom  C8  not found in mobile.
+      Reference   G   3109  Mobile   C    107 
+   Warning==> Ignored reference atom  N7  not found in mobile.
+      Reference   G   3109  Mobile   C    107 
+   Warning==> Ignored reference atom  O6  not found in mobile.
+      Reference   G   3109  Mobile   C    107 
+   Warning==> Ignored reference atom  N2  not found in mobile.
+      Reference   G   3109  Mobile   C    107 
+   Warning==> Ignored reference atom  O2  not found in mobile.
+      Reference   U   3111  Mobile   G    109 
+   Warning==> Ignored reference atom  O4  not found in mobile.
+      Reference   U   3111  Mobile   G    109 
+   Warning==> Ignored reference atom  O6  not found in mobile.
+      Reference   G   3114  Mobile   A    112 
+   Warning==> Ignored reference atom  N2  not found in mobile.
+      Reference   G   3114  Mobile   A    112 
+   Warning==> Ignored reference atom  O2  not found in mobile.
+      Reference   C   3115  Mobile   G    113 
+   Warning==> Ignored reference atom  N4  not found in mobile.
+      Reference   C   3115  Mobile   G    113 
+   Warning==> Ignored reference atom  O2  not found in mobile.
+      Reference   C   3119  Mobile   G    117 
+   Warning==> Ignored reference atom  N4  not found in mobile.
+      Reference   C   3119  Mobile   G    117 
+   Warning==> Ignored reference atom  N6  not found in mobile.
+      Reference   A   3120  Mobile   G    118 
+   Warning==> Ignored reference atom  O2  not found in mobile.
+      Reference   C   3121  Mobile   G    119 
+   Warning==> Ignored reference atom  N4  not found in mobile.
+      Reference   C   3121  Mobile   G    119 
+   Warning==> Ignored reference atom  O2  not found in mobile.
+      Reference   C   3122  Mobile   G    120 
+   Warning==> Ignored reference atom  N4  not found in mobile.
+      Reference   C   3122  Mobile   G    120 
+   RMS: 4.694
+  B3001    U  :      95    C    RMS: 8.406
+  B3002    U  :      96    C    RMS: 5.616
+  B3003    A  :      97    C    RMS: 5.807
+  B3004    G  :      98    C    RMS: 1.861
+  B3005    G  :      99    G    RMS: 1.614
+  B3006    C  :     910    U    RMS: 2.206
+  B3007    G  :     911    G    RMS: 3.441
+  B3008    G  :     912    C    RMS: 3.131
+  B3009    C  :     913    C    RMS: 2.616
+  B3010    C  :     914    C    RMS: 3.560
+  B3011    A  :     915    A    RMS: 2.660
+  B3012    C  :     916    U    RMS: 3.286
+  B3013    A  :     917    A    RMS: 3.509
+  B3014    G  :     918    G    RMS: 2.959
+  B3015    C  :     919    C    RMS: 2.746
+  B3016    G  :     920    A    RMS: 1.821
+  B3017    G  :     921    C    RMS: 2.095
+  B3018    U  :     922    U    RMS: 1.419
+  B3019    G  :     923    G    RMS: 1.325
+  B3020    G  :     924    U    RMS: 1.879
+  B3021    G  :     925    G    RMS: 1.085
+  B3022    G  :     926    G    RMS: 1.919
+  B3023    U  :     927    A    RMS: 5.491
+  B3024    U  :     928    A    RMS: 6.256
+  B3026    C  :     929    C    RMS: 2.029
+  B3027    C  :     930    C    RMS: 1.419
+  B3028    U  :     931    A    RMS: 2.190
+  B3029    C  :     932    C    RMS: 1.010
+  B3030    C  :     933    C    RMS: 1.789
+  B3031    C  :     934    C    RMS: 2.261
+  B3032    G  :     935    C    RMS: 2.564
+  B3033    U  :     936    A    RMS: 2.343
+  B3034    A  :     937    C    RMS: 6.481
+  B3035    C  :     938    C    RMS: 5.332
+  B3036    C  :     939    C    RMS: 3.605
+  B3037    C  :     940    C    RMS: 2.493
+  B3038    A  :     941    A    RMS: 3.078
+  B3039    U  :     942    U    RMS: 3.723
+  B3040    C  :     943    G    RMS: 4.367
+  B3041    C  :     944    C    RMS: 3.652
+  B3042    C  :     945    C    RMS: 2.416
+  B3043    G  :     946    G    RMS: 2.939
+  B3044    A  :     947    A    RMS: 3.782
+  B3045    A  :     948    A    RMS: 3.331
+  B3046    C  :     949    C    RMS: 2.401
+  B3047    A  :     950    U    RMS: 2.521
+  B3048    C  :     951    G    RMS: 2.301
+  B3049    G  :     952    G    RMS: 0.823
+  B3050    G  :     953    G    RMS: 0.915
+  B3051    A  :     954    U    RMS: 4.446
+  B3052    A  :     955    C    RMS: 2.801
+  B3053    G  :     956    G    RMS: 1.485
+  B3054    A  :     957    U    RMS: 1.871
+  B3055    U  :     958    G    RMS: 2.064
+  B3056    A  :     959    A    RMS: 3.949
+  B3057    A  :     960    A    RMS: 2.738
+  B3058    G  :     961    A    RMS: 2.577
+  B3059    C  :     962    C    RMS: 1.365
+  B3060    C  :     963    A    RMS: 2.033
+  B3061    C  :     964    C    RMS: 1.717
+  B3062    A  :     965    A    RMS: 0.984
+  B3063    C  :     966    G    RMS: 3.330
+  B3064    C  :     967    C    RMS: 2.797
+  B3065    A  :     968    A    RMS: 3.744
+  B3066    G  :     969    G    RMS: 2.111
+  B3067    C  :     970    C    RMS: 2.643
+  B3068    G  :     971    G    RMS: 2.954
+  B3072    C  :     972    C    RMS: 12.895
+  B3073    G  :     973    C    RMS: 13.995
+  B3074    G  :     974    A    RMS: 13.042
+  B3075    G  :     975    A    RMS: 12.292
+  B3076    G  :     976    U    RMS: 12.361
+  B3077    A  :     977    G    RMS: 8.679
+  B3078    G  :     978    A    RMS: 5.942
+  B3079    U  :     979    U    RMS: 2.690
+  B3080    A  :     980    A    RMS: 1.346
+  B3081    C  :     981    C    RMS: 0.974
+  B3082    U  :     982    U    RMS: 0.834
+  B3083    G  :     983    C    RMS: 1.754
+  B3084    G  :     984    G    RMS: 1.308
+  B3086    G  :     985    G    RMS: 5.346
+  B3087    U  :     986    A    RMS: 10.477
+  B3088    G  :     987    C    RMS: 4.814
+  B3089    C  :     988    C    RMS: 3.725
+  B3090    G  :     989    G    RMS: 3.452
+  B3091    C  :     990    C    RMS: 4.777
+  B3093    A  :     991    A    RMS: 3.642
+  B3094    G  :     992    G    RMS: 8.162
+  B3095    C  :     993    G    RMS: 7.052
+  B3096    C  :     994    G    RMS: 7.436
+  B3097    U  :     995    U    RMS: 7.484
+  B3098    C  :     996    C    RMS: 6.729
+  B3099    U  :     997    C    RMS: 6.621
+  B3100    G  :     998    C    RMS: 6.694
+  B3101    G  :     999    G    RMS: 4.922
+  B3102    G  :    9100    G    RMS: 4.887
+  B3103    A  :    9101    A    RMS: 7.609
+  B3104    A  :    9102    A    RMS: 6.272
+  B3105    A  :    9103    A    RMS: 4.731
+  B3106    C  :    9104    A    RMS: 4.997
+  B3107    C  :    9105    G    RMS: 5.261
+  B3108    C  :    9106    U    RMS: 4.682
+  B3109    G  :    9107    C    RMS: 3.715
+  B3110    G  :    9108    G    RMS: 2.405
+  B3111    U  :    9109    G    RMS: 2.403
+  B3112    U  :    9110    U    RMS: 2.410
+  B3113    C  :    9111    C    RMS: 3.495
+  B3114    G  :    9112    A    RMS: 3.074
+  B3115    C  :    9113    G    RMS: 3.337
+  B3116    C  :    9114    C    RMS: 3.631
+  B3117    G  :    9115    G    RMS: 2.967
+  B3118    C  :    9116    C    RMS: 2.866
+  B3119    C  :    9117    G    RMS: 2.685
+  B3120    A  :    9118    G    RMS: 1.466
+  B3121    C  :    9119    G    RMS: 3.061
+  B3122    C  :    9120    G    RMS: 4.678
