@@ -14,6 +14,9 @@
 #include <stack>
 using namespace std;
 
+#define TYPE_STRUCTURE
+#define TYPE2_STRUCTURE
+#define TYPE3_STRUCTURE
 //#define _DEBUG 
 //#define _COM_DEBUG
 
@@ -121,25 +124,19 @@ vector<double> weights;
 vector<int>    L1,R1,I1,L2,R2,I2;
 stack<int>     str_stack;
 vector<vector<double> > M;
+vector<vector<double> > lower;
+vector<vector<double> > upper;
+vector<vector<double> > middle;
+
 vector<vector<double> > D;
 const double eps=0.0000001;
 static int **scoring_matrix;
-
-double w_d =-9;  // base deletion
-//double w_r =2.0;  // arc  removing
-//double w_b =1.5;  // arc  breaking
-double w_r =-18.0;  // arc  removing
-double w_b =-9.0;  // arc  breaking
-double w_am=1.5;  // arc  mismatch
-double w_aa=0;     // arc  match
-double w_m=1; //base mismatch
 
 double s_d,s_aa,s_am,s_breaking,s_altering;
 
 //similarity
 //arc match = 4 * w_a;
 double MSP_alignment_value = 0.0;
-void determine_MAX(double *,double  *);
 
 
 int not_free1    (int pos)          { return (arc1[pos]=='.' ? 0:1)      ;  }
@@ -148,14 +145,34 @@ int not_free2    (int pos)          { return (arc2[pos]=='.' ? 0:1)      ;  }
 int arc_mismatch(int pos1,int pos2){ return (seq1[pos1]!=seq2[pos2]?1:0);  }
 int base_matching(int,int);
 
-static double k = 2;
-static double l= 0.1;
+double k = 2;//arc match 
+double l= 0.1;//arc mismatch
+double m= 1.5;//when one base score >=0 and other base score < 0, m 不能比k大
+
+double number=1;
+
+double w_d =-1*number;  // base deletion
+double w_r =-2*number;  // arc  removing
+double w_b =-1.5*number;  // arc  breaking
+
+double common_opp = 9;
+double common_exp = 1;
+double base_opp = 9;  // base opening gap
+double base_epp = 1;  // base extension gap
+double arc_opp = 18;   // arc opening gap
+double arc_exp = 2;   // arc extension gap_opp
+/*
+double w_am=-1.5;  // arc  mismatch
+double w_aa=0;     // arc  match
+*/
+double w_m=1; //base mismatch
 double arc_operation(int p1,int p2,int p3,int p4)
 {
     
     //當alignment score > = 0 views as arc match
     //if(base_matching(p1,p2)>=0&&base_matching(p3,p4)>=0)
-    if((base_matching(p1,p2)+base_matching(p3,p4))>=0)
+    //when both base score > 0
+    if(base_matching(p1,p2)>=0&&base_matching(p3,p4)>=0)
     {
         //return 0;
         return k*(base_matching(p1,p2)+base_matching(p3,p4));
@@ -163,8 +180,21 @@ double arc_operation(int p1,int p2,int p3,int p4)
     //當alignment score <0 views as arc-mismatch
     else
     {
+        if((base_matching(p1,p2)<0 && base_matching(p3,p4)>=0)||(base_matching(p1,p2)>=0&&base_matching(p3,p4)<0))
+        {
+            if((base_matching(p1,p2)+base_matching(p3,p4))>=0)
+            {
+
+                return (base_matching(p1,p2)+base_matching(p3,p4))*m;
+            } 
+            else
+            {
+                return (base_matching(p1,p2)+base_matching(p3,p4))*(l/2);
+            }
+        }
+        else if(base_matching(p1,p2)<=0 && base_matching(p3,p4)<0)
         //return (base_matching(p1,p2)+base_matching(p3,p4))*0.5*w_am;
-        return (base_matching(p1,p2)+base_matching(p3,p4))*l;
+            return (base_matching(p1,p2)+base_matching(p3,p4))*l;
     }
 }
 
@@ -177,8 +207,9 @@ int** readmat(char *);
 void read_data(const char *);
 void write_data(double,const char *);
 double computation();
+double test_alignment();
+string special_character_processing(string);
 //做一般的global alignment
-double computation_for_sequence_global_ali();
 /*需要寫一個python 去處理input file data*/
 
 /* input format
@@ -191,6 +222,10 @@ double computation_for_sequence_global_ali();
  *
  */
 
+double max(double a,double b)
+{
+    return ((a<b)? b:a);
+}
 double max(double a,double b,double c)
 {
     double value=(a<b)?b:a;
@@ -227,17 +262,28 @@ int main(int argc,char* argv[])
     const char *pdb_compare_path ;
     const char *pdb_result;
     cout<<argc<<endl;
-    if(argc!=3)
+    if(argc!=7)
     {
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/test_data/1A9N_Q_to_1E7K_C/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1M90_B_to_1NKW_9/semi_input.php";
-        pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1IBK_A_to_1N33_A/semi_input.php";
+        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1IBK_A_to_1N33_A/semi_input.php";
+        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1BAU_A_to_1S9S_A/semi_input.php";
+        pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1BAU_A_to_1S9S_A/semi_input.php";
+        //pdb_compare_path= "/home/watchlee/Research_Programming/AlignmentToHen/Test_for_GLOBAL/1IBK_A_to_1N32_A.php";
         pdb_result= "/home/watchlee/result.php";
+        number = 1;
+        k = 2;
+        l = 0.1;
+        m = 1.5;
     }
     else
     {
        pdb_compare_path=argv[1] ;
        pdb_result= argv[2];
+       number = atoi(argv[3]);
+       k = atoi(argv[4]);
+       l = atoi(argv[5]);
+       m = atoi(argv[6]);
     }
 
     char path[100];
@@ -246,7 +292,6 @@ int main(int argc,char* argv[])
     //sprintf(path,"./SM/iPARTS2_new_23C_4L_matrix");
     sprintf(path,"./SM/23-4L_matrix");
     scoring_matrix=readmat(path);
-    //determine_MAX(&arc_max,&seq_max);
     //cout<<"arc max = "<<arc_max<<endl;
     //cout<<"seq max = "<<seq_max<<endl;
 
@@ -268,7 +313,7 @@ int main(int argc,char* argv[])
     sorting.Sort(alphabet_index,size);
     /*取得處理資料需要的data*/
     //read_data("./test_file_2","./result"); 
-    //read_data("./test_file3","./result"); 
+    //read_data("./test_file3","./result 
     //const char *pdb_compare= "/home/watchlee/Research_Programming/X3DNA/test_data/2FMT_C_to_1J2B_D/semi_input.php";
     read_data(pdb_compare_path); 
     //read_data("./test_file4","./result"); 
@@ -290,18 +335,120 @@ int main(int argc,char* argv[])
     cout<<aseq2<<" "<<aseq2.size()<<endl;
     cout<<astr2<<endl;
     cout<<total<<endl;
-    write_data(score,pdb_result);
 
+    cout<<"score="<<test_alignment()<<endl;
+    
+    write_data(score,pdb_result);
 
     /*釋放記憶體*/
     free(alphabet_index);//來源 line:33
     return 0;
 }
 
+/*------------affine gap peanlty alignemnt-----------------------*/
+double test_alignment()
+{
+    int gap_opp = 9;
+    int gap_exp = 1;
+    double LARGE_NUMBER = 999999;
 
+    vector<vector<double> > temp_D;
+    vector<vector<double> > temp_middle;
+    vector<vector<double> > temp_lower;
+    vector<vector<double> > temp_upper;
+    temp_D.resize(arc1.size()+1);
+    temp_middle.resize(arc1.size()+1);
+    temp_lower.resize(arc1.size()+1);
+    temp_upper.resize(arc1.size()+1);
+    for(int count = 0;count<=arc1.size();count++)
+    {
+        temp_D[count].resize(arc2.size()+1);
+        temp_middle[count].resize(arc2.size()+1);
+        temp_lower[count].resize(arc2.size()+1);
+        temp_upper[count].resize(arc2.size()+1);
+    }
+    temp_middle[0][0]=temp_lower[0][0]=temp_upper[0][0]=0.0;
+    /*某些部分在affine gap penalty中entry不會使用到設定為負無限大當作不會參考*/
+    /*對Y軸進行初始*/
+    for(int count = 1; count<=arc1.size();count++)
+    {
+        temp_lower[count][0]=-LARGE_NUMBER;
+        temp_middle[count][0]=-LARGE_NUMBER;
+        temp_D[count][0]=temp_upper[count][0]=-gap_opp-(count*gap_exp);
+
+    }
+    /*對X軸進行初始*/
+    for(int count = 1; count<=arc2.size();count++)
+    {
+        temp_middle[0][count]=-LARGE_NUMBER;
+        temp_upper[0][count]=-LARGE_NUMBER;
+        temp_D[0][count]=temp_lower[0][count]=-gap_opp-(count*gap_exp);
+    }
+    for(int count = 1;count<=arc1.size();count++)
+    {
+        for(int count2 = 1;count2<=arc2.size();count2++)
+        {
+            temp_middle[count][count2]=max(temp_middle[count-1][count2-1],temp_lower[count-1][count2-1],temp_upper[count-1][count2-1])+base_matching(count-1,count2-1);
+
+            temp_lower[count][count2]=max(temp_lower[count][count2-1]-gap_exp,temp_middle[count][count2-1]-gap_opp-gap_exp,temp_upper[count][count2-1]-gap_opp-gap_exp);
+            //
+            temp_upper[count][count2]=max(temp_upper[count-1][count2]-gap_exp,temp_middle[count-1][count2]-gap_opp-gap_exp,temp_lower[count-1][count2]-gap_opp-gap_exp);
+            //arc annotated sequence must consider four tuples lower,upper,middle,special
+            temp_D[count][count2]=max(temp_middle[count][count2],temp_lower[count][count2],temp_upper[count][count2]);
+            
+        }
+    }
+
+    int i = arc1.size(),j = arc2.size(); 
+    string s1=seq1,s2=seq2;
+    while(i>0||j>0)
+    {
+        if(temp_D[i][j]==temp_lower[i][j])
+        {
+            s1.insert(i,1,'-');
+            j--;
+        }
+        else if(temp_D[i][j]==temp_upper[i][j])
+        {
+            s2.insert(j,1,'-');
+            i--;
+        }
+        else
+        {
+
+            i--;
+            j--;
+        }
+    }
+    cout<<s1<<endl;
+    cout<<s2<<endl;
+
+
+    return temp_D[arc1.size()][arc2.size()];
+}
+
+string special_character_processing(string arc_string)
+{
+    string processed_string="";
+    for(int i = 0;i<arc_string.size();i++)
+    {
+        if(arc_string[i]=='\"'||arc_string[i]=='\\'||arc_string[i]=='$')
+        {
+            processed_string.insert(processed_string.end(),1,'\\');
+            processed_string.insert(processed_string.end(),1,arc_string[i]);
+        }   
+        else
+            processed_string.insert(processed_string.end(),1,arc_string[i]);
+    }
+    return processed_string;
+}
 
 void write_data(double score,const char *path)
 {
+    /*處理特殊字元*/
+    string processed_aseq1 = special_character_processing(aseq1);
+    string processed_aseq2 = special_character_processing(aseq2);
+
     int Nmat= 0;
     for(int count = 0;count<aseq1.size();count++)
     {
@@ -314,8 +461,12 @@ void write_data(double score,const char *path)
     file<<"$result_list=array();"<<endl;
     //file<<"$result_list[0][\"seq1\"] = \""<<astr1<<"\";"<<endl;
     //cout<<astr1<<endl;
-    file<<"$result_list[0][\"seq1\"] = \""<<aseq1<<"\";"<<endl;
-    file<<"$result_list[0][\"seq2\"] = \""<<aseq2<<"\";"<<endl;
+    //file<<"$result_list[0][\"seq1\"] = \""<<aseq1<<"\";"<<endl;
+    file<<"$result_list[0][\"seq1\"] = \""<<processed_aseq1<<"\";"<<endl;
+    file<<"$result_list[0][\"arc1\"] = \""<<astr1<<"\";"<<endl;
+    //file<<"$result_list[0][\"seq2\"] = \""<<aseq2<<"\";"<<endl;
+    file<<"$result_list[0][\"seq2\"] = \""<<processed_aseq2<<"\";"<<endl;
+    file<<"$result_list[0][\"arc2\"] = \""<<astr2<<"\";"<<endl;
     file<<"$result_list[0][\"start1\"] = \"0\";"<<endl;
     file<<"$result_list[0][\"start2\"] = \"0\";"<<endl;
     file<<"$result_list[0][\"end1\"] = \""<<seq1.size()-1<<"\";"<<endl;
@@ -331,91 +482,6 @@ void write_data(double score,const char *path)
 }
 
 
-//測試用的global alignemnt  主要是測試是否一般做的alignment跟structutre alignment做的在只處理plain sequence是相同結果
-double computation_for_sequence_global_ali()
-{
-    vector<vector<double> > S;
-    int ssize=seq1.size()+1; 
-    int ssize2=seq2.size()+1;
-    S.resize(ssize);
-    for(int count =0;count<S.size();count++)
-        S[count].resize(ssize2);
-
-    for(int count =0;count<ssize;count++)
-        S[count][0]=w_d*count;
-    for(int count =0;count<ssize2;count++)
-        S[0][count]=w_d*count;
-    double match_cost=0.0,insert_cost=0.0,deletion_cost=0.0;
-    for(int i=1;i<ssize;i++)
-    {
-        for(int j =1;j<ssize2;j++)
-        {
-            //if(seq1[i]==seq2[j])
-            //    match_cost=M[i-1][j-1]+1;
-            //else
-            //    match_cost=M[i-1][j-1]-1;
-            //if(seq1[i]==seq2[j])
-            //    cout<<"match!"<<endl;
-            match_cost=S[i-1][j-1]+base_matching(i-1,j-1)*w_m;
-            deletion_cost=S[i-1][j]+w_d;
-            insert_cost=S[i][j-1]+w_d;
-            //cout<<match_cost<<" "<<deletion_cost<<" "<<insert_cost<<" max:"<<max(match_cost,deletion_cost,insert_cost)<<endl; 
-            
-            S[i][j]=max(match_cost,deletion_cost,insert_cost);
-
-            
-        }
-    }
-    /*
-    for(int i=0;i<seq1.size();i++)
-    {
-        for(int j=0;j<seq2.size();j++)
-        {
-            cout<<S[i][j]<<" ";
-        }
-        cout<<endl;
-    }
-    */
-    string A="";
-    string B="";
-    int i = seq1.size();
-    int j = seq2.size();
-    while(i>0 || j>0)
-    {
-        if(i>0 && j>0 && S[i][j]==S[i-1][j-1]+base_matching(i-1,j-1)*w_m)
-        {
-
-            A+=seq1[i-1];
-            B+=seq2[j-1];
-            i--;
-            j--;
-        }
-        else if(i>0&&S[i][j]==S[i-1][j]+w_d)
-        {
-            A+=seq1[i-1];
-            B+="-";
-            i--;
-        }
-        else if(j>0&&S[i][j]==S[i][j-1]+w_d)
-        {
-            B+=seq2[j-1];
-            A+="-";
-            j--;
-        }
-    }
-    for(int i=A.size();i>=0;i--)
-    {
-        cout<<A[i];
-    }
-    cout<<endl;
-    for(int i=B.size();i>=0;i--)
-    {
-        cout<<B[i];
-    }
-    cout<<endl;
-    /**/
-    return M[seq1.size()-1][seq2.size()-1];
-}
 
 
 
@@ -444,6 +510,7 @@ void insert(alignment* start,int p1,int p2,double weight)
 
 void traceback()
 {
+  double LARGE_NUMBER=999999;
   // stores aligned sequences and weights in aseq1,aseq2,astr1,astr2
   alignment* ali=new alignment;
   ali->p1=-1;  
@@ -451,6 +518,10 @@ void traceback()
   ali->next=NULL;
   stack<double> weight;
   double v1,v2,v3,v4;
+    double gappenalty2; 
+    double gappenalty1;
+    double open_gappenalty2;
+    double open_gappenalty1;
 
   // range is the currently computed sequence range
   four_tuple range;
@@ -480,43 +551,65 @@ void traceback()
 	{
 	  // init and compute M
 	  M.resize(r1-l1+2);
+	  lower.resize(r1-l1+2);
+	  middle.resize(r1-l1+2);
+	  upper.resize(r1-l1+2);
 	  for(int s=0;s<M.size();s++)
-	    {
+        {
 	      M[s].resize(r2-l2+2);
+	      middle[s].resize(r2-l2+2);
+	      lower[s].resize(r2-l2+2);
+	      upper[s].resize(r2-l2+2);
 	      for(int t=0;t<M[s].size();t++)
-		M[s][t]=0;
+            M[s][t]=0;
 	    }
-	  
-	  M[0][0]=0;
+	  /*---------affine gap penalty ------2016/5/20*/ 
+	  M[0][0]=middle[0][0]=lower[0][0]=upper[0][0]=0;
 	  for (int k=1;k<r1-l1+2;k++)
+        {
+
+        lower[k][0]=-LARGE_NUMBER; 
+        middle[k][0]=-LARGE_NUMBER; 
 	    M[k][0]=M[k-1][0]+w_d+not_free1(l1+k-1)*(0.5*w_r-w_d);
+        }
 	  
 	  for (int l=1;l<r2-l2+2;l++)
+        {
+        upper[0][l]=-LARGE_NUMBER;
+        middle[0][l]=-LARGE_NUMBER;
 	    M[0][l]=M[0][l-1]+w_d+not_free2(l2+l-1)*(0.5*w_r-w_d);
+        }
 	  
 	  for (int k=1;k<r1-l1+2;k++)
 	    for (int l=1;l<r2-l2+2;l++)
 	      {
 		//max
-        v1=v2=v3=v4=-10000;
-        //min 		v1=v2=v3=v4=10000;
+        v1=v2=v3=v4=-LARGE_NUMBER;
+        //min 		v1=v2=v3=v4=LARGE_NUMBER;
 		int a1=l1+k-1;                      // a1,a2 sequence positions 
 		int a2=l2+l-1;
 		
-		v1=M[k-1][l]+w_d+not_free1(a1)*(0.5*w_r-w_d);
-		v2=M[k][l-1]+w_d+not_free2(a2)*(0.5*w_r-w_d);
-		v3=M[k-1][l-1]+base_matching(a1,a2)*w_m+(not_free1(a1)+not_free2(a2))*0.5*w_b;
+        gappenalty2 = -base_epp+(not_free2(a2)*(-arc_exp/2+base_epp));
+        gappenalty1 = -base_epp+(not_free1(a1)*(-arc_exp/2+base_epp));
+        open_gappenalty2 = -base_opp-base_epp+(not_free2(a2)*(-(arc_opp/2)-(arc_exp/2)+base_opp+base_epp));
+        open_gappenalty1 = -base_opp-base_epp+(not_free1(a1)*(-(arc_opp/2)-(arc_exp/2)+base_opp+base_epp));
+        v1=lower[k][l]=max(lower[k][l-1]+gappenalty2,middle[k][l-1]+open_gappenalty2,upper[k][l-1]+gappenalty2);
+        v2=upper[k][l]=max(upper[k-1][l]+gappenalty1,middle[k-1][l]+open_gappenalty1,lower[k-1][l]+gappenalty1);
+        v3=middle[k][l]=max(middle[k-1][l-1],lower[k-1][l-1],upper[k-1][l-1])+base_matching(a1,a2)+(not_free1(a1)+not_free2(a2))*0.5*w_b; 
+		//v1=M[k-1][l]+w_d+not_free1(a1)*(0.5*w_r-w_d);
+		//v2=M[k][l-1]+w_d+not_free2(a2)*(0.5*w_r-w_d);
+		//v3=M[k-1][l-1]+base_matching(a1,a2)*w_m+(not_free1(a1)+not_free2(a2))*0.5*w_b;
 		
 		if (arc1[a1]==')' && arc2[a2]==')') 
 		  {
 		    int i1=L1[I1[a1]];
 		    int j1=L2[I2[a2]];
-		    v4=M[i1-l1][j1-l2]+D[I1[a1]][I2[a2]]+
-              arc_operation(i1,j1,a1,a2);
+		    //v4=middle[i1-l1][j1-l2]+D[I1[a1]][I2[a2]]+arc_operation(i1,j1,a1,a2);
+		    v4=M[i1-l1][j1-l2]+D[I1[a1]][I2[a2]]+arc_operation(i1,j1,a1,a2);
 		      //(base_matching(i1,j1)+base_matching(a1,a2))*0.5*w_am;
 		  }
 		//M[k][l]=min4(v1,v2,v3,v4);
-		M[k][l]=max4(v1,v2,v3,v4);
+		 M[k][l]=max4(v1,v2,v3,v4);
 	      }
 	  
 	  bool seqaln=true;
@@ -527,19 +620,27 @@ void traceback()
 	    {
 	      int a1=l1+k-1;                      // a1,a2 sequence positions 
 	      int a2=l2+l-1;
+        gappenalty2 = -base_epp+(not_free2(a2)*(-arc_exp/2+base_epp));
+        gappenalty1 = -base_epp+(not_free1(a1)*(-arc_exp/2+base_epp));
+        open_gappenalty2 = -base_opp-base_epp+(not_free2(a2)*(-(arc_opp/2)-(arc_exp/2)+base_opp+base_epp));
+        open_gappenalty1 = -base_opp-base_epp+(not_free1(a1)*(-(arc_opp/2)-(arc_exp/2)+base_opp+base_epp));
 
 	      if (k==0 && l==0)
-		seqaln=false;
-	      else if (k>0 && fabs(M[k][l]-(M[k-1][l]+w_d+not_free1(a1)*(0.5*w_r-w_d)))<eps )
-		{
-		  insert(ali,a1,-1,w_d+not_free1(a1)*(0.5*w_r-w_d));
+            seqaln=false;
+	      //else if (k>0 && fabs(M[k][l]-(M[k-1][l]+w_d+not_free1(a1)*(0.5*w_r-w_d)))<eps )
+	      else if (k>0 && fabs(M[k][l]-upper[k][l])<eps )
+		  {
+		  //insert(ali,a1,-1,w_d+not_free1(a1)*(0.5*w_r-w_d));
+		  insert(ali,a1,-1,open_gappenalty1);
 		  k--;
 		}
-	      else if (l>0 && fabs(M[k][l]-(M[k][l-1]+w_d+not_free2(a2)*(0.5*w_r-w_d)))<eps )
+	      else if (l>0 && fabs(M[k][l]-lower[k][l])<eps )
 		{
-		  insert(ali,-1,a2,w_d+not_free2(a2)*(0.5*w_r-w_d));
+		  //insert(ali,-1,a2,w_d+not_free2(a2)*(0.5*w_r-w_d));
+		  insert(ali,-1,a2,open_gappenalty2);
 		  l--;
 		}
+	      //else if (k>0 && l>0 && fabs(M[k][l]-(middle[k-1][l-1]+base_matching(a1,a2)*w_m+(not_free1(a1)+not_free2(a2))*0.5*w_b))<eps)
 	      else if (k>0 && l>0 && fabs(M[k][l]-(M[k-1][l-1]+base_matching(a1,a2)*w_m+(not_free1(a1)+not_free2(a2))*0.5*w_b))<eps)
 		{
 		  insert(ali,a1,a2,base_matching(a1,a2)*w_m+(not_free1(a1)+not_free2(a2))*0.5*w_b);
@@ -547,7 +648,7 @@ void traceback()
 		  l--;
 		}
 	      else
-		seqaln=false;
+            seqaln=false;
 	    }
 	  
 	  int a1=l1+k-1;                      // a1,a2 sequence positions 
@@ -587,154 +688,7 @@ void traceback()
       weights.push_back(iter->weight);
     }
 }
-/*
-void ttraceback()
-{
-    alignment* ali = new alignment;
-    ali->p1=-1;
-    ali->p2=-1;
-    ali->next=NULL;
-    stack<double> weight;
-    double v1,v2,v3,v4;
 
-    //range is the currently computed sequence range
-    four_tuple range;
-    range.leftpoint1=0;
-    range.rightpoint1=seq1.size()-1;
-    range.leftpoint2=0;
-    range.rightpoint2=seq2.size()-1;
-    stack<four_tuple> range_stack;
-    range_stack.push(range);
-    while(!range_stack.empty())
-    {
-        int leftpoint1 = range_stack.top().leftpoint1;
-        int rightpoint1 = range_stack.top().rightpoint1;
-        int leftpoint2 = range_stack.top().leftpoint2;
-        int rightpoint2 = range_stack.top().rightpoint2;
-        range_stack.pop();
-        if (leftpoint1>rightpoint1 && leftpoint2<=rightpoint2)
-            for (int s=rightpoint2;s>=leftpoint2;s--)
-                insert(ali,-1,s,w_d);
-        else if (leftpoint1<=rightpoint1 && leftpoint2>rightpoint2)
-            for (int s=rightpoint1;s>=leftpoint1;s--)
-                insert(ali,s,-1,w_d);
-        //normal
-        else if(leftpoint1<=rightpoint1 && leftpoint2<=rightpoint2)
-        {
-            M.resize(rightpoint1-leftpoint1+2);
-            for(int count = 0;count<M.size();count++)
-            {
-                M[count].resize(rightpoint2-leftpoint2+2);
-                for(int inner_count=0;inner_count<M[count].size();inner_count++)
-                    M[count][inner_count]=0;
-            }
-            M[0][0]=0;
-            for(int k=1;k<rightpoint1-leftpoint1+2;k++)
-                M[k][0]=M[k-1][0]+w_d+not_free1(leftpoint1+k-1)*(0.5*w_r-w_d);
-            for(int l=1;l<rightpoint2-leftpoint2+2;l++)
-                M[0][l]=M[0][l-1]+w_d+not_free2(leftpoint2+l-1)*(0.5*w_r-w_d);
-            //compute M
-            for(int k = 1;k<rightpoint1-leftpoint1+2;k++)
-                for(int l=1;l<rightpoint2-leftpoint2+2;l++)
-                {
-                    v1=v2=v3=v4=-99999;
-                    int offset_index1=leftpoint1+k-1;
-                    int offset_index2=leftpoint2+l-1;
-                    //case1
-                    v1=M[k-1][l]+w_d+not_free1(offset_index1)*(0.5*w_r-w_d);
-                    //case2
-                    v2=M[k][l-1]+w_d+not_free2(offset_index1)*(0.5*w_r-w_d);
-                    //case3
-                    v3=M[k-1][l-1]+base_matching(offset_index1,offset_index2)+(not_free1(offset_index1)+not_free2(offset_index2))*0.5*w_b;
-                    //case4
-                    if(arc1[offset_index1]==')' && arc2[offset_index2]==')')
-                    {
-                        int current_basepair_leftpoint1=L1[I1[offset_index1]];
-                        int current_basepair_leftpoint2=L2[I2[offset_index2]];
-                          v4=M[current_basepair_leftpoint1-leftpoint1][current_basepair_leftpoint2-leftpoint2]+D[I1[offset_index1]][I2[offset_index2]]+(base_matching(current_basepair_leftpoint1,current_basepair_leftpoint2)+base_matching(offset_index1,offset_index2))*0.5*w_am;
-                    }
-                    M[k][l]=max4(v1,v2,v3,v4);
-
-                }
-            cout<<"phase1"<<endl;
-            bool seq_flag = true;
-            int k=rightpoint1-leftpoint1+1;
-            int l = rightpoint2-leftpoint2+1;
-            while(seq_flag)
-            {
-                int offset_index1=leftpoint1+k-1;                      // a1,a2 sequence positions 
-                int offset_index2=leftpoint2+l-1;
-                if (k==0 && l==0)
-                    seq_flag=false;
-                else if (k>0 && fabs(M[k][l]-(M[k-1][l]+w_d+not_free1(offset_index1)*(0.5*w_r-w_d)))<eps )
-                {
-                    insert(ali,offset_index1,-1,w_d+not_free1(offset_index1)*(0.5*w_r-w_d));
-                    k--;
-                                    
-                }
-                else if (l>0 && fabs(M[k][l]-(M[k][l-1]+w_d+not_free2(offset_index2)*(0.5*w_r-w_d)))<eps )
-                {
-                    insert(ali,-1,offset_index2,w_d+not_free2(offset_index2)*(0.5*w_r-w_d));
-                    l--;
-                                    
-                }
-                else if (k>0 && l>0 && fabs(M[k][l]-(M[k-1][l-1]+base_matching(offset_index1,offset_index2)*w_m+(not_free1(offset_index1)+not_free2(offset_index2))*0.5*w_b))<eps)
-                {
-                    insert(ali,offset_index1,offset_index2,base_matching(offset_index1,offset_index2)*w_m+(not_free1(offset_index1)+not_free2(offset_index2))*0.5*w_b);
-                    k--;
-                    l--;
-                                    
-                }
-                else
-                    seq_flag=false;
-            }
-            int offset_index1=leftpoint1+k-1;
-            int offset_index2=leftpoint2+l-1;
-            //base-pair alignment
-            if(arc1[offset_index1]==')' && arc2[offset_index2]==')')
-            {
-                cout<<"phase2"<<endl;
-                 double w=M[L1[I1[offset_index1]]-leftpoint1][L2[I2[offset_index2]]-leftpoint2]+D[I1[offset_index1]][I2[offset_index2]]+(base_matching(L1[I1[offset_index1]],L2[I2[offset_index2]])+base_matching(offset_index1,offset_index2))*0.5*w_am;
-                if(fabs(M[k][l]-w)<eps)
-                {
-                    int current_basepair_leftpoint1=L1[I1[offset_index1]];
-                    int current_basepair_leftpoint2=L2[I2[offset_index2]];
-                    double edge_weight=0.5*(base_matching(L1[I1[offset_index1]],L2[I2[offset_index2]])+base_matching(offset_index1,offset_index2))*0.5*w_am;
-
-                    insert(ali,current_basepair_leftpoint1,current_basepair_leftpoint2,edge_weight);
-                    insert(ali,offset_index1,offset_index2,edge_weight);
-
-                    FourTuple CR1,CR2;
-                    CR1.leftpoint1=leftpoint1   ; CR1.rightpoint1=current_basepair_leftpoint1-1 ; CR1.leftpoint2=leftpoint2   ; CR1.rightpoint2=current_basepair_leftpoint2-1 ;
-                    CR2.leftpoint1=current_basepair_leftpoint1+1 ; CR2.rightpoint1=offset_index1-1 ; CR2.leftpoint2=current_basepair_leftpoint2+1 ; CR2.rightpoint2=offset_index2-1 ;
-                    range_stack.push(CR1);
-                    range_stack.push(CR2);
-                }
-            }
-        }
-        for(Alignment* iter=ali->next;iter!=NULL;iter=iter->next)
-            cout<<iter->p1<<" ";
-        cout<<" inset"<<endl;
-    }   
-
-    weights.resize(0);
-    for(Alignment* iter=ali->next;iter!=NULL;iter=iter->next)
-    {
-
-         aseq1.push_back((iter->p1==-1?'-':seq1[iter->p1]));
-         astr1.push_back((iter->p1==-1?'-':arc1[iter->p1]));
-         aseq2.push_back((iter->p2==-1?'-':seq2[iter->p2]));
-         astr2.push_back((iter->p2==-1?'-':arc2[iter->p2]));
-         weights.push_back(iter->weight);
-         
-    }
-    cout<<endl;
-    cout<<arc1<<endl;
-    cout<<seq1<<endl;
-    cout<<arc2<<endl;
-    cout<<seq2<<endl;
-}
-*/
 
 /*------------------利用二元搜尋快速索引位置-----------------------*/
 int BinarySearch(char character,IndexMatrix *array,int length)
@@ -963,6 +917,7 @@ int** readmat(char *file_name)
 /*計算best alignment*/
 double computation()
 {
+    double LARGE_NUMBER=999999;
     /*對I1 I2兩個vector配置arc1 and arc2大小的記憶體空間*/
     
     I1.resize(arc1.size());
@@ -1015,22 +970,48 @@ double computation()
 
     
     for(int i = 0;i<D.size();i++)
+    {
         D[i].resize(L2.size());
+    }
+    /*First processing arc align arc */
     for(int i = 0;i<L1.size();i++)
     {
         for(int j = 0;j<L2.size();j++)
         {
+            //added affine gap penaly matrix : lower, upper, middle
+            lower.resize(R1[i]-L1[i]);
+            upper.resize(R1[i]-L1[i]);
+            middle.resize(R1[i]-L1[i]);
+
             M.resize(R1[i]-L1[i]);
             for(int s = 0;s<M.size();s++)
+            {
                 M[s].resize(R2[j]-L2[j]);
+                //affine gap penalty 2016/5/20
+                lower[s].resize(R2[j]-L2[j]);
+                upper[s].resize(R2[j]-L2[j]);
+                middle[s].resize(R2[j]-L2[j]);
+
+            }
+
             M[0][0]=0;
+            //affine gap penalty 2016/5/20
+            lower[0][0]=upper[0][0]=0;
+
             for(int k = 1;k<R1[i]-L1[i];k++)
             {
-                M[k][0]=M[k-1][0]+w_d+not_free1(L1[i]+k)*(0.5*w_r-w_d);
+                lower[k][0]=-LARGE_NUMBER; 
+                middle[k][0]=-LARGE_NUMBER; 
+                M[k][0]=upper[k][0]=-base_opp-(k*base_epp)+not_free1(L1[i]+k)*(0.5*(-arc_opp-k*arc_exp)+(base_opp+(k*base_epp)));
+                //M[k][0]=M[k-1][0]+w_d+not_free1(L1[i]+k)*(0.5*w_r-w_d);
+
             }
             for (int l=1;l<R2[j]-L2[j];l++)
             {
-                M[0][l]=M[0][l-1]+w_d+not_free2(L2[j]+l)*(0.5*w_r-w_d);
+                upper[0][l]=-LARGE_NUMBER;
+                middle[0][l]=-LARGE_NUMBER;
+                M[0][l]=lower[0][l]=-base_opp-(l*base_epp)+not_free1(L1[i]+l)*(0.5*(-arc_opp-l*arc_exp)+(base_opp+(l*base_epp)));
+                //M[0][l]=M[0][l-1]+w_d+not_free2(L2[j]+l)*(0.5*w_r-w_d);
             }
         //compute M
         double v1,v2,v3,v4;
@@ -1038,21 +1019,31 @@ double computation()
             for(int l=1;l<R2[j]-L2[j];l++)
             {
                 //max 
-                v1 = v2 = v3 = v4 = -10000;
-                //min                 v1 = v2 = v3 = v4 = 10000;
+                v1 = v2 = v3 = v4 = -LARGE_NUMBER;
+                //min                 v1 = v2 = v3 = v4 = LARGE_NUMBER;
                 int a1 = L1[i]+k;
                 int a2 = L2[j]+l;
                 //edit operation
+                //v1 = lower gap penalty , v2 = upper gap penalty, v3 = mismatch or match gap penalty, v4=special case
+                double gappenalty2 = -base_epp+(not_free2(a2)*(-arc_exp/2+base_epp));
+                double gappenalty1 = -base_epp+(not_free1(a1)*(-arc_exp/2+base_epp));
+                double open_gappenalty2 = -base_opp-base_epp+(not_free2(a2)*(-(arc_opp/2)-(arc_exp/2)+base_opp+base_epp));
+                double open_gappenalty1 = -base_opp-base_epp+(not_free1(a1)*(-(arc_opp/2)-(arc_exp/2)+base_opp+base_epp));
+                v1=lower[k][l]=max(lower[k][l-1]+gappenalty2,middle[k][l-1]+open_gappenalty2,upper[k][l-1]+gappenalty2);
+                v2=upper[k][l]=max(upper[k-1][l]+gappenalty1,middle[k-1][l]+open_gappenalty1,lower[k-1][l]+gappenalty1);
+                v3=middle[k][l]=max(middle[k-1][l-1],lower[k-1][l-1],upper[k-1][l-1])+base_matching(a1,a2)+(not_free1(a1)+not_free2(a2))*0.5*w_b; 
+
+
                 //v1=M[k-1][l]+w_d+not_free1(a1)*(0.5*w_r-w_d);
-                //
-                v1=M[k-1][l]+w_d+not_free1(a1)*(0.5*w_r-w_d);
-                v2=M[k][l-1]+w_d+not_free2(a2)*(0.5*w_r-w_d);
-                v3=M[k-1][l-1]+base_matching(a1,a2)*w_m+(not_free1(a1)+not_free2(a2))*0.5*w_b;
+                //v2=M[k][l-1]+w_d+not_free2(a2)*(0.5*w_r-w_d);
+                //v3=M[k-1][l-1]+base_matching(a1,a2)*w_m+(not_free1(a1)+not_free2(a2))*0.5*w_b;
                 if(arc1[a1]==')' && arc2[a2]==')')
                 {
                     int leftpoint = L1[I1[a1]];
                     int leftpoint2 = L2[I2[a2]];
-                    v4 = M[leftpoint - L1[i]-1][leftpoint2 - L2[j]-1]+D[I1[a1]][I2[a2]]+arc_operation(L1[I1[a1]],L2[I2[a2]],R1[I1[a1]],R2[I2[a2]]);//(base_matching(L1[I1[a1]],L2[I2[a2]])+base_matching(R1[I1[a1]],R2[I2[a2]]))*0.5*w_am;
+                    v4 = M[leftpoint - L1[i]-1][leftpoint2 - L2[j]-1]+D[I1[a1]][I2[a2]]+arc_operation(L1[I1[a1]],L2[I2[a2]],R1[I1[a1]],R2[I2[a2]]);
+                    //v4 = middle[leftpoint - L1[i]-1][leftpoint2 - L2[j]-1]+D[I1[a1]][I2[a2]]+arc_operation(L1[I1[a1]],L2[I2[a2]],R1[I1[a1]],R2[I2[a2]]);
+                    //(base_matching(L1[I1[a1]],L2[I2[a2]])+base_matching(R1[I1[a1]],R2[I2[a2]]))*0.5*w_am;
                 }
                 //M[k][l]=min4(v1,v2,v3,v4);
                 M[k][l]=max4(v1,v2,v3,v4);
@@ -1061,39 +1052,78 @@ double computation()
 
         }
     }
+    
+    /*affine gap penalty 2016/5/20*/
+    lower.resize(arc1.size()+1);
+    middle.resize(arc1.size()+1);
+    upper.resize(arc1.size()+1);
 
     M.resize(arc1.size()+1);
     for(int i =0; i<M.size();i++)
+    {
         M[i].resize(arc2.size()+1);
+        lower[i].resize(arc2.size()+1);
+        middle[i].resize(arc2.size()+1);
+        upper[i].resize(arc2.size()+1);
 
-    M[0][0]=0;
+    }
 
+    M[0][0]=lower[0][0]=middle[0][0]=upper[0][0]=0;
+    /*initalize row*/
     for(int k=1;k<=arc1.size();k++)
-        M[k][0]=M[k-1][0]+w_d+not_free1(k-1)*(0.5*w_r-w_d);
+    {
+        lower[k][0]=-LARGE_NUMBER; 
+        middle[k][0]=-LARGE_NUMBER; 
+        M[k][0]=upper[k][0]=-base_opp-(k*base_epp)+not_free1(k-1)*(0.5*(-arc_opp-k*arc_exp)+(base_opp+(k*base_epp)));
+        //M[k][0]=M[k-1][0]+w_d+not_free1(k-1)*(0.5*w_r-w_d);
+    }
+    /*initalize column*/
+    for(int k=1;k<=arc1.size();k++)
     for(int l = 1;l<=arc2.size();l++)
-        M[0][l]=M[0][l-1]+w_d+not_free2(l-1)*(0.5*w_r-w_d);
-
+    {
+        upper[0][l]=-LARGE_NUMBER;
+        middle[0][l]=-LARGE_NUMBER;
+        M[0][l]=lower[0][l]=-base_opp-(l*base_epp)+not_free2(l-1)*(0.5*(-arc_opp-l*arc_exp)+(base_opp+(l*base_epp)));
+        //M[0][l]=M[0][l-1]+w_d+not_free2(l-1)*(0.5*w_r-w_d);
+    }
     //compute M
     double v1,v2,v3,v4;
     for (int k=1;k<=arc1.size();k++)
         for (int l=1;l<=arc2.size();l++)
         {
-                //min v1 = v2 = v3 = v4 = 10000;
+            //min v1 = v2 = v3 = v4 = LARGE_NUMBER;
             //max
-            v1 = v2 = v3 = v4 = -10000;
-            v1=M[k-1][l]+w_d+not_free1(k-1)*(0.5*w_r-w_d);
-            v2=M[k][l-1]+w_d+not_free2(l-1)*(0.5*w_r-w_d);
-            v3=M[k-1][l-1]+base_matching(k-1,l-1)*w_m+(not_free1(k-1)+not_free2(l-1))*0.5*w_b;
+            v1 = v2 = v3 = v4 = -LARGE_NUMBER;
+            double gappenalty1 = -base_epp-(not_free1(k-1)*((arc_exp/2)-base_epp));
+            double open_gappenalty1 = -base_opp-base_epp-(not_free1(k-1)*((arc_opp/2+arc_exp/2)-base_opp-base_epp));
+            double gappenalty2 = -base_epp-(not_free2(l-1)*((arc_exp/2)-base_epp));
+            double open_gappenalty2 = -base_opp-base_epp-(not_free2(l-1)*((arc_opp/2+arc_exp/2)-base_opp-base_epp));
+            
+
+            //origin version
+            //v1=M[k-1][l]+w_d+not_free1(k-1)*(0.5*w_r-w_d);
+            //v2=M[k][l-1]+w_d+not_free2(l-1)*(0.5*w_r-w_d);
+            //v3=M[k-1][l-1]+base_matching(k-1,l-1)*w_m+(not_free1(k-1)+not_free2(l-1))*0.5*w_b;
+            
+            //affine gap penalty version 2016/5/20 
+            v1=lower[k][l]=max(lower[k][l-1]+gappenalty2,middle[k][l-1]+open_gappenalty2,upper[k][l-1]+gappenalty2);
+            v2=upper[k][l]=max(upper[k-1][l]+gappenalty1,middle[k-1][l]+open_gappenalty1,lower[k-1][l]+gappenalty1);
+            //v1=lower[k][l]=max(lower[k][l-1]-common_exp,middle[k][l-1]-common_opp-common_exp,upper[k][l-1]-common_opp-common_exp);
+            //v2=upper[k][l]=max(upper[k-1][l]-common_exp,middle[k-1][l]-common_opp-common_exp,lower[k-1][l]-common_opp-common_exp);
+            v3=middle[k][l]=max(middle[k-1][l-1],lower[k-1][l-1],upper[k-1][l-1])+base_matching(k-1,l-1)+(not_free1(k-1)+not_free2(l-1))*0.5*w_b; 
+
             if(arc1[k-1]==')'&& arc2[l-1]==')')
             {
                 int leftpoint = L1[I1[k-1]];
                 int leftpoint2 = L2[I2[l-1]];
-                v4=M[leftpoint][leftpoint2]+D[I1[k-1]][I2[l-1]];
-                +arc_operation(L1[I1[k-1]],L2[I2[l-1]],R1[I1[k-1]],R2[I2[l-1]]);//(base_matching(L1[I1[k-1]],L2[I2[l-1]])+base_matching(R1[I1[k-1]],R2[I2[l-1]]))*0.5*w_am;
+                //v4=middle[leftpoint][leftpoint2]+D[I1[k-1]][I2[l-1]]+arc_operation(L1[I1[k-1]],L2[I2[l-1]],R1[I1[k-1]],R2[I2[l-1]]);
+                v4=M[leftpoint][leftpoint2]+D[I1[k-1]][I2[l-1]]+arc_operation(L1[I1[k-1]],L2[I2[l-1]],R1[I1[k-1]],R2[I2[l-1]]);
+                //(base_matching(L1[I1[k-1]],L2[I2[l-1]])+base_matching(R1[I1[k-1]],R2[I2[l-1]]))*0.5*w_am;
 
             }
             //M[k][l]=min4(v1,v2,v3,v4);
-            M[k][l]=max4(v1,v2,v3,v4);
+            //M[k][l]=max4(v1,v2,v3,v4);
+            M[k][l]=max4(lower[k][l],upper[k][l],middle[k][l],v4);
         }
 
     return M[arc1.size()][arc2.size()];
@@ -1101,32 +1131,3 @@ double computation()
 
 
 
-void determine_MAX(double *arc_max,double *seq_max)
-{
-    //operation = w_am = 4 * arc_max
-    //operation4 = arc mismatch = 4*arc_max - w_am(i,i',j,j')
-    //operation3 = arc breaking = arc_max+arc_seq-w_m(i,j)-w_b/2
-    //operation3 = arc altering = 2*arc_max -w_m(i,j) - w_b
-    //r = 4 , k = 1 arc match s_aa = 4*arc_max + w_aa
-    //r = 4 , k = 2 arc mismatch = 4 * arc_max - w_am
-    //上兩項 =   4 * arc_max + arc_operation() 加入到v4
-    //r = 2 , k = 3 base match = 2 * seq_max + base_match
-    //r = 2 , k = 4 base mismatch = 2 * seq_max - base_matching 
-    //r = 2 , k = 6 arc altering= 2 * arc_max - base_match or base_matching - w_b
-    //r = 2 , k = 7 arc breaking= arc_max + seq_max - base_matching - w_b/2 
-    //上兩項合併 = 2*seq_max + base_matching() 加入到v3 = 
-    //r = 1 , k = 5 base deletion = 1 * seq_max - base_deletion
-    //r = 1 , k = 7 arc base deltion = 1 * arc_max + 1* seq_max - base_deltion - w_b/2 
-    int temp_max = scoring_matrix[0][0];
-    for(int i = 1;i <size;i++ )
-    {
-        cout<<scoring_matrix[i][i]<<endl;
-       if(temp_max<scoring_matrix[i][i])
-        temp_max=scoring_matrix[i][i];
-
-    }
-    *arc_max = double (temp_max);
-    *seq_max = abs(w_d); 
-    
-
-}
