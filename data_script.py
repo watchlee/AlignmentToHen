@@ -22,6 +22,10 @@ number = 5
 k = 2
 l = 0.1
 m = 1.5
+base_open = 9
+base_exp = 1
+arc_open = 18
+arc_exp = 2
 result_path_alignment = "~/public_html/result_score_data_N"+str(number)+'_K'+str(k)+'_L'+str(l)+'_M'+str(m)+'/'
 subprocess.call('mkdir '+result_path_alignment,shell=True)
 
@@ -31,7 +35,7 @@ for line in input_pdb_list:
     outpath_edit=  result_path_edit+line
     cmd_align = "mkdir "+outpath_align
     cmd_edit = "mkdir "+outpath_edit
-    exe_cmd_align = './align '+origin_path+line+'/semi_input.php'+' '+outpath_align+'/result.php'+' '+str(number)+' '+str(k)+' '+str(l)+' '+str(m)
+    exe_cmd_align = './align '+origin_path+line+'/semi_input.php'+' '+outpath_align+'/result.php'+' '+str(number)+' '+str(k)+' '+str(l)+' '+str(m)+' '+str(base_open)+' '+str(base_exp)+' '+str(arc_open)+' '+str(arc_exp)
 #    exe_cmd_edit = './edit_iPARTS2_align '+origin_path+line+'/semi_input.php'+' '+outpath_edit+'/result.php'
     subprocess.call(cmd_align,shell=True) 
  #   subprocess.call(cmd_edit,shell=True) 
