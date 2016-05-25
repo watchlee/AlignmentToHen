@@ -317,7 +317,6 @@ int main(int argc,char* argv[])
     cout<<astr2<<endl;
     cout<<t<<endl;
 
-    cout<<"翻版"<<endl;
     //cout<<"score="<<test_alignment()<<endl;
     write_data(score,pdb_result);
     /*釋放記憶體*/
@@ -624,7 +623,7 @@ void traceback()
         int r1=ranges.top().r1;
         int l2=ranges.top().l2;
         int r2=ranges.top().r2;
-          cout<<"input r1="<<r1<<" l1="<<l1<<" r2="<<r2<<" l2="<<l2<<endl;
+          //cout<<"input r1="<<r1<<" l1="<<l1<<" r2="<<r2<<" l2="<<l2<<endl;
         ranges.pop();
         bool open_flat=true;
         if (l1>r1 && l2<=r2)
@@ -750,12 +749,13 @@ void traceback()
                         temp_direct="S";
                     else
                     {
-                        cout<<"error!"<<endl;
-                        cout<<"M["<<k<<"]["<<l<<"]="<<M[k][l]<<" v1="<<v1<<" v2="<<v2<<" v3="<<v3<<" v4="<<v4<<endl;
+                        //cout<<"error!"<<endl;
+                        //cout<<"M["<<k<<"]["<<l<<"]="<<M[k][l]<<" v1="<<v1<<" v2="<<v2<<" v3="<<v3<<" v4="<<v4<<endl;
                         temp_direct="M";
                     }
                     direct_array[k][l]=temp_direct;
                 }
+            /* debug用
             cout<<"score"<<endl;
             for(int count=0;count<=r1-l1+1;count++)
             {
@@ -786,10 +786,10 @@ void traceback()
                     cout<<direct_upper[count][count2]<<"\t";
                 cout<<endl;
             }
-           /* */
+            */
             int k=r1-l1+1;
             int l=r2-l2+1;
-          cout<<"input r1="<<r1<<" l1="<<l1<<" r2="<<r2<<" l2="<<l2<<" k="<<k<<" l="<<l<<endl;
+          //cout<<"input r1="<<r1<<" l1="<<l1<<" r2="<<r2<<" l2="<<l2<<" k="<<k<<" l="<<l<<endl;
             bool seqaln=true;
             // sequence alignment
             while (seqaln)
@@ -857,7 +857,7 @@ void traceback()
                 //else if (k>0 && l>0 && (M[k][l]-M[k-1][l-1]+base_matching(a1,a2)+(not_free1(a1)+not_free2(a2))*0.5*w_b)==0)
                 else if (k>0 && l>0 && direct_array[k][l]=="A") 
                 {
-                    cout<<k<<" "<<l<<" "<<direct_array[k][l]<<endl;
+                    //cout<<k<<" "<<l<<" "<<direct_array[k][l]<<endl;
                     //cout<<seq1[a1]<<" "<<seq2[a2]<<base_matching(a1,a2)+(not_free1(a1)+not_free2(a2))*0.5*w_b<<endl;
                     insert(ali,a1,a2,base_matching(a1,a2)+(not_free1(a1)+not_free2(a2))*0.5*w_b);
                     total+=base_matching(a1,a2)+(not_free1(a1)+not_free2(a2))*0.5*w_b;
@@ -866,14 +866,14 @@ void traceback()
                 }
                 else
                 {
-                    cout<<"move to S"<<endl;
+                    //cout<<"move to S"<<endl;
                     seqaln=false;
                 }
             }
             int a1=l1+k-1;                      // a1,a2 sequence positions 
             int a2=l2+l-1;                      // right arc ends
             // base-pair alignment
-            cout<<"a1="<<a1<<" a2="<<a2<<" arc "<<arc1[a1]<<" "<<arc2[a2]<<endl;
+            //cout<<"a1="<<a1<<" a2="<<a2<<" arc "<<arc1[a1]<<" "<<arc2[a2]<<endl;
             if (arc1[a1]==')' && arc2[a2]==')')
             {
                 double w=M[L1[I1[a1]]-l1][L2[I2[a2]]-l2]+D[I1[a1]][I2[a2]]+arc_operation(L1[I1[a1]],L2[I2[a2]],a1,a2);//(base_matching(L1[I1[a1]],L2[I2[a2]])+base_matching(a1,a2))*0.5*w_am;
@@ -882,11 +882,6 @@ void traceback()
                     int i1=L1[I1[a1]];              // left arc ends
                     int j1=L2[I2[a2]];
                     double edge_weight=0.5*arc_operation(L1[I1[a1]],L2[I2[a2]],a1,a2); //(base_matching(L1[I1[a1]],L2[I2[a2]])+base_matching(a1,a2))*0.5*w_am;
-                    cout<<arc1[i1]<<" "<<arc1[a1]<<endl;
-                    cout<<seq1[i1]<<" "<<seq1[a1]<<endl;
-                    cout<<seq2[j1]<<" "<<seq2[a2]<<endl;
-                    cout<<arc2[j1]<<" "<<arc2[a2]<<endl;
-                    cout<<"arc="<<edge_weight*2<<endl;
                     arc_cost+=edge_weight*2;
                     total+=edge_weight*2;
                     match_score+=edge_weight*2;
@@ -895,8 +890,8 @@ void traceback()
                     four_tuple CR1,CR2;
                     CR1.l1=l1   ; CR1.r1=i1-1 ; CR1.l2=l2   ; CR1.r2=j1-1 ;
                     CR2.l1=i1+1 ; CR2.r1=a1-1 ; CR2.l2=j1+1 ; CR2.r2=a2-1 ;
-          cout<<"bottom CR1.r1="<<i1-1<<" CR1.l1="<<l1<<" CR1.r2="<<j1-1<<" CR1.l2="<<l2<<endl;
-          cout<<"top CR2.r1="<<a1-1<<" CR2.l1="<<i1+1<<" CR2.r2="<<a2-1<<" CR2.l2="<<j1+1<<endl;
+          //cout<<"bottom CR1.r1="<<i1-1<<" CR1.l1="<<l1<<" CR1.r2="<<j1-1<<" CR1.l2="<<l2<<endl;
+          //cout<<"top CR2.r1="<<a1-1<<" CR2.l1="<<i1+1<<" CR2.r2="<<a2-1<<" CR2.l2="<<j1+1<<endl;
                     ranges.push(CR1);
                     ranges.push(CR2);
                 }
@@ -1135,7 +1130,7 @@ double computation()
             R1.push_back(i);
         }
     }
-    cout<<"total base pair = "<<L1.size()<<endl;
+    //cout<<"total base pair = "<<L1.size()<<endl;
     /*依照由內而外的方式取得arc2*/
     index=0;
     for(int i=0;i<arc2.size();i++)
@@ -1152,12 +1147,15 @@ double computation()
             R2.push_back(i);
         }
     }
+    /*
     cout<<"total base pair 2= "<<L2.size()<<endl;
+    
     for(int i = 0;i<L1.size();i++)
     cout<<L1[i]<<" "<<R1[i]<<" "<<I1[i]<<endl;
     cout<<endl;
     for(int i = 0;i<L2.size();i++)
     cout<<L2[i]<<" "<<R2[i]<<" "<<I2[i]<<endl;
+    */
     /*initialize*/
     D.resize(L1.size());
     //cout<<"D matrix szie = "<<D.size()<<endl;
@@ -1298,7 +1296,7 @@ for (int l=1;l<=arc2.size();l++)
         direct_array[k][l]="S";
     //M[k][l]=max4(lower[k][l],upper[k][l],middle[k][l],v4);
 }
-/**/
+/*
 for(int count = 0;count<=arc1.size();count++)
 {
     for(int count2= 0;count2<=arc2.size();count2++)
@@ -1313,5 +1311,7 @@ for(int count=0;count<=arc1.size();count++)
     cout<<endl;
 }
 cout<<"\n"<<endl;
+
+*/
 return M[arc1.size()][arc2.size()];
 }
