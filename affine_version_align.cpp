@@ -17,7 +17,8 @@ using namespace std;
 #define TYPE2_STRUCTURE
 #define TYPE3_STRUCTURE
 //#define _DEBUG 
-//#define _COM_DEBUG
+//要debug的時候請把註解去掉
+//#define _TRACE_DEBUG
 /*alignment score*/
 struct alignment{
     int p1,p2;
@@ -134,13 +135,16 @@ double m= 1.5;//when one base score >=0 and other base score < 0, m 不能比k�
 double number=1;
 double w_d =-1*number;  // base deletion
 double w_r =-2*number;  // arc  removing
-double w_b =-1.5*number;  // arc  breaking
+//double w_b =-1.5*number;  // arc  breaking
+double w_b =-1.5;  // arc  breaking
 double common_opp = 9;
 double common_exp = 1;
 double base_opp = 9;  // base opening gap
 double base_exp = 1;  // base extension gap
 double arc_opp = 18;   // arc opening gap
 double arc_exp = 2;   // arc extension gap_opp
+double deletion_cost = 0.0;
+double match_cost= 0.0;
 /*
 double w_am=-1.5;  // arc  mismatch
 double w_aa=0;     // arc  match
@@ -181,6 +185,7 @@ void insert(alignment*,int,int,double);
 int** readmat(char *);
 void read_data(const char *);
 void write_data(double,const char *);
+void write_error(double,double,const char *);
 double computation();
 double test_alignment();
 string special_character_processing(string);
@@ -233,21 +238,34 @@ int main(int argc,char* argv[])
 {
     const char *pdb_compare_path ;
     const char *pdb_result;
+    const char *error_result;
     cout<<argc<<endl;
-    if(argc!=11)
+    if(argc!=9)
     {
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/test_data/1A9N_Q_to_1E7K_C/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1M90_B_to_1NKW_9/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1IBK_A_to_1N33_A/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1FG0_A_to_1BZ3_A/semi_input.php";
-        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1D0T_A_to_1ZDK_R/semi_input.php";
-        pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1BAU_A_to_1S9S_A/semi_input.php";
-       // pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1FHK_A_to_1S9S_A/semi_input.php";
-       // pdb_compare_path= "/home/watchlee/Research_Programming/AlignmentToHen/Test_for_GLOBAL/1FG0_A_to_1BZ3_A.php";
+       //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1D0T_A_to_1ZDK_R/semi_input.php";
+        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1BAU_A_to_1S9S_A/semi_input.php";
+       //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1FHK_A_to_1S9S_A/semi_input.php";
+       //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1MT4_A_to_1I3Y_A/semi_input.php";
+       //特殊例子
+      // pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1AM0_A_to_1FMN_A/semi_input.php";
+       //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1FHK_A_to_1ZIF_A/semi_input.php";
+       //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1FHK_A_to_1BYJ_A/semi_input.php";
+       //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1BN0_A_to_1AQ3_R/semi_input.php";
+      // pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1Q9A_A_to_1QA6_C/semi_input.php";
+       //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1Q9A_A_to_1HC8_C/semi_input.php";
+        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1G70_A_to_1M5L_A/semi_input.php";
+       //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/5MSF_S_to_7MSF_R/semi_input.php";
+        //pdb_compare_path= "/home/watchlee/Research_Programming/AlignmentToHen/Test_for_GLOBAL/1FG0_A_to_1BZ3_A.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/AlignmentToHen/Test_for_GLOBAL/1D0T_A_to_1ZDK_R.php";
-       // pdb_compare_path= "/home/watchlee/Research_Programming/AlignmentToHen/Test_for_GLOBAL/1FHK_A_to_1KC8_A.php";
-        //pdb_compare_path= "/home/watchlee/Research_Programming/AlignmentToHen/Test_for_GLOBAL/1MT4_A_to_1HC8_C.php";
+        //pdb_compare_path= "/home/watchlee/Research_Programming/AlignmentToHen/Test_for_GLOBAL/1FHK_A_to_1KC8_A.php";
+       //pdb_compare_path= "/home/watchlee/Research_Programming/AlignmentToHen/Test_for_GLOBAL/1MT4_A_to_1HC8_C.php";
+       //pdb_compare_path= "/home/watchlee/Research_Programming/AlignmentToHen/Test_for_GLOBAL/1G70_A_to_1M5L_A.php";
         pdb_result= "/home/watchlee/result.php";
+        error_result= "/home/watchlee/error.php";
         number = 1;
         k = 2;
         l = 0.1;
@@ -257,14 +275,22 @@ int main(int argc,char* argv[])
     {
         pdb_compare_path=argv[1] ;
         pdb_result= argv[2];
-        number = atoi(argv[3]);
-        k = atoi(argv[4]);
-        l = atoi(argv[5]);
-        m = atoi(argv[6]);
+        error_result= argv[3];
+        number=1;
+        k = 2;
+        l = 0.1;
+        m = 1.5;
+        //k = atof(argv[4]);
+        //l = atof(argv[5]);
+        //m = atof(argv[6]);
+        //common_exp=atof(argv[7]);
+        //common_opp=atof(argv[8]);
+        /*
         base_opp = atoi(argv[7]);
         base_exp = atoi(argv[8]);
         arc_opp = atoi(argv[9]);
         arc_exp = atoi(argv[10]);
+        */
     }
     char path[100];
     //-------------Test Scoring Matrix
@@ -304,21 +330,32 @@ int main(int argc,char* argv[])
     double score = computation();
     traceback();
     cout<<"Score="<<score<<endl;
-    double t = 0.0;
+    double total = 0.0;
     for(int count = 0;count<weights.size();count++)
     {
         //cout<<weights[count]<<" ";
-        t+=weights[count];
+        total+=weights[count];
     }
 
     cout<<astr1<<endl;
     cout<<aseq1<<" "<<aseq1.size()<<endl;
     cout<<aseq2<<" "<<aseq2.size()<<endl;
     cout<<astr2<<endl;
-    cout<<t<<endl;
-
+    cout<<total<<endl;
+    cout<<"path="<<pdb_compare_path<<endl;
+    cout<<"check out here! "<<score<<" "<<total<<endl;
     //cout<<"score="<<test_alignment()<<endl;
-    write_data(score,pdb_result);
+    if(double(score-total)==0)
+    {
+        cout<<"correct!"<<endl;
+        write_data(score,pdb_result);
+    }
+    else
+    {
+        cout<<"incorrect!"<<endl;
+        write_error(score,total,error_result);
+    }
+
     /*釋放記憶體*/
     free(alphabet_index);//來源 line:33
 return 0;
@@ -526,6 +563,23 @@ string special_character_processing(string arc_string)
     }
     return processed_string;
 }
+
+void write_error(double score,double seq_score ,const char *path)
+{
+    fstream file;
+    file.open(path,ios::out);
+    file<<"score is not correct!"<<endl;
+    file<<astr1<<endl;
+    file<<aseq1<<endl;
+    file<<aseq2<<endl;
+    file<<astr2<<endl;
+    file<<"match score"<<match_cost<<endl;
+    file<<"deletion score"<<deletion_cost<<endl;
+    file<<"score"<<score<<endl;
+    file<<"seq score="<<seq_score<<endl;
+    file.close();
+    
+}
 void write_data(double score,const char *path)
 {
     /*處理特殊字元*/
@@ -589,7 +643,6 @@ void traceback()
     vector<vector<double> >().swap(lower);
     vector<vector<double> >().swap(upper);
     vector<vector<double> >().swap(M);
-    static bool open_flag=true;
     static double total=0.0;
     static double gap_insert = 0.0;
     static double gap_delete = 0.0;
@@ -607,7 +660,6 @@ void traceback()
     double open_gappenalty2;
     double open_gappenalty1;
     double arc_cost = 0.0;
-    double deletion_cost = 0.0;
     // range is the currently computed sequence range
     four_tuple range;
     range.l1=0;
@@ -625,39 +677,57 @@ void traceback()
         int r2=ranges.top().r2;
           //cout<<"input r1="<<r1<<" l1="<<l1<<" r2="<<r2<<" l2="<<l2<<endl;
         ranges.pop();
-        bool open_flat=true;
+        //幹你娘bug在這
+        bool open_flag=true;
         if (l1>r1 && l2<=r2)
         {
             for (int s=r2;s>=l2;s--)
             {
+                #ifdef _TRACE_DEBUG
+                cout<<"seq2 start inserting gap"<<endl;
+                #endif 
                 if(open_flag==true)
                 {
+                    #ifdef _TRACE_DEBUG
+                    cout<<"- "<<seq2[s]<<" open "<<(-common_exp-common_opp)<<endl;
+                    #endif 
                     deletion_cost+=(-common_exp-common_opp);
                     insert(ali,-1,s,-common_exp-common_opp);
                     open_flag=false;
                 }
                 else
                 {
+                    #ifdef _TRACE_DEBUG
+                    cout<<"- "<<seq2[s]<<" exp "<<(-common_exp)<<endl;
+                    #endif 
                     insert(ali,-1,s,-common_exp);
                     deletion_cost+=(-common_exp);
                 }
             }
+            
         }
         else if (l1<=r1 && l2>r2)
         {
             for (int s=r1;s>=l1;s--)
             {
+                #ifdef _TRACE_DEBUG
+                cout<<"seq1 start inserting gap"<<endl;
+                #endif 
                 if(open_flag==true)
                 {
+                    #ifdef _TRACE_DEBUG
+                    cout<<seq1[s]<<" - open "<<(-common_exp-common_opp)<<endl;
+                    #endif 
                     insert(ali,s,-1,-common_exp-common_opp);
                     open_flag=false;
-                    gap_delete+=(-common_exp-common_opp);
                     deletion_cost+=(-common_exp-common_opp);
                 }
                 else
                 {
+                    #ifdef _TRACE_DEBUG
+                    cout<<seq1[s]<<" - exp "<<(-common_exp)<<endl;
+                    #endif 
                     insert(ali,s,-1,-common_exp);
-                    gap_delete+=(-common_exp);
                     deletion_cost+=(-common_exp);
                 }
             }
@@ -683,8 +753,8 @@ void traceback()
             /*---------affine gap penalty ------2016/5/20*/ 
             M[0][0]=lower[0][0]=upper[0][0]=0;
             direct_array[0][0]="o";
-            direct_lower[0][0]="C";
-            direct_upper[0][0]="B";
+            direct_lower[0][0]="o";
+            direct_upper[0][0]="o";
             for (int k=1;k<r1-l1+2;k++)
             {
                 lower[k][0]=-LARGE_NUMBER; 
@@ -703,6 +773,8 @@ void traceback()
                 direct_upper[0][l]="B";
                 direct_lower[0][l]="C";
             }
+            direct_lower[0][1]="A";
+            direct_upper[1][0]="A";
             
             for (int k=1;k<r1-l1+2;k++)
                 for (int l=1;l<r2-l2+2;l++)
@@ -755,7 +827,8 @@ void traceback()
                     }
                     direct_array[k][l]=temp_direct;
                 }
-            /* debug用
+            /* debug用*/
+#ifdef _TRACE_DEBUG
             cout<<"score"<<endl;
             for(int count=0;count<=r1-l1+1;count++)
             {
@@ -786,7 +859,8 @@ void traceback()
                     cout<<direct_upper[count][count2]<<"\t";
                 cout<<endl;
             }
-            */
+            /**/
+#endif
             int k=r1-l1+1;
             int l=r2-l2+1;
           //cout<<"input r1="<<r1<<" l1="<<l1<<" r2="<<r2<<" l2="<<l2<<" k="<<k<<" l="<<l<<endl;
@@ -809,14 +883,26 @@ void traceback()
                         a1=l1+k-1;
                         if(k!=0)
                         {
+                            #ifdef _TRACE_DEBUG
+                            cout<<"insert operation "<<k<<" "<<direct_upper[k][l]<<endl;
+                            cout<<seq1[a1]<<" - index "<<a1<<endl;
+                            #endif
                             if(direct_upper[k][l]=="B")
                             {
                                 insert(ali,a1,-1,-common_exp);
+                                deletion_cost+=-common_exp;
+                                #ifdef _TRACE_DEBUG
+                                cout<<"exp score="<<(-common_exp)<<endl;
+                                #endif 
                             }
                             else if(direct_upper[k][l]=="A")
                             {
                                 insert(ali,a1,-1,-common_exp-common_opp);
+                                deletion_cost+=-common_exp-common_opp;
                                 search_flag=false;
+                                #ifdef _TRACE_DEBUG
+                                cout<<"open score="<<(-common_exp-common_opp)<<endl;
+                                #endif 
                             }
 
                         }
@@ -837,17 +923,31 @@ void traceback()
                     while(search_flag)
                     {
                         a2=l2+l-1;
+                        
                         if(l!=0)
                         {
+                            #ifdef _TRACE_DEBUG
+                            cout<<"insert operation "<<l<<" "<<direct_lower[k][l]<<endl;
+                            cout<<"- "<<seq2[a2]<<" index "<<a2<<endl;
+                            #endif
                             if(direct_lower[k][l]=="C")
                             {
                                 insert(ali,-1,a2,-common_exp);
+                                #ifdef _TRACE_DEBUG
+                                cout<<"exp score="<<(-common_exp)<<endl;
+                                #endif 
+                                deletion_cost+=-common_exp;
                             }
                             else if(direct_lower[k][l]=="A")
                             {
                                 insert(ali,-1,a2,-common_exp-common_opp);
+                                #ifdef _TRACE_DEBUG
+                                cout<<"open score="<<(-common_exp-common_opp)<<endl;
+                                #endif 
+                                deletion_cost+=-common_exp-common_opp;
                                 search_flag=false;
                             }
+
                         }
                         else
                             search_flag=false;
@@ -859,6 +959,14 @@ void traceback()
                 {
                     //cout<<k<<" "<<l<<" "<<direct_array[k][l]<<endl;
                     //cout<<seq1[a1]<<" "<<seq2[a2]<<base_matching(a1,a2)+(not_free1(a1)+not_free2(a2))*0.5*w_b<<endl;
+                    match_score+=base_matching(a1,a2)+(not_free1(a1)+not_free2(a2))*0.5*w_b;
+                    #ifdef _TRACE_DEBUG
+                    cout<<"Base match"<<endl;
+                    cout<<arc1[a1]<<" "<<arc2[a2]<<endl;
+                    cout<<seq1[a1]<<" "<<seq2[a2]<<" index "<<a1<<" "<<a2<<endl;
+                    cout<<"score="<<base_matching(a1,a2)+(not_free1(a1)+not_free2(a2))*0.5*w_b<<endl;
+
+                    #endif
                     insert(ali,a1,a2,base_matching(a1,a2)+(not_free1(a1)+not_free2(a2))*0.5*w_b);
                     total+=base_matching(a1,a2)+(not_free1(a1)+not_free2(a2))*0.5*w_b;
                     k--;
@@ -879,26 +987,36 @@ void traceback()
                 double w=M[L1[I1[a1]]-l1][L2[I2[a2]]-l2]+D[I1[a1]][I2[a2]]+arc_operation(L1[I1[a1]],L2[I2[a2]],a1,a2);//(base_matching(L1[I1[a1]],L2[I2[a2]])+base_matching(a1,a2))*0.5*w_am;
                 if (fabs(M[k][l]-w)<eps)
                 {
+
                     int i1=L1[I1[a1]];              // left arc ends
                     int j1=L2[I2[a2]];
                     double edge_weight=0.5*arc_operation(L1[I1[a1]],L2[I2[a2]],a1,a2); //(base_matching(L1[I1[a1]],L2[I2[a2]])+base_matching(a1,a2))*0.5*w_am;
                     arc_cost+=edge_weight*2;
+                    #ifdef _TRACE_DEBUG
+                    cout<<"confimed the path come from arc match"<<endl;
+                    cout<<"arc match"<<endl;
+                    cout<<arc1[i1]<<" "<<arc1[a1]<<endl;
+                    cout<<seq1[i1]<<" "<<seq1[a1]<<" index "<<i1<<" "<<a1<<endl;
+                    cout<<seq2[j1]<<" "<<seq2[a2]<<" index "<<j1<<" "<<a2<<endl;
+                    cout<<arc2[j1]<<" "<<arc2[a2]<<endl; 
+                    cout<<"score="<<(edge_weight*2)<<endl;
+                    #endif
                     total+=edge_weight*2;
-                    match_score+=edge_weight*2;
+                    match_cost+=edge_weight*2;
                     insert(ali,i1,j1,edge_weight);
                     insert(ali,a1,a2,edge_weight);
                     four_tuple CR1,CR2;
                     CR1.l1=l1   ; CR1.r1=i1-1 ; CR1.l2=l2   ; CR1.r2=j1-1 ;
                     CR2.l1=i1+1 ; CR2.r1=a1-1 ; CR2.l2=j1+1 ; CR2.r2=a2-1 ;
-          //cout<<"bottom CR1.r1="<<i1-1<<" CR1.l1="<<l1<<" CR1.r2="<<j1-1<<" CR1.l2="<<l2<<endl;
-          //cout<<"top CR2.r1="<<a1-1<<" CR2.l1="<<i1+1<<" CR2.r2="<<a2-1<<" CR2.l2="<<j1+1<<endl;
+                    cout<<"之後處理 左邊CR1.r1="<<i1-1<<" CR1.l1="<<l1<<" CR1.r2="<<j1-1<<" CR1.l2="<<l2<<endl;
+                    cout<<"優先處理 右邊CR2.r1="<<a1-1<<" CR2.l1="<<i1+1<<" CR2.r2="<<a2-1<<" CR2.l2="<<j1+1<<endl;
                     ranges.push(CR1);
                     ranges.push(CR2);
                 }
             }
         }
     }
-    cout<<"match score:"<<arc_cost<<endl;
+    cout<<"match score:"<<arc_cost<<"+"<<match_score<<endl;
     // write aligned sequences
     weights.resize(0);
     for(alignment* iter=ali->next;iter!=NULL;iter=iter->next)
@@ -1109,6 +1227,9 @@ void traceback()
 /*計算best alignment*/
 double computation()
 {
+    vector<vector<string> > B;
+    vector<vector<string> > C;
+
     vector<vector<string> > direct_array;
     double LARGE_NUMBER=999999;
     /*對I1 I2兩個vector配置arc1 and arc2大小的記憶體空間*/
@@ -1147,15 +1268,14 @@ double computation()
             R2.push_back(i);
         }
     }
-    /*
-    cout<<"total base pair 2= "<<L2.size()<<endl;
-    
+    #ifdef _TRACE_DEBUG
+    cout<<"base pair 1"<<endl;
     for(int i = 0;i<L1.size();i++)
     cout<<L1[i]<<" "<<R1[i]<<" "<<I1[i]<<endl;
-    cout<<endl;
+    cout<<"base pair 2"<<endl;
     for(int i = 0;i<L2.size();i++)
     cout<<L2[i]<<" "<<R2[i]<<" "<<I2[i]<<endl;
-    */
+    #endif
     /*initialize*/
     D.resize(L1.size());
     //cout<<"D matrix szie = "<<D.size()<<endl;
@@ -1172,27 +1292,54 @@ for(int i = 0;i<L1.size();i++)
         lower.resize(R1[i]-L1[i]);
         upper.resize(R1[i]-L1[i]);
         M.resize(R1[i]-L1[i]);
+
+        #ifdef _TRACE_DEBUG
+        B.resize(R1[i]-L1[i]);
+        C.resize(R1[i]-L1[i]);
+        direct_array.resize(R1[i]-L1[i]);
+        #endif
+
+
         for(int s = 0;s<M.size();s++)
         {
             M[s].resize(R2[j]-L2[j]);
             //affine gap penalty 2016/5/20
             lower[s].resize(R2[j]-L2[j]);
             upper[s].resize(R2[j]-L2[j]);
+            #ifdef _TRACE_DEBUG
+            B[s].resize(R2[j]-L2[j]);
+            C[s].resize(R2[j]-L2[j]);
+            direct_array[s].resize(R2[j]-L2[j]);
+            #endif
         }
         M[0][0]=0;
         //affine gap penalty 2016/5/20
         lower[0][0]=upper[0][0]=0;
+        #ifdef _TRACE_DEBUG
+        B[0][0]=C[0][0]=direct_array[0][0]="o";
+        #endif
+
         for(int k = 1;k<R1[i]-L1[i];k++)
         {
             lower[k][0]=-LARGE_NUMBER; 
-            M[k][0]=upper[k][0]=-common_exp-k*common_opp;
+            M[k][0]=upper[k][0]=-common_opp-k*common_exp;
             //M[k][0]=M[k-1][0]+w_d+not_free1(L1[i]+k)*(0.5*w_r-w_d);
+            #ifdef _TRACE_DEBUG
+            B[k][0]="B";
+            C[k][0]="C";
+            direct_array[k][0]="B";
+            #endif
         }
         for (int l=1;l<R2[j]-L2[j];l++)
         {
             upper[0][l]=-LARGE_NUMBER;
-            M[0][l]=lower[0][l]=-common_exp-l*common_opp;
+            M[0][l]=lower[0][l]=-common_opp-l*common_exp;
             //M[0][l]=M[0][l-1]+w_d+not_free2(L2[j]+l)*(0.5*w_r-w_d);
+            #ifdef _TRACE_DEBUG
+            B[0][l]="B";
+            C[0][l]="C";
+            direct_array[0][l]="C";
+            #endif
         }
         //compute M
         double v1,v2,v3,v4;
@@ -1207,7 +1354,19 @@ for(int i = 0;i<L1.size();i++)
             //edit operation
             //v1 = lower gap penalty , v2 = upper gap penalty, v3 = mismatch or match gap penalty, v4=special case
             v1=lower[k][l]=max(lower[k][l-1]-common_exp,M[k][l-1]-common_opp-common_exp);
+            #ifdef _TRACE_DEBUG
+            if(lower[k][l]==lower[k][l-1]-common_exp)
+                C[k][l]="C";
+            else if(lower[k][l]==M[k][l-1]-common_exp-common_opp)
+                C[k][l]="A";
+            #endif
             v2=upper[k][l]=max(upper[k-1][l]-common_exp,M[k-1][l]-common_opp-common_exp);
+            #ifdef _TRACE_DEBUG
+            if(upper[k][l]==upper[k-1][l]-common_exp)
+                B[k][l]="B";
+            else if(upper[k][l]==M[k-1][l]-common_opp-common_exp)
+                B[k][l]="A";
+            #endif
             //v3=middle[k][l]=max(middle[k-1][l-1]+base_matching(a1,a2)+((not_free1(a1)+not_free2(a2))*0.5*w_b),lower[k-1][l-1],upper[k-1][l-1]);
             //v1=M[k-1][l]+w_d+not_free1(a1)*(0.5*w_r-w_d);
             //v2=M[k][l-1]+w_d+not_free2(a2)*(0.5*w_r-w_d);
@@ -1217,14 +1376,57 @@ for(int i = 0;i<L1.size();i++)
                 int leftpoint = L1[I1[a1]];
                 int leftpoint2 = L2[I2[a2]];
                 v4 = M[leftpoint - L1[i]-1][leftpoint2 - L2[j]-1]+D[I1[a1]][I2[a2]]+arc_operation(L1[I1[a1]],L2[I2[a2]],R1[I1[a1]],R2[I2[a2]]);
-                //v4 = middle[leftpoint - L1[i]-1][leftpoint2 - L2[j]-1]+D[I1[a1]][I2[a2]]+arc_operation(L1[I1[a1]],L2[I2[a2]],R1[I1[a1]],R2[I2[a2]]);
                 //(base_matching(L1[I1[a1]],L2[I2[a2]])+base_matching(R1[I1[a1]],R2[I2[a2]]))*0.5*w_am;
             }
             //M[k][l]=min4(v1,v2,v3,v4);
             //
             M[k][l]=max4(v1,v2,v3,v4);
+            #ifdef _TRACE_DEBUG
+            if(M[k][l]==v1)
+                direct_array[k][l]="C";
+            else if(M[k][l]==v2)
+                direct_array[k][l]="B";
+            else if(M[k][l]==v3)
+                direct_array[k][l]="A";
+            else if(M[k][l]==v4)
+                direct_array[k][l]="S";
+            #endif
         }
-D[i][j]=M[R1[i]-L1[i]-1][R2[j]-L2[j]-1];
+        D[i][j]=M[R1[i]-L1[i]-1][R2[j]-L2[j]-1];
+        #ifdef _TRACE_DEBUG
+        cout<<"base pair vs base pair"<<endl;
+        cout<<"arc1: "<<R1[i]<<" "<<L1[i]<<endl;
+        cout<<"arc2: "<<R2[j]<<" "<<L2[j]<<endl;
+        cout<<"score"<<endl;
+        for(int x = 0;x<R1[i]-L1[i];x++)
+        {
+            for(int y=0;y<R2[j]-L2[j];y++)
+                cout<<M[x][y]<<"\t";
+            cout<<endl;
+        }
+        cout<<"lower"<<endl;
+        for(int x = 0;x<R1[i]-L1[i];x++)
+        {
+            for(int y=0;y<R2[j]-L2[j];y++)
+                cout<<C[x][y]<<"\t";
+            cout<<endl;
+        }
+        cout<<"M"<<endl;
+        for(int x = 0;x<R1[i]-L1[i];x++)
+        {
+            for(int y=0;y<R2[j]-L2[j];y++)
+                cout<<direct_array[x][y]<<"\t";
+            cout<<endl;
+        }
+        cout<<"upper"<<endl;
+        for(int x = 0;x<R1[i]-L1[i];x++)
+        {
+            for(int y=0;y<R2[j]-L2[j];y++)
+                cout<<B[x][y]<<"\t";
+            cout<<endl;
+        }
+        cout<<endl;
+        #endif
     }
 }
 /*affine gap penalty 2016/5/20*/
@@ -1287,16 +1489,17 @@ for (int l=1;l<=arc2.size();l++)
     //M[k][l]=min4(v1,v2,v3,v4);
     M[k][l]=max4(v1,v2,v3,v4);
     if(M[k][l]==v1)
-        direct_array[k][l]="B";
-    else if(M[k][l]==v2)
         direct_array[k][l]="C";
+    else if(M[k][l]==v2)
+        direct_array[k][l]="B";
     else if(M[k][l]==v3)
         direct_array[k][l]="A";
     else if(M[k][l]==v4)
         direct_array[k][l]="S";
     //M[k][l]=max4(lower[k][l],upper[k][l],middle[k][l],v4);
 }
-/*
+#ifdef _TRACE_DEBUG
+cout<<"Computation model results"<<endl;
 for(int count = 0;count<=arc1.size();count++)
 {
     for(int count2= 0;count2<=arc2.size();count2++)
@@ -1311,7 +1514,7 @@ for(int count=0;count<=arc1.size();count++)
     cout<<endl;
 }
 cout<<"\n"<<endl;
+#endif
 
-*/
 return M[arc1.size()][arc2.size()];
 }
