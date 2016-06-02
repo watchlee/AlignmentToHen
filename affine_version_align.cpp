@@ -107,7 +107,6 @@ static int size=0;
 static int gap_opp,gap_exp;//Input gap penalty arguments
 static string seq1,arc1,seq2,arc2,matrixpath;
 static string aseq1,aseq2,astr1,astr2;
-double arc_max = 0.0,seq_max = 0.0;
 vector<double> weights;
 vector<int>    L1,R1,I1,L2,R2,I2;
 stack<int>     str_stack;
@@ -129,20 +128,16 @@ int not_free2    (int pos)          { return (arc2[pos]=='.' ? 0:1)      ;  }
 /*沒這麼簡單了*/
 int arc_mismatch(int pos1,int pos2){ return (seq1[pos1]!=seq2[pos2]?1:0);  }
 int base_matching(int,int);
-double k = 2;//arc match 
-double l= 0.1;//arc mismatch
-double m= 1.5;//when one base score >=0 and other base score < 0, m 不能比k大
+double arc_match_weight = 4;//arc match 
+double arc_mismatch_weight= 1;//arc mismatch
+double arc_halfmatch_weight= 3;//when one base score >=0 and other base score < 0, m 不能比k大
 double number=1;
 double w_d =-1*number;  // base deletion
 double w_r =-2*number;  // arc  removing
 //double w_b =-1.5*number;  // arc  breaking
-double w_b =-1.5;  // arc  breaking
+double w_b =-0;  // arc  breaking
 double common_opp = 9;
 double common_exp = 1;
-double base_opp = 9;  // base opening gap
-double base_exp = 1;  // base extension gap
-double arc_opp = 18;   // arc opening gap
-double arc_exp = 2;   // arc extension gap_opp
 double deletion_cost = 0.0;
 double match_cost= 0.0;
 /*
@@ -158,7 +153,11 @@ double arc_operation(int p1,int p2,int p3,int p4)
     if(base_matching(p1,p2)>=0&&base_matching(p3,p4)>=0)
     {
         //return 0;
-        return k*(base_matching(p1,p2)+base_matching(p3,p4));
+        if(base_matching(p1,p2)==0&&base_matching(p3,p4)==0)
+            return arc_match_weight;
+        else
+            return arc_match_weight*(base_matching(p1,p2)+base_matching(p3,p4));
+
     }
     //當alignment score <0 views as arc-mismatch
     else
@@ -167,16 +166,16 @@ double arc_operation(int p1,int p2,int p3,int p4)
         {
             if((base_matching(p1,p2)+base_matching(p3,p4))>=0)
             {
-                return (base_matching(p1,p2)+base_matching(p3,p4))*m;
+                return (base_matching(p1,p2)+base_matching(p3,p4))*arc_halfmatch_weight;
             } 
             else
             {
-                return (base_matching(p1,p2)+base_matching(p3,p4))*(l/2);
+                return (base_matching(p1,p2)+base_matching(p3,p4))*(arc_mismatch_weight/2);
             }
         }
         else if(base_matching(p1,p2)<=0 && base_matching(p3,p4)<0)
         //return (base_matching(p1,p2)+base_matching(p3,p4))*0.5*w_am;
-        return (base_matching(p1,p2)+base_matching(p3,p4))*l;
+        return (base_matching(p1,p2)+base_matching(p3,p4))*arc_mismatch_weight;
     }
 }
 int BinarySearch(char ,IndexMatrix *,int );
@@ -240,7 +239,7 @@ int main(int argc,char* argv[])
     const char *pdb_result;
     const char *error_result;
     cout<<argc<<endl;
-    if(argc!=9)
+    if(argc!=10)
     {
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/test_data/1A9N_Q_to_1E7K_C/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1M90_B_to_1NKW_9/semi_input.php";
@@ -255,36 +254,43 @@ int main(int argc,char* argv[])
        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1FHK_A_to_1ZIF_A/semi_input.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1FHK_A_to_1BYJ_A/semi_input.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1BN0_A_to_1AQ3_R/semi_input.php";
-      // pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1Q9A_A_to_1QA6_C/semi_input.php";
+       pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1Q9A_A_to_1QA6_C/semi_input.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1Q9A_A_to_1HC8_C/semi_input.php";
-        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1G70_A_to_1M5L_A/semi_input.php";
+       //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1G70_A_to_1M5L_A/semi_input.php";
+      // pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1UN6_E_to_1M90_B/semi_input.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/5MSF_S_to_7MSF_R/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/AlignmentToHen/Test_for_GLOBAL/1FG0_A_to_1BZ3_A.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/AlignmentToHen/Test_for_GLOBAL/1D0T_A_to_1ZDK_R.php";
+        //pdb_compare_path= "/home/watchlee/Research_Programming/AlignmentToHen/Test_for_GLOBAL/1FHK_A_to_1FKA_A.php";
+        //pdb_compare_path= "/home/watchlee/Research_Programming/AlignmentToHen/Test_for_GLOBAL/1FHK_A_to_1KC8_A.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/AlignmentToHen/Test_for_GLOBAL/1FHK_A_to_1KC8_A.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/AlignmentToHen/Test_for_GLOBAL/1MT4_A_to_1HC8_C.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/AlignmentToHen/Test_for_GLOBAL/1G70_A_to_1M5L_A.php";
         pdb_result= "/home/watchlee/result.php";
         error_result= "/home/watchlee/error.php";
         number = 1;
-        k = 2;
-        l = 0.1;
-        m = 1.5;
+        arc_match_weight = 3;
+        arc_mismatch_weight = 1;
+        arc_halfmatch_weight = 1.5;
     }
     else
     {
         pdb_compare_path=argv[1] ;
         pdb_result= argv[2];
         error_result= argv[3];
+
         number=1;
-        k = 2;
-        l = 0.1;
-        m = 1.5;
+        arc_match_weight = atof(argv[4]);
+        arc_mismatch_weight = atof(argv[5]);
+        arc_halfmatch_weight = atof(argv[6]); 
+        w_b =atof(argv[7]);
+        
+
         //k = atof(argv[4]);
         //l = atof(argv[5]);
         //m = atof(argv[6]);
-        //common_exp=atof(argv[7]);
-        //common_opp=atof(argv[8]);
+        common_opp=atof(argv[8]);
+        common_exp=atof(argv[9]);
         /*
         base_opp = atoi(argv[7]);
         base_exp = atoi(argv[8]);
@@ -297,6 +303,7 @@ int main(int argc,char* argv[])
     //sprintf(path,"./SM/BLOSUM-like_scoring_matrix");
     //sprintf(path,"./SM/iPARTS2_new_23C_4L_matrix");
     sprintf(path,"./SM/23-4L_matrix");
+    //sprintf(path,"./SM/SARA_23C_4L_matrix");
     scoring_matrix=readmat(path);
     //cout<<"arc max = "<<arc_max<<endl;
     //cout<<"seq max = "<<seq_max<<endl;
@@ -345,7 +352,7 @@ int main(int argc,char* argv[])
     cout<<"path="<<pdb_compare_path<<endl;
     cout<<"check out here! "<<score<<" "<<total<<endl;
     //cout<<"score="<<test_alignment()<<endl;
-    if(double(score-total)==0)
+    if(abs(double(score-total))<0.01)
     {
         cout<<"correct!"<<endl;
         write_data(score,pdb_result);
@@ -1008,8 +1015,10 @@ void traceback()
                     four_tuple CR1,CR2;
                     CR1.l1=l1   ; CR1.r1=i1-1 ; CR1.l2=l2   ; CR1.r2=j1-1 ;
                     CR2.l1=i1+1 ; CR2.r1=a1-1 ; CR2.l2=j1+1 ; CR2.r2=a2-1 ;
+                    #ifdef _TRACE_DEBUG
                     cout<<"之後處理 左邊CR1.r1="<<i1-1<<" CR1.l1="<<l1<<" CR1.r2="<<j1-1<<" CR1.l2="<<l2<<endl;
                     cout<<"優先處理 右邊CR2.r1="<<a1-1<<" CR2.l1="<<i1+1<<" CR2.r2="<<a2-1<<" CR2.l2="<<j1+1<<endl;
+                    #endif
                     ranges.push(CR1);
                     ranges.push(CR2);
                 }
