@@ -254,7 +254,8 @@ int main(int argc,char* argv[])
        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1FHK_A_to_1ZIF_A/semi_input.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1FHK_A_to_1BYJ_A/semi_input.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1BN0_A_to_1AQ3_R/semi_input.php";
-       pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1Q9A_A_to_1QA6_C/semi_input.php";
+       //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1Q9A_A_to_1QA6_C/semi_input.php";
+       pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1J4Y_A_to_1Q2S_E/semi_input.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1Q9A_A_to_1HC8_C/semi_input.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1G70_A_to_1M5L_A/semi_input.php";
       // pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1UN6_E_to_1M90_B/semi_input.php";
@@ -870,13 +871,22 @@ void traceback()
 #endif
             int k=r1-l1+1;
             int l=r2-l2+1;
+            #ifdef _TRACE_DEBUG
+            cout<<"origin k and l"<<endl;
+            cout<<"k="<<k<<" l="<<l<<endl;
+            #endif
           //cout<<"input r1="<<r1<<" l1="<<l1<<" r2="<<r2<<" l2="<<l2<<" k="<<k<<" l="<<l<<endl;
             bool seqaln=true;
             // sequence alignment
             while (seqaln)
             {
+
                 int a1=l1+k-1;                      // a1,a2 sequence positions 
                 int a2=l2+l-1;
+                #ifdef _TRACE_DEBUG
+                cout<<"a1="<<a1<<" a2="<<a2<<endl;
+                cout<<"k="<<k<<" l="<<l<<endl;
+                #endif
                 if (k==0 && l==0)
                 {
                     seqaln=false;
@@ -912,12 +922,12 @@ void traceback()
                                 #endif 
                             }
 
+                        k--;
                         }
                         else
                         {
                             search_flag=false;
                         }
-                        k--;
                     }
                     
                 }
@@ -955,10 +965,10 @@ void traceback()
                                 search_flag=false;
                             }
 
+                        l--;
                         }
                         else
                             search_flag=false;
-                        l--;
                     }
                 }
                 //else if (k>0 && l>0 && (M[k][l]-M[k-1][l-1]+base_matching(a1,a2)+(not_free1(a1)+not_free2(a2))*0.5*w_b)==0)
