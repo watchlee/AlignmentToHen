@@ -127,6 +127,7 @@ int not_free2    (int pos)          { return (arc2[pos]=='.' ? 0:1)      ;  }
 int arc_mismatch(int pos1,int pos2){ return (seq1[pos1]!=seq2[pos2]?1:0);  }
 int base_matching(int,int);
 double arc_match_weight = 4;//arc match 
+double arc_match_weight2 = 4;//arc match 
 double arc_mismatch_case1= 3;//when one base score >=0 and other base score < 0, m 不能比k大
 double arc_mismatch_case2= 1;//when sum=0
 double arc_mismatch_case3= 1.5;//when sum<0
@@ -156,7 +157,7 @@ double arc_operation(int p1,int p2,int p3,int p4)
     {
         //return 0;
         if(base_matching(p1,p2)==0&&base_matching(p3,p4)==0)
-            return arc_match_weight;
+            return arc_mismatch_case2;
         else
             return arc_match_weight*(base_matching(p1,p2)+base_matching(p3,p4));
     }
@@ -191,6 +192,7 @@ void write_data(double,const char *);
 void write_error(double,double,const char *);
 double computation();
 double test_alignment();
+void write_profit(const char *);
 string special_character_processing(string);
 //做一般的global alignment
 /*需要寫一個python 去處理input file data*/
@@ -242,6 +244,7 @@ int main(int argc,char* argv[])
     const char *pdb_compare_path ;
     const char *pdb_result;
     const char *error_result;
+    const char *profit_result;
     cout<<argc<<endl;
     if(argc!=12)
     {
@@ -260,10 +263,17 @@ int main(int argc,char* argv[])
        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1FHK_A_to_1S9S_A/semi_input.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1MT4_A_to_1I3Y_A/semi_input.php";
        //特殊例子
+
+    //   pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1A9N_R_to_1MFJ_A/semi_input.php";
       // pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1AM0_A_to_1FMN_A/semi_input.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1FHK_A_to_1ZIF_A/semi_input.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1FHK_A_to_1BYJ_A/semi_input.php";
-       pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1FHK_A_to_1G1X_E/semi_input.php";
+       //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1FHK_A_to_1G1X_E/semi_input.php";
+        //有  bug
+       pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1UN6_F_to_1K9M_B/semi_input.php";
+        //有bug
+        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1FQZ_A_to_1KP7_A/semi_input.php";
+        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1F84_A_to_1P5N_A/semi_input.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1BN0_A_to_1AQ3_R/semi_input.php";
       //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1Q9A_A_to_1QA6_C/semi_input.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1Q9A_A_to_1HC8_C/semi_input.php";
@@ -281,12 +291,15 @@ int main(int argc,char* argv[])
        //pdb_compare_path= "/home/watchlee/Research_Programming/AlignmentToHen/Test_for_GLOBAL/1IKD_A_to_1NJM_5.php";
         pdb_result= "/home/watchlee/result.php";
         error_result= "/home/watchlee/error.php";
+        profit_result= "/home/watchlee/profit_result";
         number = 1;
-        arc_match_weight = 3;
-        arc_mismatch_case1 = 1.5;
-        arc_mismatch_case2 = 2;
-        arc_mismatch_case3 = 1.5;
+        arc_match_weight = 50;
+        arc_mismatch_case1 = 1;
+        arc_mismatch_case2 = 1;
+        arc_mismatch_case3 = 1;
         arc_mismatch_case4 = 1;
+        common_opp=9;
+        common_exp=1;
         w_b=-0.5;
     }
     else
@@ -303,6 +316,7 @@ int main(int argc,char* argv[])
         w_b =atof(argv[9]);
         common_opp=atof(argv[10]);
         common_exp=atof(argv[11]);
+        profit_result= "/home/watchlee/profit_result";
         //k = atof(argv[4]);
         //l = atof(argv[5]);
         //m = atof(argv[6]);
@@ -374,11 +388,26 @@ int main(int argc,char* argv[])
     else
     {
         cout<<"incorrect!"<<endl;
+        write_data(score,pdb_result);
         write_error(score,total,error_result);
     }
+    write_profit(profit_result);
     /*釋放記憶體*/
     free(alphabet_index);//來源 line:33
 return 0;
+}
+void write_profit(const char *path)
+{ 
+    /*處理特殊字元*/
+
+    fstream file;
+    file.open(path,ios::out);
+    file<<aseq1<<endl;
+    file<<aseq2<<endl;
+
+    file.close();
+
+
 }
 /*判斷方向*/
 string determingDIRECT(double temp_middle,double temp_lower,double temp_upper,double current_score)
@@ -688,7 +717,7 @@ void traceback()
     ranges.push(range);
     vector<vector<string> >direct_array;
     bool first_time=true;
-    double arc_flag= false;
+    bool arc_flag= false;
     while(!ranges.empty())
     {
         int l1=ranges.top().l1;
@@ -792,7 +821,7 @@ void traceback()
                 lower[k][0]=-LARGE_NUMBER; 
                 //M[k][0]=upper[k][0]=-base_opp-(k*base_exp)+not_free1(l1+k-1)*(0.5*(-arc_opp-k*arc_exp)+(base_opp+(k*base_exp)));
                 upper[k][0]=-common_opp-(k*common_exp);
-                if(!arc_flag)
+                if(!arc_flag&&l1==0)
                 //if(first_time)
                     M[k][0]=0;
                 else
@@ -806,7 +835,7 @@ void traceback()
                 upper[0][l]=-LARGE_NUMBER;
                 //M[0][l]=lower[0][l]=-base_opp-(l*base_exp)+not_free2(l2+l-1)*(0.5*(-arc_opp-l*arc_exp)+(base_opp+(l*base_exp)));
                 lower[0][l]=-common_opp-(l*common_exp);
-                if(!arc_flag)
+                if(!arc_flag&&l2==0)
                 //if(first_time)
                     M[0][l]=0;
                 else

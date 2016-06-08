@@ -14,12 +14,8 @@
 #include <stack>
 using namespace std;
 
-#define TYPE_STRUCTURE
-#define TYPE2_STRUCTURE
-#define TYPE3_STRUCTURE
-//#define _DEBUG 
-//#define _COM_DEBUG
 #define _TRACE_DEBUG
+#define _DISPLAY
 /*alignment score*/
 struct alignment{
     int p1,p2;
@@ -178,7 +174,7 @@ double arc_operation(int p1,int p2,int p3,int p4)
     {
         //return 0;
         if((base_matching(p1,p2)+base_matching(p3,p4))==0)
-            return arc_match_case2;
+            return arc_mismatch_case2;
         else
             return arc_match_case1*(base_matching(p1,p2)+base_matching(p3,p4));
     }
@@ -213,6 +209,7 @@ void insert(alignment*,int,int,double);
 int** readmat(char *);
 void read_data(const char *);
 void write_data(double,const char *);
+void write_profit(const char *);
 double computation();
 string special_character_processing(string);
 //做一般的global alignment
@@ -263,41 +260,47 @@ int main(int argc,char* argv[])
 {
     const char *pdb_compare_path ;
     const char *pdb_result;
-    if(argc!=3)
+    const char *profit_result;
+    if(argc!=11)
     {
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/test_data/1A9N_Q_to_1E7K_C/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1M90_B_to_1NKW_9/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1IBK_A_to_1N33_A/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1BAU_A_to_1S9S_A/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1FQZ_A_to_1KP7_A/semi_input.php";
-        pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1FHK_A_to_1S9S_A/semi_input.php";
+        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1F84_A_to_1P5N_A/semi_input.php";
+        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1BYJ_A_to_1I6U_C/semi_input.php";
+        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1FHK_A_to_1S9S_A/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1JJ2_9_to_1NKW_9/semi_input.php";
+        pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1E8O_E_to_1JID_B/semi_input.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/AlignmentToHen/Test_for_GLOBAL/1NJI_B_to_1NMY_9.php";
+       //pdb_compare_path= "/home/watchlee/Research_Programming/AlignmentToHen/Special_for_debug/semi_input.php";
+    //   pdb_compare_path= "/home/watchlee/Research_Programming/AlignmentToHen/Special_for_debug/1E8O_Evs1JID_B/semi_input.php";
+       //pdb_compare_path= "/home/watchlee/Research_Programming/AlignmentToHen/Special_for_debug/input2.php";
         pdb_result= "/home/watchlee/result.php";
+        profit_result= "/home/watchlee/profit_result";
         number = 1;
-         arc_match_case1 = 2; //if both > 0
-         arc_match_case2 = 2; // if both =0
-         arc_mismatch_case1=1.5;// if sum >0
-         arc_mismatch_case2=1;// if sum = 0
-         arc_mismatch_case3=0.25;// if sum < 0
-         arc_mismatch_case4=0.5;// if both < 0
-         w_d =-1;  // base deletion
-         w_r =-2;  // arc  removing
-         w_b =-0.5;  // arc  breaking
+         arc_match_case1 = 1; //if both > 0
+         arc_mismatch_case1=1;// if sum >0
+         arc_mismatch_case2=0;// if sum = 0
+         arc_mismatch_case3=1;// if sum < 0
+         arc_mismatch_case4=1;// if both < 0
+         w_d =-9;  // base deletion
+         w_r =-1;  // arc  removing
+         w_b =-1;  // arc  breaking
     }
     else
     {
        pdb_compare_path=argv[1] ;
        pdb_result= argv[2];
          arc_match_case1 = atof(argv[3]); //if both > 0
-         arc_match_case2 = atof(argv[4]); // if both =0
-         arc_mismatch_case1=atof(argv[5]);// if sum >0
-         arc_mismatch_case2=atof(argv[6]);// if sum = 0
-         arc_mismatch_case3=atof(argv[7]);// if sum < 0
-         arc_mismatch_case4=atof(argv[8]);// if both < 0
-         w_d =atof(argv[9]);  // base deletion
-         w_r =atof(argv[10]);  // arc  removing
-         w_b =atof(argv[11]);  // arc  breaking
+         arc_mismatch_case1=atof(argv[4]);// if sum >0
+         arc_mismatch_case2=atof(argv[5]);// if sum = 0
+         arc_mismatch_case3=atof(argv[6]);// if sum < 0
+         arc_mismatch_case4=atof(argv[7]);// if both < 0
+         w_d =atof(argv[8]);  // base deletion
+         w_r =atof(argv[9]);  // arc  removing
+         w_b =atof(argv[10]);  // arc  breaking
     }
 
     char path[100];
@@ -337,25 +340,38 @@ int main(int argc,char* argv[])
     /*Computation*/
     double score = computation();
     traceback();
-
+    #ifdef _TRACE_DEBUG
     cout<<"Match Score="<<match_score<<endl;
     cout<<"Arc Score="<<arc_score<<endl;
     cout<<"del Score="<<del_score<<endl;
     cout<<"Score="<<score<<endl;
+    #endif 
     double total = 0.0;
     for(int count = 0;count<weights.size();count++)
     {
         //cout<<weights[count]<<" ";
         total+=weights[count];
     }
+    #ifdef _DISPLAY
     cout<<astr1<<endl;
     cout<<aseq1<<" "<<aseq1.size()<<endl;
     cout<<aseq2<<" "<<aseq2.size()<<endl;
     cout<<astr2<<endl;
-    cout<<total<<endl;
+    #endif
+    #ifdef _DISPLAY
+    cout<<"result = "<<score<<" "<<total<<endl;
+    #endif
+    if(abs(total-score)>0.01)
+    {
+        cout<<"incorrect"<<endl;
+        cout<<pdb_compare_path<<endl;
+    }
+    else
+        cout<<"correct"<<endl;
 
     write_data(score,pdb_result);
-
+    
+    write_profit(profit_result);
 
     /*釋放記憶體*/
     free(alphabet_index);//來源 line:33
@@ -379,7 +395,20 @@ string special_character_processing(string arc_string)
     }
     return processed_string;
 }
+void write_profit(const char *path)
+{ 
+    /*處理特殊字元*/
 
+    fstream file;
+    file.open(path,ios::out);
+    file<<aseq1<<endl;
+    file<<aseq2<<endl;
+
+
+    file.close();
+
+
+}
 void write_data(double score,const char *path)
 {
     /*處理特殊字元*/
@@ -488,7 +517,7 @@ void traceback()
             {
                 if(l1!=0)
                 {
-                    insert(ali,-1,s,w_d);
+                    insert(ali,-1,s,w_d+not_free2(s)*(0.5*w_r-w_d));
                     del_score+=w_d;
                 }
                 else
@@ -509,7 +538,7 @@ void traceback()
                 if(l2!=0)
                 {
                     
-                     insert(ali,s,-1,w_d);
+                     insert(ali,s,-1,w_d+not_free1(s)*(0.5*w_r-w_d));
                     del_score+=w_d;
                 }
                 else
@@ -531,12 +560,14 @@ void traceback()
 	      for(int t=0;t<M[s].size();t++)
             M[s][t]=0;
 	    }
-	  
+	#ifdef _TRACE_DEBUG
+        cout<<"ARC_FLAG="<<arc_flag<<endl;
+    #endif
 	  M[0][0]=0;
 	  direct[0][0]="o";
 	  for (int k=1;k<r1-l1+2;k++)
         {
-            if(!arc_flag)
+            if(!arc_flag&&l1==0)
                 M[k][0]=0; 
             else
                 M[k][0]=M[k-1][0]+w_d+not_free1(l1+k-1)*(0.5*w_r-w_d);
@@ -545,7 +576,7 @@ void traceback()
 	  
 	  for (int l=1;l<r2-l2+2;l++)
         {
-            if(!arc_flag)
+            if(!arc_flag&&l2==0)
                 M[0][l]=0;
             else
                 M[0][l]=M[0][l-1]+w_d+not_free2(l2+l-1)*(0.5*w_r-w_d);
@@ -553,6 +584,7 @@ void traceback()
         } 
       if(arc_flag)
         arc_flag=false;
+
 	  for (int k=1;k<r1-l1+2;k++)
 	    for (int l=1;l<r2-l2+2;l++)
 	      {
@@ -585,19 +617,35 @@ void traceback()
                 direct[k][l]="S";
 	      }
 	#ifdef _TRACE_DEBUG
+    cout<<"\t";
+    for(int count =0;count<r2-l2+2;count++)
+    {
+        cout<<"a2:"<<count<<"\t";
+    }
+    cout<<"\t";
+    cout<<endl;
     for(int count =0; count<r1-l1+2;count++)
     {
+        cout<<"a1:"<<count<<"\t";
         for(int count2=0;count2<r2-l2+2;count2++)
             cout<<M[count][count2]<<"\t";
         cout<<endl;
     }       
     cout<<"Direct array"<<endl;
+    cout<<"\t";
+    for(int count =0;count<r2-l2+2;count++)
+    {
+        cout<<"a2:"<<count<<"\t";
+    }
+    cout<<"\t";
+    cout<<endl;
     for(int count =0; count<r1-l1+2;count++)
     {
+        cout<<"a1:"<<count<<"\t";
         for(int count2=0;count2<r2-l2+2;count2++)
             cout<<direct[count][count2]<<"\t";
         cout<<endl;
-    }       
+    }
     #endif
 	  bool seqaln=true;
       /*由外而內*/
@@ -625,7 +673,7 @@ cout<<current_column<<" "<<current_row<<endl;
             insert(ali,count,-1,0);
         for(int count = r2;count>l-1;count--)
             insert(ali,-1,count,0);
-        cout<<"last value is k="<<k<<" l="<<l<<" max="<<M[k][l]<<endl;
+
       }
       first_time=false;
         while(seqaln)
@@ -636,6 +684,15 @@ cout<<current_column<<" "<<current_row<<endl;
                 seqaln=false;
             else if(direct[k][l]=="C")
             {
+                #ifdef _TRACE_DEBUG
+                cout<<"發生deletion"<<endl;
+                cout<<arc1[a1]<<endl;
+                cout<<seq1[a1]<<endl;
+                cout<<seq2[a2]<<endl;
+                cout<<arc2[a2]<<endl;
+                cout<<"k = "<<k<<" l1="<<l1<<" delete cost= "<<w_d+not_free1(a1)*(0.5*w_r-w_d);
+                #endif
+               
                 if(k!=0||l1!=0)
                       insert(ali,-1,a2,w_d+not_free2(a2)*(0.5*w_r-w_d));
                 else
@@ -644,6 +701,14 @@ cout<<current_column<<" "<<current_row<<endl;
             }
             else if(direct[k][l]=="B")
             {
+                #ifdef _TRACE_DEBUG
+                cout<<"發生insert"<<endl;
+                cout<<arc1[a1]<<endl;
+                cout<<seq1[a1]<<endl;
+                cout<<seq2[a2]<<endl;
+                cout<<arc2[a2]<<endl;
+                cout<<"l = "<<l<<" l2="<<l2<<" insert cost= "<<w_d+not_free1(a1)*(0.5*w_r-w_d);
+                #endif
                 if(l!=0||l2!=0)
                   insert(ali,a1,-1,w_d+not_free1(a1)*(0.5*w_r-w_d));
                 else
@@ -653,6 +718,14 @@ cout<<current_column<<" "<<current_row<<endl;
             else if(direct[k][l]=="A")
             {
               insert(ali,a1,a2,base_matching(a1,a2)*w_m+(not_free1(a1)+not_free2(a2))*w_b);
+              #ifdef _TRACE_DEBUG
+              cout<<"發生ＭＡＴＣＨ"<<endl;
+                cout<<arc1[a1]<<endl;
+                cout<<seq1[a1]<<endl;
+                cout<<seq2[a2]<<endl;
+                cout<<arc2[a2]<<endl;
+                cout<<"match cost ="<<base_matching(a1,a2)*w_m+(not_free1(a1)+not_free2(a2))*w_b<<endl;
+              #endif
                 k--;
                 l--;
             }
@@ -734,8 +807,14 @@ cout<<current_column<<" "<<current_row<<endl;
 		  CR1.l1=l1   ; CR1.r1=i1-1 ; CR1.l2=l2   ; CR1.r2=j1-1 ;
 		  CR2.l1=i1+1 ; CR2.r1=a1-1 ; CR2.l2=j1+1 ; CR2.r2=a2-1 ;
           #ifdef _TRACE_DEBUG
-          cout<<"bottom CR1.r1="<<i1-1<<" CR1.l1="<<l1<<" CR1.r2="<<j1-1<<" CR1.l2="<<l2<<endl;
-          cout<<"top CR2.r1="<<a1-1<<" CR2.l1="<<i1+1<<" CR2.r2="<<a2-1<<" CR2.l2="<<j1+1<<endl;
+          cout<<"發生ARC operation"<<endl;
+          cout<<arc1[i1]<<"\t"<<arc1[a1]<<endl;
+          cout<<seq1[i1]<<"\t"<<seq1[a1]<<endl;
+          cout<<seq2[j1]<<"\t"<<seq2[a2]<<endl;
+          cout<<arc2[j1]<<"\t"<<arc2[a2]<<endl;
+          cout<<"arc cost="<<2*edge_weight<<endl;
+          cout<<"之後處理 CR1.r1="<<i1-1<<" CR1.l1="<<l1<<" CR1.r2="<<j1-1<<" CR1.l2="<<l2<<endl;
+          cout<<"優先處理 CR2.r1="<<a1-1<<" CR2.l1="<<i1+1<<" CR2.r2="<<a2-1<<" CR2.l2="<<j1+1<<endl;
          #endif
 		  ranges.push(CR1);
 		  ranges.push(CR2);
@@ -893,8 +972,10 @@ int** readmat(char *file_name)
     }
     else
     {
+        #ifdef _TRACE_DEBUG
         printf("Successful open file!\n");
         puts(file_name);
+        #endif
     }
     /*預設每一段長度最大為400*/
     char line[400];
@@ -986,7 +1067,7 @@ int** readmat(char *file_name)
 double computation()
 {
     /*對I1 I2兩個vector配置arc1 and arc2大小的記憶體空間*/
-    
+    vector<vector <string> > direct; 
     I1.resize(arc1.size());
     I2.resize(arc2.size());
     /*依照由內而外的方式取得arc1*/
@@ -1008,7 +1089,6 @@ double computation()
     }
 
     
-    cout<<"total base pair = "<<L1.size()<<endl;
     /*依照由內而外的方式取得arc2*/
     index=0;
     for(int i=0;i<arc2.size();i++)
@@ -1025,24 +1105,25 @@ double computation()
             R2.push_back(i);
         }
     }
-#ifdef _COM_DEBUG
+#ifdef _TRACE_DEBUG
     cout<<"seq1's arc"<<endl;
     for(int i = 0;i<L1.size();i++)
-        cout<<L1[i]<<" "<<R1[i]<<endl;
+        cout<<L1[i]<<"\t"<<R1[i]<<endl;
+    cout<<"total base pair 1= "<<L1.size()<<endl;
     cout<<"seq2's arc"<<endl;
     for(int i = 0;i<L2.size();i++)
-        cout<<L2[i]<<" "<<R2[i]<<endl;
+        cout<<L2[i]<<"\t"<<R2[i]<<endl;
     cout<<"total base pair 2= "<<L2.size()<<endl;
     for(int i = 0;i<L1.size();i++)
-        cout<<L1[i]<<" "<<R1[i]<<" "<<I1[i]<<endl;
+        cout<<L1[i]<<"\t"<<R1[i]<<"\t"<<I1[i]<<endl;
     cout<<endl;
     for(int i = 0;i<L2.size();i++)
-        cout<<L2[i]<<" "<<R2[i]<<" "<<I2[i]<<endl;
+        cout<<L2[i]<<"\t"<<R2[i]<<"\t"<<I2[i]<<endl;
 #endif
     /*initialize*/
     D.resize(L1.size());
-    lower.resize(L1.size());
-    upper.resize(L1.size());
+    //lower.resize(L1.size());
+    //upper.resize(L1.size());
     //cout<<"D matrix szie = "<<D.size()<<endl;
 
     
@@ -1059,18 +1140,26 @@ double computation()
         {
             //added affine gap penaly matrix : lower and upper
             M.resize(R1[i]-L1[i]);
+            direct.resize(R1[i]-L1[i]);
             for(int s = 0;s<M.size();s++)
+            {
                 M[s].resize(R2[j]-L2[j]);
+                direct[s].resize(R2[j]-L2[j]);
+                
+            }
 
             M[0][0]=0;
+            direct[0][0]="O";
             for(int k = 1;k<R1[i]-L1[i];k++)
             {
                 M[k][0]=M[k-1][0]+w_d+not_free1(L1[i]+k)*(0.5*w_r-w_d);
+               direct[k][0]="B";
 
             }
             for (int l=1;l<R2[j]-L2[j];l++)
             {
                 M[0][l]=M[0][l-1]+w_d+not_free2(L2[j]+l)*(0.5*w_r-w_d);
+               direct[0][l]="C";
             }
         //compute M
         double v1,v2,v3,v4;
@@ -1098,24 +1187,84 @@ double computation()
                 }
                 //M[k][l]=min4(v1,v2,v3,v4);
                 M[k][l]=max4(v1,v2,v3,v4);
-            }
+             if(M[k][l]==v1)
+                direct[k][l]="B";
+             else if(M[k][l]==v2)
+                direct[k][l]="C";
+             else if(M[k][l]==v3)
+                direct[k][l]="A";
+             else if(M[k][l]==v4)
+                direct[k][l]="S";
+
+                }
         D[i][j]=M[R1[i]-L1[i]-1][R2[j]-L2[j]-1];
 
+        
+        #ifdef _TRACE_DEBUG
+        cout<<"ARC1 base pair"<<endl;
+        cout<<R1[i]<<"\t"<<L1[i]<<endl;
+        cout<<"ARC2 base pair"<<endl;
+        cout<<R2[j]<<"\t"<<L2[j]<<endl;
+         
+        cout<<"COMPUTATION\n\t";
+        for(int count =0;count<R2[j]-L2[j];count++)
+        {
+            cout<<"a2:"<<count<<"\t";
+        }
+        cout<<"\t";
+        cout<<endl;
+        for(int count =0; count<R1[i]-L1[i];count++)
+        {
+            cout<<"a1:"<<count<<"\t";
+            for(int count2=0;count2<R2[j]-L2[j];count2++)
+                cout<<M[count][count2]<<"\t";
+            cout<<endl;
+        }       
+        cout<<"Direct array"<<endl;
+        cout<<"\t";
+        for(int count =0;count<R2[j]-L2[j];count++)
+        {
+            cout<<"a2:"<<count<<"\t";
+        }
+        cout<<"\t";
+        cout<<endl;
+        for(int count =0; count<R1[i]-L1[i];count++)
+        {
+            cout<<"a1:"<<count<<"\t";
+            for(int count2=0;count2<R2[j]-L2[j];count2++)
+                cout<<direct[count][count2]<<"\t";
+            cout<<endl;
+        }
+        #endif
+        
         }
     }
-
+    
+    direct.resize(arc1.size()+1);
     M.resize(arc1.size()+1);
     for(int i =0; i<M.size();i++)
+    {
         M[i].resize(arc2.size()+1);
+        direct[i].resize(arc2.size()+1);
+    }
 
     M[0][0]=0;
+    direct[0][0]="o";
     //這裏應該初始值設定成0
     for(int k=1;k<=arc1.size();k++)
+    {
         //M[k][0]=M[k-1][0]+w_d+not_free1(k-1)*(0.5*w_r-w_d);
         M[k][0]=0;
+        direct[k][0]="B";
+
+    }
     for(int l = 1;l<=arc2.size();l++)
+    {
         //M[0][l]=M[0][l-1]+w_d+not_free2(l-1)*(0.5*w_r-w_d);
         M[0][l]=0;
+        direct[0][l]="C";
+        
+    }
 
     //compute M
     double v1,v2,v3,v4;
@@ -1138,9 +1287,59 @@ double computation()
             }
             //M[k][l]=min4(v1,v2,v3,v4);
             M[k][l]=max4(v1,v2,v3,v4);
+             if(M[k][l]==v1)
+                direct[k][l]="B";
+             else if(M[k][l]==v2)
+                direct[k][l]="C";
+             else if(M[k][l]==v3)
+                direct[k][l]="A";
+             else if(M[k][l]==v4)
+                direct[k][l]="S";
+                
         }
+    #ifdef _TRACE_DEBUG
+    cout<<"COMPUTATION"<<endl;
+    cout<<"\t";
+    for(int count = 0;count<=arc2.size();count++)
+    {
+        cout<<"a2:"<<count<<"\t";
+    }
+    cout<<endl;
+    for(int count = 0;count<=arc1.size();count++)
+    {
+        cout<<"a1:"<<count<<"\t";
+        for(int count2=0;count2<=arc2.size();count2++)
+        {
+            cout<<left<<M[count][count2]<<"\t";
+        }
+        cout<<endl;
+    }
+    cout<<"Direct"<<endl;
+    cout<<"\t";
+    for(int count = 0;count<=arc2.size();count++)
+    {
+        cout<<"a2:"<<count<<"\t";
+    }
+    cout<<endl;
+    for(int count = 0;count<=arc1.size();count++)
+    {
+        cout<<"a1:"<<count<<"\t";
+        for(int count2=0;count2<=arc2.size();count2++)
+        {
+            cout<<left<<direct[count][count2]<<"\t";
+        }
+        cout<<endl;
+    }
+    cout<<"done!"<<endl;
+
+    #endif
     //找最大值
     max_column_value=M[0][arc2.size()];
+    #ifdef _TRACE_DEBUG
+    for(int count = 0;count<=arc1.size();count++)
+        cout<<M[count][arc2.size()]<<"\t";
+    cout<<endl;
+    #endif
     for(int count = 0;count<=arc1.size();count++)
     {
         if(max_column_value<M[count][arc2.size()])
@@ -1150,6 +1349,11 @@ double computation()
         }
     }
     max_row_value=M[arc1.size()][0];
+    #ifdef _TRACE_DEBUG
+    for(int count = 0;count<=arc2.size();count++)
+        cout<<M[arc1.size()][count]<<"\t";
+    cout<<endl;
+    #endif
     for(int count =0;count<=arc2.size();count++)
     {
         if(max_row_value<M[arc1.size()][count])
