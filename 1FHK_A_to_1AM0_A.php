@@ -1,0 +1,10 @@
+<?php
+$seq1="wwZuu'$CDA)uZZ";
+$arc1="(((........)))";
+$seq2="vv8QA1IABl(w)M6j";
+$arc2="(...........().)";
+$matfile="SM/23-4L_matrix";
+$opp="-9";
+$exp="-1";
+$suboptimal="1";
+?>
