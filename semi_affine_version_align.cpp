@@ -157,9 +157,14 @@ double arc_operation(int p1,int p2,int p3,int p4)
     {
         //return 0;
         if(base_matching(p1,p2)==0&&base_matching(p3,p4)==0)
+        {
             return arc_mismatch_case2;
+            
+        }
         else
+        {
             return arc_match_weight*(base_matching(p1,p2)+base_matching(p3,p4));
+        }
     }
     //當alignment score <0 views as arc-mismatch
     else
@@ -192,7 +197,9 @@ void write_data(double,const char *);
 void write_error(double,double,const char *);
 double computation();
 double test_alignment();
+void loop_test();
 void write_profit(const char *);
+void pressure_test(double,double,double,double,double,double,double,double);
 string special_character_processing(string);
 //做一般的global alignment
 /*需要寫一個python 去處理input file data*/
@@ -252,6 +259,7 @@ int main(int argc,char* argv[])
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1M90_B_to_1NKW_9/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1IBK_A_to_1N33_A/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1FG0_A_to_1BZ3_A/semi_input.php";
+        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1UN6_F_to_1JUR_A/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1IKD_A_to_1NJM_5/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1J4Y_A_to_1Q2S_E/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1KKA_A_to_1LUX_A/semi_input.php";
@@ -268,13 +276,16 @@ int main(int argc,char* argv[])
       // pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1AM0_A_to_1FMN_A/semi_input.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1FHK_A_to_1ZIF_A/semi_input.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1FHK_A_to_1BYJ_A/semi_input.php";
+       pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1BYJ_A_to_1G1X_D/semi_input.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1FHK_A_to_1G1X_E/semi_input.php";
         //有  bug
-       pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1UN6_F_to_1K9M_B/semi_input.php";
+       //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1UN6_F_to_1K9M_B/semi_input.php";
         //有bug
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1FQZ_A_to_1KP7_A/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1F84_A_to_1P5N_A/semi_input.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1BN0_A_to_1AQ3_R/semi_input.php";
+       //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/2TPK_A_to_1NYB_B/semi_input.php";
+      // pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1FHK_A_to_1AM0_A/semi_input.php";
       //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1Q9A_A_to_1QA6_C/semi_input.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1Q9A_A_to_1HC8_C/semi_input.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1G70_A_to_1M5L_A/semi_input.php";
@@ -293,12 +304,12 @@ int main(int argc,char* argv[])
         error_result= "/home/watchlee/error.php";
         profit_result= "/home/watchlee/profit_result";
         number = 1;
-        arc_match_weight = 50;
+        arc_match_weight = 3;
         arc_mismatch_case1 = 1;
         arc_mismatch_case2 = 1;
         arc_mismatch_case3 = 1;
         arc_mismatch_case4 = 1;
-        common_opp=9;
+        common_opp=10;
         common_exp=1;
         w_b=-0.5;
     }
@@ -369,9 +380,10 @@ int main(int argc,char* argv[])
     double total = 0.0;
     for(int count = 0;count<weights.size();count++)
     {
-        //cout<<weights[count]<<" ";
+        cout<<weights[count]<<" ";
         total+=weights[count];
     }
+    cout<<endl;
     cout<<astr1<<endl;
     cout<<aseq1<<" "<<aseq1.size()<<endl;
     cout<<aseq2<<" "<<aseq2.size()<<endl;
@@ -391,11 +403,71 @@ int main(int argc,char* argv[])
         write_data(score,pdb_result);
         write_error(score,total,error_result);
     }
-    write_profit(profit_result);
+    loop_test();
+    //write_profit(profit_result);
     /*釋放記憶體*/
     free(alphabet_index);//來源 line:33
 return 0;
 }
+void loop_test()
+{
+    for(double count =2;count<20;count++)
+    {
+        for(double count2=1;count2<15;count2+=0.5)
+        {
+            for(double count3=1;count3;count3++)
+            {
+                for(double count4=0.1;count4<=1;count4+=0.1)
+                {
+                    for(double count5=0.1;count5<=1;count5+=0.1)
+                    {
+                        for(double count6=1;count6<=20;count6++)
+                        {
+                            for(double count7=0.5;count7<=10;count7+=0.5)
+                            {
+                                for(double count8=0.1;count8<=1.5;count8+=0.1)
+                                {
+                                    cout<<count<<"\t"<<count2<<"\t"<<count3<<"\t"<<count4<<"\t"<<count5<<"\t"<<count6<<"\t"<<count7<<"\t"<<count8<<endl;
+                                    pressure_test(count,count2,count3,count4,count5,count6,count7,-count8);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+void pressure_test(double input,double input2,double input3,double input4,double input5,double input6,double input7,double input8)
+{
+    arc_match_weight = input;
+    arc_mismatch_case1 = input2;
+    arc_mismatch_case2 = input3;
+    arc_mismatch_case3 = input4;
+    arc_mismatch_case4 = input5;
+    common_opp=input6;
+    common_exp=input7;
+    w_b=input8;
+    astr1="",aseq1="",aseq2="",astr2="";
+    double score = computation();
+    traceback();
+    double total=0.0;
+    for(int count =0;count<weights.size();count++)
+    {
+        //cout<<weights[count]<<" ";
+        total+=weights[count];
+    }
+    cout<<astr1<<endl;
+    cout<<aseq1<<" "<<aseq1.size()<<endl;
+    cout<<aseq2<<" "<<aseq2.size()<<endl;
+    cout<<astr2<<endl;
+    cout<<score<<"\t"<<total<<endl;
+    if(abs(total-score)<0.01)
+        cout<<"correct"<<endl;
+    else
+        cout<<"incorrect"<<endl;
+}
+
 void write_profit(const char *path)
 { 
     /*處理特殊字元*/
@@ -1168,11 +1240,12 @@ void traceback()
                     #ifdef _TRACE_DEBUG
                     cout<<"confimed the path come from arc match"<<endl;
                     cout<<"w="<<w<<endl;
-                    cout<<"arc match"<<endl;
+                    cout<<"arc-match"<<endl;
                     cout<<arc1[i1]<<" "<<arc1[a1]<<endl;
                     cout<<seq1[i1]<<" "<<seq1[a1]<<" index "<<i1<<" "<<a1<<endl;
                     cout<<seq2[j1]<<" "<<seq2[a2]<<" index "<<j1<<" "<<a2<<endl;
                     cout<<arc2[j1]<<" "<<arc2[a2]<<endl; 
+                    cout<<base_matching(i1,j1)<<"\t"<<base_matching(a1,a2)<<endl;
                     cout<<"score="<<(edge_weight*2)<<endl;
                     #endif
                     total+=edge_weight*2;
