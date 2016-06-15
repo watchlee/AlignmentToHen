@@ -14,10 +14,10 @@
 #include <cmath>
 #include <stack>
 using namespace std;
-#define _WEIGHT
+//#define _WEIGHT
 //要debug的時候請把註解去掉
 //#define _TRACE_DEBUG
-//#define _DISPLAY
+#define _DISPLAY
 /*alignment score*/
 struct alignment{
     int p1,p2;
@@ -256,14 +256,13 @@ int main(int argc,char* argv[])
     const char *pdb_result;
     const char *error_result;
     const char *profit_result;
-    cout<<argc<<endl;
-    if(argc!=12)
+    if(argc!=13)
     {
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/test_data/1A9N_Q_to_1E7K_C/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1M90_B_to_1NKW_9/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1IBK_A_to_1N33_A/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1FG0_A_to_1BZ3_A/semi_input.php";
-        pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1UN6_F_to_1JUR_A/semi_input.php";
+        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1UN6_F_to_1JUR_A/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1IKD_A_to_1NJM_5/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1J4Y_A_to_1Q2S_E/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1KKA_A_to_1LUX_A/semi_input.php";
@@ -274,9 +273,10 @@ int main(int argc,char* argv[])
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1BAU_A_to_1S9S_A/semi_input.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1FHK_A_to_1S9S_A/semi_input.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1MT4_A_to_1I3Y_A/semi_input.php";
+       //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1AM0_A_to_1QVF_3/semi_input.php";
        //特殊例子
 
-    //   pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1A9N_R_to_1MFJ_A/semi_input.php";
+       //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1A9N_R_to_1MFJ_A/semi_input.php";
       // pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1AM0_A_to_1FMN_A/semi_input.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1FHK_A_to_1ZIF_A/semi_input.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1FHK_A_to_1BYJ_A/semi_input.php";
@@ -289,7 +289,7 @@ int main(int argc,char* argv[])
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1F84_A_to_1P5N_A/semi_input.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1BN0_A_to_1AQ3_R/semi_input.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/2TPK_A_to_1NYB_B/semi_input.php";
-       pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1AM0_A_to_1BGZ_A/semi_input.php";
+       //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1AM0_A_to_1BGZ_A/semi_input.php";
       // pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1FHK_A_to_1AM0_A/semi_input.php";
       //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1Q9A_A_to_1QA6_C/semi_input.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1Q9A_A_to_1HC8_C/semi_input.php";
@@ -309,14 +309,14 @@ int main(int argc,char* argv[])
         error_result= "/home/watchlee/error.php";
         profit_result= "/home/watchlee/profit_result";
         number = 1;
-        arc_match_weight = 10;
-        arc_mismatch_case1 = 1.5;
+        arc_match_weight = 5;
+        arc_mismatch_case1 = 4;
         arc_mismatch_case2 = 1;
-        arc_mismatch_case3 = 0.5;
-        arc_mismatch_case4 = 0.5;
-        common_opp=10;
+        arc_mismatch_case3 = 1;
+        arc_mismatch_case4 = 1;
+        common_opp=13;
         common_exp=1;
-        w_b=-0.1;
+        w_b=0;
     }
     else
     {
@@ -332,7 +332,8 @@ int main(int argc,char* argv[])
         w_b =atof(argv[9]);
         common_opp=atof(argv[10]);
         common_exp=atof(argv[11]);
-        profit_result= "/home/watchlee/profit_result";
+        //profit_result= "/home/watchlee/profit_result";
+        profit_result= argv[12];
         //k = atof(argv[4]);
         //l = atof(argv[5]);
         //m = atof(argv[6]);
@@ -375,7 +376,7 @@ int main(int argc,char* argv[])
     //read_data("./test_file5","./result"); 
     //read_data("./test_file","./result"); 
     /*Computation*/
-    #ifdef _DISPLAY
+    #ifdef _DISPLAYA
     cout<<arc1<<endl;
     cout<<seq1<<endl;
     cout<<seq2<<endl;
@@ -383,7 +384,7 @@ int main(int argc,char* argv[])
     #endif
     double score = computation();
     traceback();
-    cout<<"Score="<<score<<endl;
+    //cout<<"Score="<<score<<endl;
     double total = 0.0;
     for(int count = 0;count<weights.size();count++)
     {
@@ -398,9 +399,6 @@ int main(int argc,char* argv[])
     cout<<aseq1<<" "<<aseq1.size()<<endl;
     cout<<aseq2<<" "<<aseq2.size()<<endl;
     cout<<astr2<<endl;
-    cout<<total<<endl;
-    cout<<"path="<<pdb_compare_path<<endl;
-    cout<<"check out here! "<<score<<" "<<total<<endl;
     #endif
     //cout<<"score="<<test_alignment()<<endl;
     if(abs(double(score-total))<0.01)
@@ -410,6 +408,8 @@ int main(int argc,char* argv[])
     }
     else
     {
+        cout<<"path="<<pdb_compare_path<<endl;
+        cout<<"check out here! "<<score<<" "<<total<<endl;
         cout<<"incorrect!"<<endl;
         write_data(score,pdb_result);
         write_error(score,total,error_result);
@@ -422,18 +422,18 @@ return 0;
 }
 void loop_test()
 {
-    /*
-    for(double count =2;count<20;count++)
+    /**/
+    for(int count =4;count<=4;count++)
     {
-        for(double count2=1;count2<15;count2+=0.5)
+        for(double count2=3;count2<=3;count2+=0.5)
         {
-            for(double count3=1;count3;count3++)
+            for(int count3=4;count3<=4;count3++)
             {
-                for(double count4=0.1;count4<=1;count4+=0.1)
+                for(double count4=0.1;count4<1;count4+=0.1)
                 {
-                    for(double count5=0.1;count5<=1;count5+=0.1)
+                    for(double count5=0.1;count5<1;count5+=0.1)
                     {
-                        for(double count6=1;count6<=20;count6++)
+                        for(double count6=1;count6<=10;count6++)
                         {
                             for(double count7=0.5;count7<=10;count7+=0.5)
                             {
@@ -449,13 +449,14 @@ void loop_test()
             }
         }
     }
-    */
+    /*
     for(double count = 0.1;count<1;count+=0.1)
     {
         cout<<count<<endl;
-        pressure_test(10,1.5,1,count,0.1,13,1,-0.01);
+        pressure_test(4,1.5,1,0.5,0.1,9,1,-count);
 
     }
+    */
 }
 void pressure_test(double input,double input2,double input3,double input4,double input5,double input6,double input7,double input8)
 {
@@ -520,7 +521,7 @@ void write_profit(const char*soucre,const char *path)
            pdb_b=pdb_b+test[count].substr(10,15)+".seq";
         }
     }
-    cout<<"PDB:"<<pdb_a<<"\tPDB:"<<pdb_b<<endl;
+    //cout<<"PDB:"<<pdb_a<<"\tPDB:"<<pdb_b<<endl;
     const char *path_pdb_a=pdb_a.c_str();
     const char *path_pdb_b=pdb_b.c_str();
     ifstream file_pdb_a(path_pdb_a);
@@ -1478,8 +1479,8 @@ void traceback()
           }
           else
           {
-              printf("Successful open file!\n");
-              puts(file_name);
+              //printf("Successful open file!\n");
+              //puts(file_name);
           }
           /*預設每一段長度最大為400*/
           char line[400];
