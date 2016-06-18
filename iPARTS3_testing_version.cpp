@@ -117,7 +117,6 @@ vector<vector<double> > middle;
 /*記錄矩陣各個entry來的方向*/
 vector<vector<double> > direct;
 vector<vector<double> > D;
-vector<string > arc_match_info;
 const double eps=0.0000001;
 static int **scoring_matrix;
 double s_d,s_aa,s_am,s_breaking,s_altering;
@@ -135,6 +134,8 @@ double arc_mismatch_case1= 3;//when one base score >=0 and other base score < 0,
 double arc_mismatch_case2= 1;//when sum=0
 double arc_mismatch_case3= 1.5;//when sum<0
 double arc_mismatch_case4= 1;//arc mismatch
+double arc_breaking_case1=0;
+double arc_breaking_case2=0;
 double number=1;
 double w_d =-1*number;  // base deletion
 double w_r =-2*number;  // arc  removing
@@ -203,7 +204,6 @@ double test_alignment();
 void loop_test();
 void write_profit(const char *,const char *);
 void pressure_test(double,double,double,double,double,double,double,double);
-void basepair_info();
 vector<string> &split(string &,char,vector<string>);
 vector<string> split(string &,char);
 string special_character_processing(string);
@@ -258,10 +258,10 @@ int main(int argc,char* argv[])
     const char *pdb_result;
     const char *error_result;
     const char *profit_result;
-    if(argc!=13)
+    if(argc!=14)
     {
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/test_data/1A9N_Q_to_1E7K_C/semi_input.php";
-        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1M90_B_to_1NKW_9/semi_input.php";
+        pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1M90_B_to_1NKW_9/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1IBK_A_to_1N33_A/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1FG0_A_to_1BZ3_A/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1UN6_F_to_1JUR_A/semi_input.php";
@@ -270,8 +270,8 @@ int main(int argc,char* argv[])
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1KKA_A_to_1LUX_A/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1K9W_D_to_1S9S_A/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/5MSF_S_to_7MSF_R/semi_input.php";
-        pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1NKW_9_to_1NWX_9/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1FQZ_A_to_1P5O_A/semi_input.php";
+        pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1NKW_9_to_1NWX_9/semi_input.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1D0T_A_to_1ZDK_R/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1BAU_A_to_1S9S_A/semi_input.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1FHK_A_to_1S9S_A/semi_input.php";
@@ -317,7 +317,9 @@ int main(int argc,char* argv[])
         arc_mismatch_case2 = 1;
         arc_mismatch_case3 = 1;
         arc_mismatch_case4 = 1;
-        common_opp=13;
+        arc_breaking_case1=0.8;
+        arc_breaking_case2=1.8;
+        common_opp=9;
         common_exp=1;
         w_b=0;
     }
@@ -332,11 +334,12 @@ int main(int argc,char* argv[])
         arc_mismatch_case2 = atof(argv[6]); 
         arc_mismatch_case3 = atof(argv[7]); 
         arc_mismatch_case4 = atof(argv[8]);
-        w_b =atof(argv[9]);
-        common_opp=atof(argv[10]);
-        common_exp=atof(argv[11]);
+        arc_breaking_case1 =atof(argv[9]);
+        arc_breaking_case2 =atof(argv[10]);
+        common_opp=atof(argv[11]);
+        common_exp=atof(argv[12]);
         //profit_result= "/home/watchlee/profit_result";
-        profit_result= argv[12];
+        profit_result= argv[13];
         //k = atof(argv[4]);
         //l = atof(argv[5]);
         //m = atof(argv[6]);
@@ -419,25 +422,9 @@ int main(int argc,char* argv[])
     }
     //loop_test();
     write_profit(pdb_compare_path,profit_result);
- //basepair_info();
     /*釋放記憶體*/
     free(alphabet_index);//來源 line:33
 return 0;
-}
-
-
-void basepair_info()
-{
-    fstream base_pair_info;
-    base_pair_info.open("./basepair_info",ios::out);
-    for(int count = 0;count<arc_match_info.size();count++)
-        if(arc_match_info[count]!="")
-        {
-            cout<<arc_match_info[count]<<endl;
-            base_pair_info<<arc_match_info[count]<<endl; 
-        }
-    base_pair_info.close();
-    
 }
 void loop_test()
 {
@@ -540,9 +527,10 @@ void write_profit(const char*soucre,const char *path)
            pdb_b=pdb_b+test[count].substr(10,15)+".seq";
         }
     }
+    //cout<<"PDB:"<<pdb_a<<"\tPDB:"<<pdb_b<<endl;
     const char *path_pdb_a=pdb_a.c_str();
     const char *path_pdb_b=pdb_b.c_str();
-    //cout<<"PDB:"<<pdb_a<<"\tPDB:"<<pdb_b<<endl;
+
     fstream file_pdb_a;
     file_pdb_a.open(path_pdb_a,ios::in);
     string seq_a;
@@ -558,21 +546,16 @@ void write_profit(const char*soucre,const char *path)
     int index=0;
     int index2=0;
     int align_number=0;
-    
     for(int count = 0;count<aseq1.size();count++)
     {
         if(aseq1[count]!='-')
             aseq1[count]=seq_a[index++];
+        if(aseq2[count]!='-')
+            aseq2[count]=seq_b[index2++];
         if(aseq1[count]!='-'&&aseq2[count]!='-')
             align_number++;
     }
-    index=0;
-    for(int count=0;count<aseq2.size();count++)
-    {
-        if(aseq2[count]!='-')
-            aseq2[count]=seq_b[index++];
 
-    }
     fstream file;
     file.open(path,ios::out);
          
@@ -893,7 +876,6 @@ void traceback()
     vector<vector<string> >direct_array;
     bool first_time=true;
     bool arc_flag= false;
-    int count=0;
     while(!ranges.empty())
     {
         int l1=ranges.top().l1;
@@ -1047,7 +1029,13 @@ void traceback()
                         direct_upper[k][l]="B";
                     else if(upper[k][l]==M[k-1][l]-common_exp-common_opp)
                         direct_upper[k][l]="A";
-                    v3=M[k-1][l-1]+base_matching(a1,a2)*w_m+(not_free1(a1)+not_free2(a2))*w_b;
+                    double temp_value=0.0;
+                    if(base_matching(a1,a2)>0)
+                        temp_value-=(not_free1(a1)+not_free2(a2))*0.5*arc_breaking_case1*(base_matching(a1,a2));
+                    else
+                        temp_value=(not_free1(a1)+not_free2(a2))*0.5*arc_breaking_case2*(base_matching(a1,a2));
+                    //v3=M[k-1][l-1]+base_matching(a1,a2)*w_m+(not_free1(a1)+not_free2(a2))*w_b;
+                    v3=M[k-1][l-1]+base_matching(a1,a2)*w_m+temp_value;
                     if (arc1[a1]==')' && arc2[a2]==')') 
                     {
                         int i1=L1[I1[a1]];
@@ -1312,7 +1300,14 @@ void traceback()
                     cout<<" index "<<k<<" "<<l<<endl;
                     cout<<"score="<<base_matching(a1,a2)+(not_free1(a1)+not_free2(a2))*w_b<<endl;
                     #endif
-                    insert(ali,a1,a2,base_matching(a1,a2)+(not_free1(a1)+not_free2(a2))*w_b);
+                    double temp_value=0.0;
+                    if(base_matching(a1,a2)>0)
+                        temp_value-=(not_free1(a1)+not_free2(a2))*0.5*arc_breaking_case1*(base_matching(a1,a2));
+                    else
+                        temp_value=(not_free1(a1)+not_free2(a2))*0.5*arc_breaking_case2*(base_matching(a1,a2));
+                    //v3=M[k-1][l-1]+base_matching(a1,a2)*w_m+(not_free1(a1)+not_free2(a2))*w_b;
+                    //insert(ali,a1,a2,base_matching(a1,a2)+(not_free1(a1)+not_free2(a2))*w_b);
+                    insert(ali,a1,a2,base_matching(a1,a2)+temp_value);
                     total+=base_matching(a1,a2)+(not_free1(a1)+not_free2(a2))*w_b;
                     k--;
                     l--;
@@ -1344,8 +1339,6 @@ void traceback()
                     int i1=L1[I1[a1]];              // left arc ends
                     int j1=L2[I2[a2]];
                     double edge_weight=0.5*arc_operation(L1[I1[a1]],L2[I2[a2]],a1,a2); //(base_matching(L1[I1[a1]],L2[I2[a2]])+base_matching(a1,a2))*0.5*w_am;
-                    string arc_position = to_string(i1+1)+" "+to_string(a1+1)+" "+to_string(j1+1)+" "+to_string(a2+1);
-                    arc_match_info[count++]=arc_position;
                     arc_cost+=edge_weight*2;
                     #ifdef _TRACE_DEBUG
                     cout<<"confimed the path come from arc match"<<endl;
@@ -1629,7 +1622,6 @@ double computation()
             R2.push_back(i);
         }
     }
-    arc_match_info.resize(L1.size()*L2.size());
     #ifdef _TRACE_DEBUG
     cout<<"base pair 1"<<endl;
     for(int i = 0;i<L1.size();i++)
@@ -1728,7 +1720,13 @@ for(int i = 0;i<L1.size();i++)
             //v3=middle[k][l]=max(middle[k-1][l-1]+base_matching(a1,a2)+((not_free1(a1)+not_free2(a2))*w_b),lower[k-1][l-1],upper[k-1][l-1]);
             //v1=M[k-1][l]+w_d+not_free1(a1)*(0.5*w_r-w_d);
             //v2=M[k][l-1]+w_d+not_free2(a2)*(0.5*w_r-w_d);
-            v3=M[k-1][l-1]+base_matching(a1,a2)*w_m+(not_free1(a1)+not_free2(a2))*w_b;
+            double temp_value=0.0;
+            if(base_matching(a1,a2)>0)
+                temp_value-=(not_free1(a1)+not_free2(a2))*0.5*arc_breaking_case1*(base_matching(a1,a2));
+            else
+                temp_value=(not_free1(a1)+not_free2(a2))*0.5*arc_breaking_case2*(base_matching(a1,a2));
+            //v3=M[k-1][l-1]+base_matching(a1,a2)*w_m+(not_free1(a1)+not_free2(a2))*w_b;
+            v3=M[k-1][l-1]+base_matching(a1,a2)*w_m+temp_value;
             if(arc1[a1]==')' && arc2[a2]==')')
             {
                 int leftpoint = L1[I1[a1]];
@@ -1837,14 +1835,19 @@ for (int l=1;l<=arc2.size();l++)
     //v1=lower[k][l]=max(lower[k][l-1]-common_exp,middle[k][l-1]-common_opp-common_exp,upper[k][l-1]-common_opp-common_exp);
     //v2=upper[k][l]=max(upper[k-1][l]-common_exp,middle[k-1][l]-common_opp-common_exp,lower[k-1][l]-common_opp-common_exp);
     //v3=middle[k][l]=max(middle[k-1][l-1]+base_matching(k-1,l-1)+((not_free1(k-1)+not_free2(l-1))*w_b),lower[k-1][l-1],upper[k-1][l-1]);
-    v3=M[k-1][l-1]+base_matching(k-1,l-1)*w_m+(not_free1(k-1)+not_free2(l-1))*w_b;
+    double temp_value=0.0;
+    if(base_matching(k-1,l-1)>0)
+        temp_value-=(not_free1(k-1)+not_free2(l-1))*0.5*arc_breaking_case1*(base_matching(k-1,l-1));
+    else
+        temp_value=(not_free1(k-1)+not_free2(l-1))*0.5*arc_breaking_case2*(base_matching(k-1,l-1));
+    //v3=M[k-1][l-1]+base_matching(k-1,l-1)*w_m+(not_free1(k-1)+not_free2(l-1))*w_b;
+    v3=M[k-1][l-1]+base_matching(k-1,l-1)*w_m+temp_value;
     if(arc1[k-1]==')'&& arc2[l-1]==')')
     {
         int leftpoint = L1[I1[k-1]];
         int leftpoint2 = L2[I2[l-1]];
         //v4=middle[leftpoint][leftpoint2]+D[I1[k-1]][I2[l-1]]+arc_operation(L1[I1[k-1]],L2[I2[l-1]],R1[I1[k-1]],R2[I2[l-1]]);
         v4=M[leftpoint][leftpoint2]+D[I1[k-1]][I2[l-1]]+arc_operation(L1[I1[k-1]],L2[I2[l-1]],R1[I1[k-1]],R2[I2[l-1]]);
-    
         //(base_matching(L1[I1[k-1]],L2[I2[l-1]])+base_matching(R1[I1[k-1]],R2[I2[l-1]]))*0.5*w_am;
     }
     //M[k][l]=min4(v1,v2,v3,v4);
@@ -1856,10 +1859,7 @@ for (int l=1;l<=arc2.size();l++)
     else if(M[k][l]==v3)
         direct_array[k][l]="A";
     else if(M[k][l]==v4)
-    {
-        
         direct_array[k][l]="S";
-    }
     //M[k][l]=max4(lower[k][l],upper[k][l],middle[k][l],v4);
 }
 temp_column=M[0][arc2.size()-1];
