@@ -14,7 +14,7 @@
 #include <cmath>
 #include <stack>
 using namespace std;
-//#define _WEIGHT
+//define _WEIGHT
 //要debug的時候請把註解去掉
 //#define _TRACE_DEBUG
 #define _DISPLAY
@@ -117,6 +117,7 @@ vector<vector<double> > middle;
 /*記錄矩陣各個entry來的方向*/
 vector<vector<double> > direct;
 vector<vector<double> > D;
+vector<string > arc_match_info;
 const double eps=0.0000001;
 static int **scoring_matrix;
 double s_d,s_aa,s_am,s_breaking,s_altering;
@@ -195,6 +196,7 @@ double arc_operation(int p1,int p2,int p3,int p4)
 int BinarySearch(char ,IndexMatrix *,int );
 void traceback();
 void insert(alignment*,int,int,double);
+void basepair_info(const char*);
 int** readmat(char *);
 void read_data(const char *);
 void write_data(double,const char *);
@@ -258,11 +260,14 @@ int main(int argc,char* argv[])
     const char *pdb_result;
     const char *error_result;
     const char *profit_result;
-    if(argc!=14)
+    const char *basepair_result;
+    if(argc!=15)
     {
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/test_data/1A9N_Q_to_1E7K_C/semi_input.php";
-        pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1M90_B_to_1NKW_9/semi_input.php";
+        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1M90_B_to_1NKW_9/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1IBK_A_to_1N33_A/semi_input.php";
+        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1FHK_A_to_1ZIH_A/semi_input.php";
+        pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1J5E_A_to_1JZY_A/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1FG0_A_to_1BZ3_A/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1UN6_F_to_1JUR_A/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1IKD_A_to_1NJM_5/semi_input.php";
@@ -271,7 +276,8 @@ int main(int argc,char* argv[])
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1K9W_D_to_1S9S_A/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/5MSF_S_to_7MSF_R/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1FQZ_A_to_1P5O_A/semi_input.php";
-        pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1NKW_9_to_1NWX_9/semi_input.php";
+        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1NKW_9_to_1NWX_9/semi_input.php";
+        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1LNG_B_to_1MFQ_A/semi_input.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1D0T_A_to_1ZDK_R/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1BAU_A_to_1S9S_A/semi_input.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1FHK_A_to_1S9S_A/semi_input.php";
@@ -289,7 +295,7 @@ int main(int argc,char* argv[])
        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1UN6_F_to_1K9M_B/semi_input.php";
         //有bug
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1FQZ_A_to_1KP7_A/semi_input.php";
-        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1F84_A_to_1P5N_A/semi_input.php";
+        pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1F84_A_to_1P5N_A/semi_input.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1BN0_A_to_1AQ3_R/semi_input.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/2TPK_A_to_1NYB_B/semi_input.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1AM0_A_to_1BGZ_A/semi_input.php";
@@ -308,17 +314,19 @@ int main(int argc,char* argv[])
       // pdb_compare_path= "/home/watchlee/Research_Programming/AlignmentToHen/Test_for_GLOBAL/1MT4_A_to_1HC8_C.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/AlignmentToHen/Test_for_GLOBAL/1NJI_B_to_1NMY_9.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/AlignmentToHen/Test_for_GLOBAL/1IKD_A_to_1NJM_5.php";
-        pdb_result= "/home/watchlee/result.php";
+        pdb_result= "/home/watchlee/resut.php";
         error_result= "/home/watchlee/error.php";
-        profit_result= "/home/watchlee/profit_result";
+        profit_result= "/home/watchlee/pofit_result";
+        basepair_result="/home/watchlee/basepair_result";
         number = 1;
-        arc_match_weight = 5;
-        arc_mismatch_case1 = 4;
-        arc_mismatch_case2 = 1;
+        arc_match_weight = 4;
+        arc_mismatch_case1 = 1;
+        arc_mismatch_case2 = 0;
         arc_mismatch_case3 = 1;
         arc_mismatch_case4 = 1;
-        arc_breaking_case1=0.8;
-        arc_breaking_case2=1.8;
+        arc_breaking_case1=0.5;
+        arc_breaking_case2=0.5;
+        w_r=1;
         common_opp=9;
         common_exp=1;
         w_b=0;
@@ -336,10 +344,12 @@ int main(int argc,char* argv[])
         arc_mismatch_case4 = atof(argv[8]);
         arc_breaking_case1 =atof(argv[9]);
         arc_breaking_case2 =atof(argv[10]);
-        common_opp=atof(argv[11]);
-        common_exp=atof(argv[12]);
+        w_r=atof(argv[11]);
+        common_opp=atof(argv[12]);
+        common_exp=atof(argv[13]);
         //profit_result= "/home/watchlee/profit_result";
-        profit_result= argv[13];
+        profit_result= argv[14];
+        //basepair_result= argv[15];
         //k = atof(argv[4]);
         //l = atof(argv[5]);
         //m = atof(argv[6]);
@@ -422,10 +432,27 @@ int main(int argc,char* argv[])
     }
     //loop_test();
     write_profit(pdb_compare_path,profit_result);
+    //basepair_info(basepair_result);
     /*釋放記憶體*/
     free(alphabet_index);//來源 line:33
 return 0;
 }
+
+void basepair_info(const char* path)
+{
+    fstream base_pair_info;
+    base_pair_info.open(path,ios::out);
+    for(int count = 0;count<arc_match_info.size();count++)
+        if(arc_match_info[count]!="")
+        {
+            cout<<arc_match_info[count]<<endl;
+            base_pair_info<<arc_match_info[count]<<endl; 
+        }
+    base_pair_info.close();
+    
+}
+
+
 void loop_test()
 {
     /**/
@@ -876,6 +903,7 @@ void traceback()
     vector<vector<string> >direct_array;
     bool first_time=true;
     bool arc_flag= false;
+    int base_count=0;
     while(!ranges.empty())
     {
         int l1=ranges.top().l1;
@@ -893,6 +921,7 @@ void traceback()
                 #ifdef _TRACE_DEBUG
                 cout<<"seq2 start inserting gap"<<endl;
                 #endif 
+
                 if(open_flag==true)
                 {
                     #ifdef _TRACE_DEBUG
@@ -900,7 +929,7 @@ void traceback()
                     #endif 
                     deletion_cost+=(0);
                     if(l1!=0)
-                        insert(ali,-1,s,-common_opp-common_exp);
+                        insert(ali,-1,s,-common_opp-common_exp-not_free2(s)*w_r);
                     else
                         insert(ali,-1,s,0);
                     open_flag=false;
@@ -911,7 +940,7 @@ void traceback()
                     cout<<"- "<<seq2[s]<<" exp "<<(0)<<endl;
                     #endif 
                     if(l1!=0)
-                        insert(ali,-1,s,-common_exp);
+                        insert(ali,-1,s,-common_exp-not_free2(s)*w_r);
                     else
                         insert(ali,-1,s,0);
                     deletion_cost+=(0);
@@ -932,7 +961,7 @@ void traceback()
                     cout<<seq1[s]<<" - open "<<(0)<<endl;
                     #endif 
                     if(l2!=0)
-                        insert(ali,s,-1,-common_opp-common_exp);
+                        insert(ali,s,-1,-common_opp-common_exp-not_free1(s)*w_r);
                     else
                         insert(ali,s,-1,0);
 
@@ -945,7 +974,7 @@ void traceback()
                     cout<<seq1[s]<<" - exp "<<(0)<<endl;
                     #endif 
                     if(l2!=0)
-                        insert(ali,s,-1,-common_exp);
+                        insert(ali,s,-1,-common_exp-not_free1(s)*w_r);
                     else
                         insert(ali,s,-1,0);
                     deletion_cost+=(0);
@@ -979,30 +1008,36 @@ void traceback()
             #ifdef _TRACE_DEBUG
             cout<<"ARC_FLAG="<<arc_flag<<endl;
             #endif
+            double arc_breaking_cost=0.0;
             for (int k=1;k<r1-l1+2;k++)
             {
                 lower[k][0]=-LARGE_NUMBER; 
                 //M[k][0]=upper[k][0]=-base_opp-(k*base_exp)+not_free1(l1+k-1)*(0.5*(-arc_opp-k*arc_exp)+(base_opp+(k*base_exp)));
-                upper[k][0]=-common_opp-(k*common_exp);
+        //-----------要加入arc_removing
+                arc_breaking_cost+=not_free1(l1+k-1)*w_r; 
+                upper[k][0]=-common_opp-(k*common_exp)-arc_breaking_cost;
                 if(!arc_flag&&l1==0)
                 //if(first_time)
                     M[k][0]=0;
                 else
-                    M[k][0]=-common_opp-(k*common_exp);
+                    M[k][0]=-common_opp-(k*common_exp)-arc_breaking_cost;
                 direct_array[k][0]="B";
                 direct_lower[k][0]="C";
                 direct_upper[k][0]="B";
             }
+            arc_breaking_cost=0.0;
             for (int l=1;l<r2-l2+2;l++)
             {
                 upper[0][l]=-LARGE_NUMBER;
                 //M[0][l]=lower[0][l]=-base_opp-(l*base_exp)+not_free2(l2+l-1)*(0.5*(-arc_opp-l*arc_exp)+(base_opp+(l*base_exp)));
-                lower[0][l]=-common_opp-(l*common_exp);
+        //-----------要加入arc_removing
+                arc_breaking_cost+=not_free2(l2+l-1)*w_r;
+                lower[0][l]=-common_opp-(l*common_exp)-arc_breaking_cost;
                 if(!arc_flag&&l2==0)
                 //if(first_time)
                     M[0][l]=0;
                 else
-                    M[0][l]=-common_opp-(l*common_exp);
+                    M[0][l]=-common_opp-(l*common_exp)-arc_breaking_cost;
                 direct_array[0][l]="C";
                 direct_upper[0][l]="B";
                 direct_lower[0][l]="C";
@@ -1019,16 +1054,22 @@ void traceback()
                     //min         v1=v2=v3=v4=LARGE_NUMBER;
                     int a1=l1+k-1;                      // a1,a2 sequence positions 
                     int a2=l2+l-1;
-                    v1=lower[k][l]=max(lower[k][l-1]-common_exp,M[k][l-1]-common_exp-common_opp);
-                    if(lower[k][l]==lower[k][l-1]-common_exp)
+        //-----------要加入arc_removing
+        //-----------要加入arc_removing
+                    double second_removing=not_free2(a2)*w_r; 
+                    v1=lower[k][l]=max(lower[k][l-1]-common_exp-second_removing,M[k][l-1]-common_exp-common_opp-second_removing);
+                    if(lower[k][l]==lower[k][l-1]-common_exp-second_removing)
                         direct_lower[k][l]="C";
-                    else if(lower[k][l]==M[k][l-1]-common_exp-common_opp)
+                    else if(lower[k][l]==M[k][l-1]-common_exp-common_opp-second_removing)
                         direct_lower[k][l]="A";
-                    v2=upper[k][l]=max(upper[k-1][l]-common_exp,M[k-1][l]-common_exp-common_opp);
-                    if(upper[k][l]==upper[k-1][l]-common_exp)
+
+                    double first_removing=not_free1(a1)*w_r;
+                    v2=upper[k][l]=max(upper[k-1][l]-common_exp-first_removing,M[k-1][l]-common_exp-common_opp-first_removing);
+                    if(upper[k][l]==upper[k-1][l]-common_exp-first_removing)
                         direct_upper[k][l]="B";
-                    else if(upper[k][l]==M[k-1][l]-common_exp-common_opp)
+                    else if(upper[k][l]==M[k-1][l]-common_exp-common_opp-first_removing)
                         direct_upper[k][l]="A";
+
                     double temp_value=0.0;
                     if(base_matching(a1,a2)>0)
                         temp_value-=(not_free1(a1)+not_free2(a2))*0.5*arc_breaking_case1*(base_matching(a1,a2));
@@ -1161,6 +1202,7 @@ void traceback()
                 else if (k>0 && direct_array[k][l]=="B" )
                 {
                     /*跳至direct_upper矩陣進行處理*/ 
+        //-----------要加入arc_removing
                     bool search_flag = true;
                     while(search_flag)
                     {
@@ -1175,9 +1217,9 @@ void traceback()
                             {
                                 if(l!=0||l2!=0)
                                 {
-                                    insert(ali,a1,-1,-common_exp);
+                                    insert(ali,a1,-1,-common_exp-not_free1(a1)*w_r);
 
-                                    deletion_cost+=-common_exp;
+                                    deletion_cost+=-common_exp-not_free1(a1)*w_r;
                                 }
                                 else
                                 {
@@ -1187,7 +1229,7 @@ void traceback()
                                 }
                                 #ifdef _TRACE_DEBUG
                                 if(l!=0)
-                                    cout<<"exp score="<<(-common_exp)<<endl;
+                                    cout<<"exp score="<<(-common_exp-not_free1(a1)*w_r)<<endl;
                                 else
                                     cout<<"exp score="<<(0)<<endl;
                                 #endif 
@@ -1197,8 +1239,8 @@ void traceback()
                                 if(l!=0||l2!=0)
                                 {
                                     
-                                    insert(ali,a1,-1,-common_exp-common_opp);
-                                    deletion_cost+=-common_exp-common_opp;
+                                    insert(ali,a1,-1,-common_exp-common_opp-not_free1(a1)*w_r);
+                                    deletion_cost+=-common_exp-common_opp-not_free1(a1)*w_r;
                                 }
                                 else
                                 {
@@ -1209,7 +1251,7 @@ void traceback()
                                 search_flag=false;
                                 #ifdef _TRACE_DEBUG
                                 if(l!=0)
-                                    cout<<"open score="<<(-common_exp-common_opp)<<endl;
+                                    cout<<"open score="<<(-common_exp-common_opp-not_free1(a1)*w_r)<<endl;
                                 else
                                     cout<<"open score="<<(0)<<endl;
                                 #endif 
@@ -1227,6 +1269,7 @@ void traceback()
                 else if (l>0 && direct_array[k][l]=="C")
                 {
                     //cout<<k<<" "<<l<<" "<<direct_array[k][l]<<endl;
+        //-----------要加入arc_removing
                     bool search_flag= true;
                     while(search_flag)
                     {
@@ -1242,8 +1285,8 @@ void traceback()
                             {
                                 if(k!=0||l1!=0)
                                 {
-                                    insert(ali,-1,a2,-common_exp);
-                                    deletion_cost+=-common_exp;
+                                    insert(ali,-1,a2,-common_exp-not_free2(a2)*w_r);
+                                    deletion_cost+=-common_exp-not_free2(a2)*w_r;
                                 }
                                 else
                                 {
@@ -1253,7 +1296,7 @@ void traceback()
                                 }
                                 #ifdef _TRACE_DEBUG
                                 if(k!=0)
-                                    cout<<"exp score="<<(-common_exp)<<endl;
+                                    cout<<"exp score="<<(-common_exp-not_free2(a2)*w_r)<<endl;
                                 else
                                     cout<<"exp score="<<(0)<<endl;
                                 #endif 
@@ -1262,8 +1305,8 @@ void traceback()
                             {
                                 if(k!=0||l1!=0)
                                 {
-                                    insert(ali,-1,a2,-common_exp-common_opp);
-                                    deletion_cost+=-common_exp-common_opp;
+                                    insert(ali,-1,a2,-common_exp-common_opp-not_free2(a2)*w_r);
+                                    deletion_cost+=-common_exp-common_opp-not_free2(a2)*w_r;
 
                                 }
                                 else
@@ -1274,7 +1317,7 @@ void traceback()
                                 }
                                 #ifdef _TRACE_DEBUG
                                 if(k!=0)
-                                    cout<<"open score="<<(-common_exp-common_opp)<<endl;
+                                    cout<<"open score="<<(-common_exp-common_opp-not_free2(a2)*w_r)<<endl;
                                 else
                                     cout<<"open score="<<(0)<<endl;
                                 #endif 
@@ -1339,6 +1382,9 @@ void traceback()
                     int i1=L1[I1[a1]];              // left arc ends
                     int j1=L2[I2[a2]];
                     double edge_weight=0.5*arc_operation(L1[I1[a1]],L2[I2[a2]],a1,a2); //(base_matching(L1[I1[a1]],L2[I2[a2]])+base_matching(a1,a2))*0.5*w_am;
+                    string arc_position = to_string(i1+1)+" "+to_string(a1+1)+" "+to_string(j1+1)+" "+to_string(a2+1);
+                    //cout<<arc_position<<endl;
+                    arc_match_info[base_count++]=arc_position;
                     arc_cost+=edge_weight*2;
                     #ifdef _TRACE_DEBUG
                     cout<<"confimed the path come from arc match"<<endl;
@@ -1622,6 +1668,7 @@ double computation()
             R2.push_back(i);
         }
     }
+    arc_match_info.resize(L1.size()*L2.size());
     #ifdef _TRACE_DEBUG
     cout<<"base pair 1"<<endl;
     for(int i = 0;i<L1.size();i++)
@@ -1669,10 +1716,13 @@ for(int i = 0;i<L1.size();i++)
         #ifdef _TRACE_DEBUG
         B[0][0]=C[0][0]=direct_array[0][0]="o";
         #endif
+        //-----------要加入arc_removing
+        double arc_breaking_cost=0.0;
         for(int k = 1;k<R1[i]-L1[i];k++)
         {
             lower[k][0]=-LARGE_NUMBER; 
-            M[k][0]=upper[k][0]=-common_opp-k*common_exp;
+            arc_breaking_cost+=not_free1(L1[i]+k)*w_r;
+            M[k][0]=upper[k][0]=-common_opp-k*common_exp-arc_breaking_cost;
             //M[k][0]=M[k-1][0]+w_d+not_free1(L1[i]+k)*(0.5*w_r-w_d);
             #ifdef _TRACE_DEBUG
             B[k][0]="B";
@@ -1680,10 +1730,13 @@ for(int i = 0;i<L1.size();i++)
             direct_array[k][0]="B";
             #endif
         }
+        //-----------要加入arc_removing
+        arc_breaking_cost=0.0;
         for (int l=1;l<R2[j]-L2[j];l++)
         {
             upper[0][l]=-LARGE_NUMBER;
-            M[0][l]=lower[0][l]=-common_opp-l*common_exp;
+            arc_breaking_cost+=not_free2(L2[j]+l)*w_r;
+            M[0][l]=lower[0][l]=-common_opp-l*common_exp-arc_breaking_cost;
             //M[0][l]=M[0][l-1]+w_d+not_free2(L2[j]+l)*(0.5*w_r-w_d);
             #ifdef _TRACE_DEBUG
             B[0][l]="B";
@@ -1703,18 +1756,22 @@ for(int i = 0;i<L1.size();i++)
             int a2 = L2[j]+l;
             //edit operation
             //v1 = lower gap penalty , v2 = upper gap penalty, v3 = mismatch or match gap penalty, v4=special case
-            v1=lower[k][l]=max(lower[k][l-1]-common_exp,M[k][l-1]-common_opp-common_exp);
+        //-----------要加入arc_removing
+        //-----------要加入arc_removing
+            double second_removing=not_free2(a2)*w_r;
+            v1=lower[k][l]=max(lower[k][l-1]-common_exp-second_removing,M[k][l-1]-common_opp-common_exp-second_removing);
             #ifdef _TRACE_DEBUG
-            if(lower[k][l]==lower[k][l-1]-common_exp)
+            if(lower[k][l]==lower[k][l-1]-common_exp-second_removing)
                 C[k][l]="C";
-            else if(lower[k][l]==M[k][l-1]-common_exp-common_opp)
+            else if(lower[k][l]==M[k][l-1]-common_exp-common_opp-second_removing)
                 C[k][l]="A";
             #endif
-            v2=upper[k][l]=max(upper[k-1][l]-common_exp,M[k-1][l]-common_opp-common_exp);
+            double first_removing=not_free1(a1)*w_r;
+            v2=upper[k][l]=max(upper[k-1][l]-common_exp-first_removing,M[k-1][l]-common_opp-common_exp-first_removing);
             #ifdef _TRACE_DEBUG
-            if(upper[k][l]==upper[k-1][l]-common_exp)
+            if(upper[k][l]==upper[k-1][l]-common_exp-first_removing)
                 B[k][l]="B";
-            else if(upper[k][l]==M[k-1][l]-common_opp-common_exp)
+            else if(upper[k][l]==M[k-1][l]-common_opp-common_exp-first_removing)
                 B[k][l]="A";
             #endif
             //v3=middle[k][l]=max(middle[k-1][l-1]+base_matching(a1,a2)+((not_free1(a1)+not_free2(a2))*w_b),lower[k-1][l-1],upper[k-1][l-1]);
@@ -1800,10 +1857,13 @@ for(int i =0; i<M.size();i++)
 M[0][0]=lower[0][0]=upper[0][0]=0;
 direct_array[0][0]="o";
 /*initalize row*/
+double arc_breaking_cost=0.0;
 for(int k=1;k<=arc1.size();k++)
 {
+        //-----------要加入arc_removing
+    arc_breaking_cost+=not_free1(k-1)*w_r;
     lower[k][0]=-LARGE_NUMBER; 
-    upper[k][0]=-common_opp-k*common_exp;
+    upper[k][0]=-common_opp-k*common_exp-arc_breaking_cost;
     M[k][0]=0;
     direct_array[k][0]="B";
     //M[k][0]=M[k-1][0]+w_d+not_free1(k-1)*(0.5*w_r-w_d);
@@ -1811,8 +1871,10 @@ for(int k=1;k<=arc1.size();k++)
 /*initalize column*/
 for(int l = 1;l<=arc2.size();l++)
 {
+        //-----------要加入arc_removing
+    arc_breaking_cost+=not_free2(l-1)*w_r;
     upper[0][l]=-LARGE_NUMBER;
-    lower[0][l]=-common_opp-l*common_exp;
+    lower[0][l]=-common_opp-l*common_exp-arc_breaking_cost;
     M[0][l]=0;
     direct_array[0][l]="C";
     //M[0][l]=M[0][l-1]+w_d+not_free2(l-1)*(0.5*w_r-w_d);
@@ -1830,8 +1892,13 @@ for (int l=1;l<=arc2.size();l++)
     //v2=M[k][l-1]+w_d+not_free2(l-1)*(0.5*w_r-w_d);
     //v3=M[k-1][l-1]+base_matching(k-1,l-1)*w_m+(not_free1(k-1)+not_free2(l-1))*w_b;
     //affine gap penalty version 2016/5/20 
-    v1=lower[k][l]=max(lower[k][l-1]-common_exp,M[k][l-1]-common_exp-common_opp);
-    v2=upper[k][l]=max(upper[k-1][l]-common_exp,M[k-1][l]-common_exp-common_opp);
+        //-----------要加入arc_removing
+        //-----------要加入arc_removing
+    double second_removing=not_free2(l-1)*w_r;
+    v1=lower[k][l]=max(lower[k][l-1]-common_exp-second_removing,M[k][l-1]-common_exp-common_opp-second_removing);
+
+    double first_removing=not_free1(k-1)*w_r;
+    v2=upper[k][l]=max(upper[k-1][l]-common_exp-first_removing,M[k-1][l]-common_exp-common_opp-first_removing);
     //v1=lower[k][l]=max(lower[k][l-1]-common_exp,middle[k][l-1]-common_opp-common_exp,upper[k][l-1]-common_opp-common_exp);
     //v2=upper[k][l]=max(upper[k-1][l]-common_exp,middle[k-1][l]-common_opp-common_exp,lower[k-1][l]-common_opp-common_exp);
     //v3=middle[k][l]=max(middle[k-1][l-1]+base_matching(k-1,l-1)+((not_free1(k-1)+not_free2(l-1))*w_b),lower[k-1][l-1],upper[k-1][l-1]);
