@@ -1,8 +1,9 @@
 /*************************************************************************
-	> File Name: align.cpp
+	> File Name: semi_global.cpp
 	> Author: 
 	> Mail: 
 	> Created Time: Thu Mar 24 11:35:41 2016
+    > Description: semi序列比對且未考慮affine gap penalty
  ************************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
@@ -272,7 +273,8 @@ int main(int argc,char* argv[])
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1BYJ_A_to_1I6U_C/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1FHK_A_to_1S9S_A/semi_input.php";
         //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1JJ2_9_to_1NKW_9/semi_input.php";
-        pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1E8O_E_to_1JID_B/semi_input.php";
+        pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1UN6_F_to_1JUR_A/semi_input.php";
+        //pdb_compare_path= "/home/watchlee/Research_Programming/X3DNA/23-4L_SARA_FSCOR_structure/1E8O_E_to_1JID_B/semi_input.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/AlignmentToHen/Test_for_GLOBAL/1NJI_B_to_1NMY_9.php";
        //pdb_compare_path= "/home/watchlee/Research_Programming/AlignmentToHen/Special_for_debug/semi_input.php";
     //   pdb_compare_path= "/home/watchlee/Research_Programming/AlignmentToHen/Special_for_debug/1E8O_Evs1JID_B/semi_input.php";
@@ -285,7 +287,7 @@ int main(int argc,char* argv[])
          arc_mismatch_case2=0;// if sum = 0
          arc_mismatch_case3=1;// if sum < 0
          arc_mismatch_case4=1;// if both < 0
-         w_d =-9;  // base deletion
+         w_d =-100;  // base deletion
          w_r =-1;  // arc  removing
          w_b =-1;  // arc  breaking
     }
@@ -349,9 +351,11 @@ int main(int argc,char* argv[])
     double total = 0.0;
     for(int count = 0;count<weights.size();count++)
     {
-        //cout<<weights[count]<<" ";
+        cout<<weights[count]<<"\t";
+
         total+=weights[count];
     }
+    cout<<endl;
     #ifdef _DISPLAY
     cout<<astr1<<endl;
     cout<<aseq1<<" "<<aseq1.size()<<endl;
@@ -670,9 +674,15 @@ cout<<current_column<<" "<<current_row<<endl;
           else
               l=l2+current_row;
         for(int count = r1;count>k-1;count--)
+          {
+              cout<<"insert!!"<<count<<endl;
             insert(ali,count,-1,0);
+          }
         for(int count = r2;count>l-1;count--)
+          {
+              cout<<"deletion!!"<<count<<endl;
             insert(ali,-1,count,0);
+          }
 
       }
       first_time=false;
@@ -680,17 +690,36 @@ cout<<current_column<<" "<<current_row<<endl;
         {
             int a1=l1+k-1;
            int a2=l2+l-1;
+            #ifdef _TRACE_DEBUG
+                cout<<"a1="<<a1<<"\ta2="<<a2<<endl;
+            #endif
             if(k==0&&l==0)
                 seqaln=false;
-            else if(direct[k][l]=="C")
+            else if(direct[k][l]=="B")
+            {
+                #ifdef _TRACE_DEBUG
+                cout<<"發生insert"<<endl;
+                cout<<arc1[a1]<<endl;
+                cout<<seq1[a1]<<endl;
+                cout<<"-"<<endl;
+                cout<<"-"<<endl;
+                cout<<"l = "<<l<<" l2="<<l2<<" insert cost= "<<w_d+not_free1(a1)*(0.5*w_r-w_d)<<endl;
+                #endif
+                if(l!=0||l2!=0)
+                  insert(ali,a1,-1,w_d+not_free1(a1)*(0.5*w_r-w_d));
+                else
+                  insert(ali,a1,-1,0);
+                k--;
+            }
+             else if(direct[k][l]=="C")
             {
                 #ifdef _TRACE_DEBUG
                 cout<<"發生deletion"<<endl;
-                cout<<arc1[a1]<<endl;
-                cout<<seq1[a1]<<endl;
+                cout<<"-"<<endl;
+                cout<<"-"<<endl;
                 cout<<seq2[a2]<<endl;
                 cout<<arc2[a2]<<endl;
-                cout<<"k = "<<k<<" l1="<<l1<<" delete cost= "<<w_d+not_free1(a1)*(0.5*w_r-w_d);
+                cout<<"k = "<<k<<" l1="<<l1<<" delete cost= "<<w_d+not_free1(a1)*(0.5*w_r-w_d)<<endl;
                 #endif
                
                 if(k!=0||l1!=0)
@@ -698,22 +727,6 @@ cout<<current_column<<" "<<current_row<<endl;
                 else
                       insert(ali,-1,a2,0);
                 l--;
-            }
-            else if(direct[k][l]=="B")
-            {
-                #ifdef _TRACE_DEBUG
-                cout<<"發生insert"<<endl;
-                cout<<arc1[a1]<<endl;
-                cout<<seq1[a1]<<endl;
-                cout<<seq2[a2]<<endl;
-                cout<<arc2[a2]<<endl;
-                cout<<"l = "<<l<<" l2="<<l2<<" insert cost= "<<w_d+not_free1(a1)*(0.5*w_r-w_d);
-                #endif
-                if(l!=0||l2!=0)
-                  insert(ali,a1,-1,w_d+not_free1(a1)*(0.5*w_r-w_d));
-                else
-                  insert(ali,a1,-1,0);
-                k--;
             }
             else if(direct[k][l]=="A")
             {
