@@ -1,8 +1,9 @@
 /*************************************************************************
-> File Name: align.cpp
-> Author: 
-> Mail: 
+> File Name: iPARTS3.cpp
+> Author: watchlee
+> Mail: nonono 
 > Created Time: Thu Mar 24 11:35:41 2016
+> Description: 正式版本
 ************************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
